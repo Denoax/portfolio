@@ -1,10 +1,8 @@
 import {
-  algorithmSignals,
   careerAnchors,
   chapters,
   contact,
   humanSignals,
-  infrastructureSignals,
 } from '../content/portfolio'
 
 interface ChapterLayerProps {
@@ -29,20 +27,6 @@ function ChapterDetails({ index, onCopyEmail, emailCopied }: ChapterLayerProps) 
     )
   }
 
-  if (index === 3 || index === 4) {
-    const signals = index === 3 ? infrastructureSignals : algorithmSignals
-    return (
-      <ul className="signal-list" aria-label={`${chapters[index].label} concepts`}>
-        {signals.map((signal, signalIndex) => (
-          <li key={signal}>
-            <span>{String(signalIndex + 1).padStart(2, '0')}</span>
-            {signal}
-          </li>
-        ))}
-      </ul>
-    )
-  }
-
   if (index === 5) {
     return (
       <div className="dual-degree" aria-label="Education">
@@ -55,11 +39,12 @@ function ChapterDetails({ index, onCopyEmail, emailCopied }: ChapterLayerProps) 
 
   if (index === 6) {
     return (
-      <ul className="human-signals" aria-label="Interests">
+      <ul className="human-signals" aria-label="Selected resume highlights">
         {humanSignals.map((signal) => (
-          <li key={signal.title}>
-            <strong>{signal.title}</strong>
-            {signal.detail && <span>{signal.detail}</span>}
+          <li key={signal.label}>
+            <strong>{signal.value}</strong>
+            <span>{signal.label}</span>
+            <small>{signal.detail}</small>
           </li>
         ))}
       </ul>
@@ -73,8 +58,8 @@ function ChapterDetails({ index, onCopyEmail, emailCopied }: ChapterLayerProps) 
           <span>{emailCopied ? 'EMAIL COPIED' : contact.email}</span>
           <i aria-hidden="true">{emailCopied ? '✓' : '↗'}</i>
         </button>
-        <a href={contact.linkedin} target="_blank" rel="noreferrer">
-          <span>LINKEDIN</span>
+        <a href={contact.github} target="_blank" rel="noreferrer">
+          <span>GITHUB</span>
           <i aria-hidden="true">↗</i>
         </a>
       </div>
@@ -93,10 +78,6 @@ export function ChapterLayer(props: ChapterLayerProps) {
       aria-label={`${chapter.number} ${chapter.label}`}
     >
       <div className="chapter__layer" data-chapter-layer>
-        <div className="chapter__eyebrow">
-          <span>{chapter.number}</span>
-          <span>{chapter.eyebrow}</span>
-        </div>
         <h2 className="chapter__title">
           <span>{chapter.title}</span>
           {chapter.titleSecondary && <span>{chapter.titleSecondary}</span>}

@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.agents
+.vscode
+.idea
+attractors-main
+coverage
+scripts
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+AGENTS.md
+README.md
+DEPLOYMENT.md
+

@@ -26,6 +26,7 @@ export const galaxyVertexShader = /* glsl */ `
   }
 
   vec3 statePosition(float state) {
+    if (state >= 7.0) return aHorizon;
     float segment = floor(state);
     float blend = cinematicEase(fract(state));
     vec3 galaxySignal = position * 0.86;

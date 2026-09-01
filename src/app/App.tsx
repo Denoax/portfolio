@@ -85,7 +85,7 @@ export function App() {
 
       <header className="frame-ui">
         <button className="frame-ui__brand" type="button" onClick={() => selectChapter(0)}>
-          M / 26
+          Mani
         </button>
         <button
           className="frame-ui__chapter"
@@ -98,7 +98,7 @@ export function App() {
           <span>{chapters[activeChapter].label}</span>
         </button>
         <div className="frame-ui__links">
-          <a href={contact.linkedin} target="_blank" rel="noreferrer">LINKEDIN ↗</a>
+          <a href={contact.github} target="_blank" rel="noreferrer">GITHUB ↗</a>
           <button type="button" onClick={copyEmail}>{emailCopied ? 'COPIED' : 'EMAIL'}</button>
         </div>
       </header>
@@ -136,11 +136,6 @@ export function App() {
           />
         ))}
       </main>
-
-      <div className="system-status" aria-hidden="true">
-        <span>{quality.webgpuAvailable ? 'GPU FIELD / ENHANCED' : 'GPU FIELD / COMPATIBLE'}</span>
-        <span>{quality.tier.toUpperCase()}</span>
-      </div>
 
       <div className="cursor" aria-hidden="true"><i /></div>
     </div>

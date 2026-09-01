@@ -27,7 +27,6 @@ export const chapters: Chapter[] = [
     eyebrow: 'SYSTEMS / DATA / AUTOMATION',
     title: 'INFORMATION',
     titleSecondary: 'UNDER GRAVITY',
-    description: 'I work where software, data and infrastructure meet.',
     align: 'right',
   },
   {
@@ -37,7 +36,6 @@ export const chapters: Chapter[] = [
     eyebrow: 'AGRICULTURE & AGRI-FOOD CANADA / LETHBRIDGE, ALBERTA',
     title: 'THREE',
     titleSecondary: 'ORBITAL STATES',
-    description: 'Scientific data evolved into automation, pipelines and production infrastructure.',
     align: 'left',
   },
   {
@@ -47,7 +45,6 @@ export const chapters: Chapter[] = [
     eyebrow: 'TRACE / VALIDATE / TEST / AUTOMATE / REPORT',
     title: 'COMPLEXITY',
     titleSecondary: 'MADE DETERMINISTIC',
-    description: 'Runtime paths, legacy data and CI/CD reorganized into systems that can be understood and trusted.',
     align: 'right',
   },
   {
@@ -57,7 +54,6 @@ export const chapters: Chapter[] = [
     eyebrow: 'ICPC / 2024–2025 / UNIVERSITY OF CALGARY',
     title: 'ONE PATH',
     titleSecondary: 'RESOLVES',
-    description: 'Regional contestant. Top 10. Three-person team.',
     align: 'left',
   },
   {
@@ -77,7 +73,6 @@ export const chapters: Chapter[] = [
     eyebrow: 'BEYOND THE SYSTEM',
     title: 'DISTANT',
     titleSecondary: 'SIGNALS',
-    description: 'Soccer. Track & field. Piano. Recorder. Gaming.',
     align: 'left',
   },
   {
@@ -86,8 +81,8 @@ export const chapters: Chapter[] = [
     label: 'HORIZON',
     eyebrow: 'LETHBRIDGE, ALBERTA, CANADA',
     title: 'THE NEXT',
-    titleSecondary: 'PROBLEM',
-    description: 'The field resolves. The work continues.',
+    titleSecondary: 'SOLUTION',
+    description: 'MANI MARAMI MILANI\nComputer Science × Mathematics\nLethbridge, Alberta, Canada',
     align: 'right',
   },
 ]
@@ -110,32 +105,12 @@ export const careerAnchors = [
   },
 ]
 
-export const infrastructureSignals = [
-  'INGEST',
-  'TRACE',
-  'VALIDATE',
-  'TEST',
-  'AUTOMATE',
-  'REPORT',
-]
-
-export const algorithmSignals = [
-  'DATA STRUCTURES',
-  'GRAPH ALGORITHMS',
-  'DYNAMIC PROGRAMMING',
-  'GREEDY METHODS',
-  'DEBUGGING',
-  'COMPLEXITY ANALYSIS',
-]
-
 export const humanSignals = [
-  { title: 'SOCCER', detail: 'THREE YEARS / TIER-1 LFC / LETHBRIDGE' },
-  { title: 'TRACK & FIELD', detail: 'LONG + TRIPLE JUMP / SOUTHERN ALBERTA 1ST + 2ND / 7TH PROVINCIALLY' },
-  { title: 'MUSIC', detail: 'PIANO / RECORDER' },
-  { title: 'GAMING', detail: '' },
+  { value: 'TOP 10', label: 'ICPC REGIONAL', detail: 'THREE-PERSON TEAM / UNIVERSITY OF CALGARY' },
+  { value: '2023-26', label: 'DEVELOPER FOR THE GOVERNMENT OF CANADA', detail: 'FSWEP + TWO CO-OP TERMS' },
 ]
 
 export const contact = {
   email: 'mani.maramimilani@uleth.ca',
-  linkedin: 'https://ca.linkedin.com/in/mani-marami-milani-8713a7309',
+  github: 'https://github.com/Denoax',
 }
