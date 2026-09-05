@@ -1,0 +1,33 @@
+{
+  "url": "http://127.0.0.1:4194/",
+  "mode": "banner",
+  "observations": [
+    {
+      "label": "designed-cover",
+      "title": "Mani Marami Milani — Computer Science Portfolio",
+      "viewport": [
+        1800,
+        800
+      ],
+      "overflow": 0,
+      "ready": true,
+      "path": "webgl",
+      "chapter": "",
+      "links": [
+        {
+          "text": "Skip to content",
+          "href": "#signal"
+        },
+        {
+          "text": "GITHUB ↗",
+          "href": "https://github.com/Denoax"
+        },
+        {
+          "text": "GITHUB↗",
+          "href": "https://github.com/Denoax"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

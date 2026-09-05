@@ -1,0 +1,59 @@
+{
+  "url": "http://127.0.0.1:4194/",
+  "mode": "motion",
+  "observations": [
+    {
+      "label": "gravity-motion",
+      "title": "Mani Marami Milani — Computer Science Portfolio",
+      "viewport": [
+        1120,
+        700
+      ],
+      "overflow": 0,
+      "ready": true,
+      "path": "webgl",
+      "chapter": "00\nSIGNAL",
+      "links": [
+        {
+          "text": "Skip to content",
+          "href": "#signal"
+        },
+        {
+          "text": "GITHUB ↗",
+          "href": "https://github.com/Denoax"
+        },
+        {
+          "text": "GITHUB↗",
+          "href": "https://github.com/Denoax"
+        }
+      ]
+    },
+    {
+      "label": "field-motion",
+      "title": "Mani Marami Milani — Computer Science Portfolio",
+      "viewport": [
+        1120,
+        700
+      ],
+      "overflow": 0,
+      "ready": true,
+      "path": "webgl",
+      "chapter": "03\nINFRASTRUCTURE",
+      "links": [
+        {
+          "text": "Skip to content",
+          "href": "#signal"
+        },
+        {
+          "text": "GITHUB ↗",
+          "href": "https://github.com/Denoax"
+        },
+        {
+          "text": "GITHUB↗",
+          "href": "https://github.com/Denoax"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

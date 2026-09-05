@@ -1,0 +1,13 @@
+/* Repository-only cover layout. The background is the live application canvas. */
+.site > :not(.experience-canvas) { visibility: hidden !important; }
+html, body { overflow: hidden !important; }
+.repository-cover { position: fixed; inset: 0; z-index: 1000; color: #f2f0e9; padding: 50px 72px; font-family: 'Instrument Sans Variable', sans-serif; }
+.repository-cover header, .repository-cover footer { display: flex; justify-content: space-between; align-items: center; font: 400 13px/1.4 'IBM Plex Mono', monospace; letter-spacing: .12em; }
+.repository-cover header { color: #a9acb4; }
+.repository-cover header b { color: #e8a15b; padding: 0 16px; font-weight: 400; }
+.repository-cover h1 { margin: 86px 0 0; font-size: 106px; font-weight: 480; line-height: .98; letter-spacing: -.058em; }
+.repository-cover h1 span { color: #a9acb4; }
+.cover-caption { position: absolute; bottom: 134px; left: 76px; display: flex; gap: 20px; align-items: flex-start; }
+.cover-caption i { display: block; background: #e8a15b; width: 30px; height: 2px; margin-top: 16px; }
+.cover-caption p { margin: 0; font-size: 26px; line-height: 1.35; letter-spacing: -.02em; }
+.repository-cover footer { position: absolute; left: 76px; right: 72px; bottom: 46px; color: #8c9099; }
