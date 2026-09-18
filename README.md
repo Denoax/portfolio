@@ -157,7 +157,6 @@ src/
 │   └── webgpu/           optional WGSL career-orbit prewarm
 └── styles/               typography, layout and responsive presentation
 showcase/                 real captures, banner source and media tooling
-AGENTS.md                 galaxy art-direction constitution
 ```
 
 ## Presentation and credits
@@ -167,14 +166,10 @@ production build. The banner combines its real WebGL galaxy with a repository-on
 typographic cover. No generated galaxy picture stands in for the running site.
 See [how to recreate the media](showcase/README.md#recreate-the-media).
 
-The art-direction constitution references
-[Galaxy Interactive](https://interactive.galaxy.com/) for restraint and spatial
-storytelling. The bundled `attractors-main/` directory is technical study material
-associated with [Scenes3D/attractors](https://github.com/Scenes3D/attractors), not
-the production entry point. No blanket reuse permission is implied for that material.
-Instrument Sans and IBM Plex Mono are bundled through Fontsource packages with
-their respective font licenses. This repository currently has **no project-wide
-license**; public visibility alone does not grant unrestricted reuse.
+The visual direction draws on restrained editorial motion and scientific
+visualization. Instrument Sans and IBM Plex Mono are bundled through Fontsource
+packages with their respective font licenses. This repository currently has **no
+project-wide license**; public visibility alone does not grant unrestricted reuse.
 
 ---
 

@@ -88,6 +88,3 @@ not retouched in the captures or changed during this repository-only request.
 The main gallery emphasizes the desktop experience; portrait captures remain
 available as-is. The public domain could not be verified from the research
 browser during this pass, so the media comes from the local production build.
-
-The original repo's reference-study directory has no project-wide reuse license
-established here. This pass does not relicense the application or its references.
