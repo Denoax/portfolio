@@ -51,3 +51,11 @@ with immutable caching and handles application routes through index.html. Asset
 requests have their own static handler so a missing asset cannot return an HTML
 success page. Existing local review4174, approved-v2 preview4173 and evidence4180
 are independent of the production origin.
+
+## Approved v20 rollout —2026-10-09
+
+Mani explicitly approved v20 and authorized GitHub publication and deployment. Runtime `f2f12722ea1559fac08a5a56583d51631d8d309d` / evidence `da9ee3d8e0fd34c0bc1e9dfe8eb3a8e355d411fe` are the reviewed authority. Isolated release checkout: `/home/mani/.codex/worktrees/portfolio-v20-live-20261009`, local commit `4d61f656999e709e10e25d56c633e38f366db421`, preserving remote main cleanup. Docker rebuilt all219 outputs byte-identically; public HTTPS/origin HTML/compiled chunks/media/data, credits routing and missing-asset404 were checked.
+
+Checkpoint: `/home/mani/.codex/backups/portfolio-pre-v20-live-20261009T061933Z`. Previous v17 image: `sha256:3cadb086600592914258933a49ea94aac7d857ad30158896ecf9639af5efed2f`. Rollback tag: `portfolio-portfolio:rollback-pre-v20-20261009t061933z`. Candidate/live v20 image: `sha256:637107ab7b502e8f9811dc626104634b30b9a51cf5b69a78bbc3b2f6508cc69b`. Gateway image/container/start time unchanged; only the portfolio service was recreated. Use Compose project `portfolio` explicitly when operating from the isolated checkout. Recovery must target only that service, retaining the gateway and previews.
+
+GitHub publication initially encountered a connected-integration HTTP403 on Git blob creation. Mani completed the GitHub CLI sign-in; normal fast-forward push published runtime release4d61f65 to main. Actual public desktop1440×900/portrait390×844 checks passed entry67,24minor marks, intentional preview playback, resource Pause/Continue/Cancel and persistent theme with no page errors or missing assets. Final push identity and public checks are recorded in `showcase/v20-evidence/deployment/`.
