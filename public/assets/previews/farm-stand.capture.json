@@ -1,0 +1,138 @@
+{
+  "source_file": "farm-stand-raw.webm",
+  "source_sha256": "cbf39e321fd48b58419572394b103412e1033776d9ca6fdf020a6ec4a5cd977d",
+  "source_revision": "7349113bfd7218e8600b3d20576179a7749bfee1",
+  "source_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "17.680000"
+    }
+  },
+  "start_seconds": 1,
+  "duration_seconds": 7.0,
+  "output_width": 1280,
+  "output_fps": 20,
+  "processing": "Real source-frame selection/scaling/encoding only; no model generation, upscaling or frame synthesis. Review loop boundary and accuracy manually.",
+  "outputs": [
+    {
+      "file": "farm-stand-portrait.webp",
+      "bytes": 484708,
+      "sha256": "1e3240a44f2283804a1e85c1e23dd52df9ac7e12d6fefb27ffed359203c3075a",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "webp",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {}
+      }
+    },
+    {
+      "file": "farm-stand-poster.webp",
+      "bytes": 224950,
+      "sha256": "1cde517a0366406b3ba41c775e8d5ac569d02ffa93cb410cd0804ce16633fb30",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "webp",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {}
+      }
+    },
+    {
+      "file": "farm-stand.gif",
+      "bytes": 11879972,
+      "sha256": "92da493e1734bf878fe9182b55e1c1967bcaf0ab287e026182763c98bf650cf7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "gif",
+            "width": 840,
+            "height": 472,
+            "pix_fmt": "bgra",
+            "level": -99,
+            "avg_frame_rate": "25/2"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "farm-stand.mp4",
+      "bytes": 1982375,
+      "sha256": "a3c3763bf66b37ddb4c58778a95f2629b03b6c3df7c64f818f704463aae11bba",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": 31,
+            "avg_frame_rate": "20/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "farm-stand.webm",
+      "bytes": 1036774,
+      "sha256": "2bf8e8ebb6873aed66735a10586212bdd3a19c163418f21d9c2be6c56ed72e47",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vp9",
+            "profile": "Profile 0",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "20/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    }
+  ],
+  "repository": "Denoax/farm-stand",
+  "content": "Actual licensed-photograph market opening; demonstration only, no real orders",
+  "refinement": "Trim genuine source timestamps to exclude observed browser loading/compositor window-transition frames. Seven real seconds, no synthetic fill, retiming or interpolation."
+}

@@ -1,0 +1,51 @@
+{
+  "key": "kona",
+  "processing": "Whole genuine source sequence; native or smaller encodes, no upscaling or synthesized frames.",
+  "sources": [],
+  "outputs": [
+    {
+      "file": "kona-poster.webp",
+      "bytes": 82466,
+      "sha256": "a71dc20d866522805f4467b0c4b65a61478283c07ec0e13f2fc4e9466626e830"
+    },
+    {
+      "file": "kona.webm",
+      "bytes": 456625,
+      "sha256": "ed962664779b79a2eb551cc3a92fd7371818188e4ec194cd14a15f603953596f"
+    },
+    {
+      "file": "kona-portrait.gif",
+      "bytes": 3921729,
+      "sha256": "04a95bceaac053fff8b85913ccf9a9f5cf7de5e3e9416b336be5488ba88bf6bb"
+    },
+    {
+      "file": "kona-portrait.webp",
+      "bytes": 82466,
+      "sha256": "a71dc20d866522805f4467b0c4b65a61478283c07ec0e13f2fc4e9466626e830"
+    },
+    {
+      "file": "kona.gif",
+      "bytes": 3921729,
+      "sha256": "04a95bceaac053fff8b85913ccf9a9f5cf7de5e3e9416b336be5488ba88bf6bb"
+    },
+    {
+      "file": "kona-portrait.webm",
+      "bytes": 456625,
+      "sha256": "fdd1cbe5bc813f1548cd7b908f31f01e9fc32cc3f6c1e500e1b8d8991644dee6"
+    },
+    {
+      "file": "kona-portrait.mp4",
+      "bytes": 1502858,
+      "sha256": "0eca944490edd4662ad183e5e8ec07132ff74378a316658ffc354b4daf085e9c"
+    },
+    {
+      "file": "kona.mp4",
+      "bytes": 1502858,
+      "sha256": "0eca944490edd4662ad183e5e8ec07132ff74378a316658ffc354b4daf085e9c"
+    }
+  ],
+  "revision": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
+  "rights": "Original UI/config MIT, third-party fan character artwork not MIT or publication-cleared. Local review only; no new GUI capture claimed.",
+  "cadence": "Published720x405 GIF10fps15.2s; not a60fps master",
+  "source_sha256": "04a95bceaac053fff8b85913ccf9a9f5cf7de5e3e9416b336be5488ba88bf6bb"
+}

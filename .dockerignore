@@ -15,3 +15,7 @@ AGENTS.md
 README.md
 DEPLOYMENT.md
 
+
+# Research and review artifacts are not Docker runtime inputs.
+docs
+showcase

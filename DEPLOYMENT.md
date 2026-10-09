@@ -1,123 +1,53 @@
 # manimarami.com deployment
 
-This repository is packaged as a multi-stage Docker image. Node.js exists only
-in the build stage, where the locked npm dependencies build the existing Vite
-application. The final image contains Caddy, the compiled `dist/` output, and
-the Caddy configuration only.
+The live origin is the `portfolio` Docker Compose project in this repository on
+Mani's Linux host. Its `manimarami-portfolio` container serves compiled Vite output
+with Caddy on `http://127.0.0.1:18088`. The existing `mani-web-gateway` container
+terminates public HTTPS and routes `manimarami.com` to that origin. The gateway's
+configuration, certificates and other sites are separate and are preserved.
 
-## Requirements
+## Build and publish an authorized source release
 
-- Docker Desktop or another Docker Engine with Docker Compose
-- Free local TCP ports `18088` and `18443`
-
-Node.js, npm, and Vite are not required on the Windows host.
-
-## Start and operate
-
-Build and start:
-
-```powershell
-docker compose up -d --build
-```
-
-Check status:
-
-```powershell
+```sh
+docker compose config --quiet
+docker compose build portfolio
+docker run --rm --network none --entrypoint caddy portfolio-portfolio validate --config /etc/caddy/Caddyfile
+docker compose up -d --no-build --no-deps portfolio
 docker compose ps
 ```
 
-View logs:
+Build/validate before replacing the running service. Rebuild uses locked npm
+packages in Node 24; the final image contains only Caddy, compiled application and
+public assets. Research, historical captures and instruction packages are excluded
+from the Docker context. Node/npm are not required on a host running the image.
 
-```powershell
-docker compose logs -f
-```
+Pushing source to GitHub does **not** rebuild this host automatically. There is no
+GitHub Actions deployment workflow. Deploy only with applicable user authorization.
+The published repository keeps runtime source and operational documentation; full
+local review/history and verified review ZIPs are retained separately.
 
-Restart:
+## Verify and recover
 
-```powershell
-docker compose restart
-```
+Check both `http://127.0.0.1:18088/` and `https://manimarami.com/` against the
+reviewed production HTML and fingerprinted asset hashes. Verify `/credits` SPA
+routing, actual preview interactions and missing-asset 404 behavior. A healthy
+container alone does not establish the intended version or visual approval.
 
-Stop:
+Before replacing the container, retain its image under a unique local rollback tag.
+The v17 pre-release checkpoint records that tag, previous image ID and Compose
+configuration under `/home/mani/.codex/backups/portfolio-pre-v17-live-20261008T164701Z`.
+Rollback targets only the portfolio service using a Compose override for that image;
+use `up -d --no-build --no-deps portfolio`. Do not alter the HTTPS gateway, delete
+volumes or prune the retained image during a rollout.
 
-```powershell
-docker compose down
-```
+## Network and caching
 
-Rebuild after future source changes:
+Compose binds host ports18088/18443 to loopback. Only port18088 serves HTTP;18443
+is reserved, with no active TLS listener in this origin. The existing public gateway
+owns80/443 and certificates. DNS/registrar/router/firewall configuration is unchanged.
 
-```powershell
-docker compose up -d --build
-```
-
-The deployment has no persistent volumes. Do not add `-v` to routine shutdown
-commands; on deployments with volumes, that option deletes them.
-
-## Local origin
-
-Open `http://localhost:18088` to test the production portfolio.
-
-- Host `127.0.0.1:18088` maps to container HTTP port `80`.
-- Host `127.0.0.1:18443` is reserved and maps to container port `443`.
-- Port `18443` has no active TLS listener and is not needed while the existing
-  public reverse proxy terminates HTTPS.
-- Existing host ports `80` and `443` are untouched.
-
-Both published ports are bound to loopback to prevent direct LAN or public
-access. This is the preferred arrangement when the reverse proxy runs on the
-same Windows computer.
-
-## Public architecture
-
-```text
-Internet
-   |
-   v
-manimarami.com
-   |
-   v
-YOUR_PUBLIC_IPV4
-   |
-   v
-Existing HTTPS service / reverse proxy
-(existing public ports 80 and 443)
-   |
-   | hostname = manimarami.com
-   v
-http://127.0.0.1:18088
-   |
-   v
-Docker -> Caddy -> existing compiled React portfolio
-```
-
-The existing reverse proxy must later route requests with the hostname
-`manimarami.com` to `http://127.0.0.1:18088`. Configure the canonical redirect
-for `www.manimarami.com`, if desired, at that public reverse proxy. This
-repository intentionally does not inspect or modify the existing proxy,
-certificates, router, firewall, or services on ports `80` and `443`.
-
-If the reverse proxy runs on another LAN computer, the loopback-only Compose
-bindings are not reachable from it. In that architecture, deliberately change
-the port binding to `18088:80`, route the proxy to
-`http://WINDOWS_PC_LAN_IP:18088`, and add only a narrowly scoped Windows
-Firewall rule for the proxy machine. Do not disable the firewall or expose the
-high port publicly.
-
-## Wix DNS
-
-Wix remains the registrar and DNS provider unless changed separately. DNS does
-not contain port numbers: an `A` record maps `manimarami.com` to the public IPv4
-address of the service receiving HTTPS traffic, represented here as
-`YOUR_PUBLIC_IPV4`. It cannot map the domain directly to port `18088`.
-
-Keep the existing public ingress and router forwarding unchanged. Once DNS
-points at that ingress, its hostname-aware reverse proxy performs the final
-hop to the portfolio origin on port `18088`.
-
-## Deployment boundaries
-
-Docker builds the existing application without changing its source, assets,
-metadata, routing, or visual behavior. Caddy provides static serving, gzip and
-zstd compression, conservative caching for `index.html`, and immutable caching
-only for fingerprinted Vite assets.
-
+Caddy compresses responses, disables HTML caching, serves fingerprinted Vite assets
+with immutable caching and handles application routes through index.html. Asset
+requests have their own static handler so a missing asset cannot return an HTML
+success page. Existing local review4174, approved-v2 preview4173 and evidence4180
+are independent of the production origin.

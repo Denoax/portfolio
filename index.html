@@ -8,8 +8,32 @@
       name="description"
       content="Mani Marami Milani is a Computer Science and Mathematics student working across software, data, automation, and scientific infrastructure."
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // First paint uses the same safe default and legacy migration as settings.
+      let theme = 'light'
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem('portfolio:experience-settings:v1') || 'null',
+        )
+        if (saved?.version === 1 && ['light', 'dark'].includes(saved.theme))
+          theme = saved.theme
+      } catch {
+        /* Storage is optional; the user's new default is light. */
+      }
+      document.documentElement.dataset.colorTheme = theme
+      document.documentElement.style.colorScheme = theme
+      document.documentElement.style.backgroundColor =
+        theme === 'light' ? '#f3f5f7' : '#080808'
+      document.querySelector('meta[name="theme-color"]').content =
+        theme === 'light' ? '#f3f5f7' : '#080808'
+    </script>
     <title>Mani Marami Milani — Computer Science Portfolio</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/profile/profile-v12-32.png"
+    />
+    <link rel="apple-touch-icon" href="/assets/profile/profile-v12-192.png" />
   </head>
   <body>
     <div id="root"></div>

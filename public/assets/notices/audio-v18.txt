@@ -1,0 +1,13 @@
+Portfolio v18 interface recordings
+
+Kenney UI Audio, ObsydianX Interface Sounds, EZduzziteh Pop Sounds: CC0.
+Original sources, full candidate processing, original bytes and their hashes are
+retained in docs/design/handoff-v18/audio/AUDIO_ASSETS.json and audio/original.
+Sources: https://kenney.nl/assets/interface-sounds
+https://obsydianx.itch.io/interface-sfx-pack-1
+https://opengameart.org/content/pop-sounds-0
+
+20 press,12 hover,9 buddy independent recordings. Trim, natural-rate low-pass,
+soft attack/tail and headroom normalization; no pitch variants or generated media.
+Original roles remain separate. Audio audition/listening approval is pending.
+Legacy back/ripple/ambience credits remain in v16-audio-credits.txt and prior notices.

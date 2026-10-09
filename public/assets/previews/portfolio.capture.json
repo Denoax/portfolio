@@ -1,0 +1,83 @@
+{
+  "source": "Actual v11 local portfolio renderer and DOM; unedited browser capture,25fps requested, software SwiftShader backend. Intro, menu and native wheel reversal; no recursive Portfolio clip playback.",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "revision": "local v11 candidate based on45c06c2",
+  "sourceTextPatchSha256": "2645945685a6fef6e4aad00508def3b8675208ff37cbdf54978e7da22e40ce10",
+  "runtime": {
+    "flash": 0,
+    "clouds": 0,
+    "cloudCover": 0,
+    "exposure": 0.9,
+    "outputColorSpace": "srgb",
+    "drawingBufferColorSpace": "srgb",
+    "outputPath": "direct",
+    "textureColorSpaces": [
+      {
+        "name": "licensed-IBM-Plex-Mono-glyph-atlas",
+        "space": "NoColorSpace"
+      },
+      {
+        "name": "/assets/previews/pelagic-poster.webp",
+        "space": "srgb"
+      },
+      {
+        "name": "/assets/previews/kona-poster.webp",
+        "space": "srgb"
+      },
+      {
+        "name": "/assets/previews/codex-hermes-poster.webp",
+        "space": "srgb"
+      }
+    ],
+    "altitude": 0,
+    "cloudSteps": 40,
+    "cloudResolution": 0.5,
+    "backend": "WebGL2 / Three 0.180",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "shot": "S01",
+    "surfaceHeight": 9,
+    "submerged": 0,
+    "tier": "high",
+    "particles": 80000,
+    "dpr": 1,
+    "state": 0,
+    "elapsed": 6.684199999988076,
+    "camera": [
+      0,
+      0,
+      2.8559788826223462
+    ],
+    "calls": 4,
+    "triangles": 4802,
+    "points": 0,
+    "geometries": 5,
+    "textures": 6
+  },
+  "source_sha256": "f510c5fcfd5aee04e6553d1c485d2ee01b7d4f5cfcc5e87975687f6eb6e55116",
+  "outputs": [
+    {
+      "file": "portfolio.gif",
+      "bytes": 20079292,
+      "sha256": "43bd1e48984fa5e49adc3f1f8780e62038022e622af6090c555f1769bddad0aa"
+    },
+    {
+      "file": "portfolio.mp4",
+      "bytes": 2262875,
+      "sha256": "2d18d8f98c7cb954b335ba11fb7368de3c8329fa3a8b5c18c91ec737ee7a3614"
+    },
+    {
+      "file": "portfolio.webm",
+      "bytes": 1385509,
+      "sha256": "d13e28bc34cadfce304df6834a5bcccaeabb5b60ca06382547c686045b0f9a28"
+    },
+    {
+      "file": "portfolio-poster.webp",
+      "bytes": 45546,
+      "sha256": "562f6b897ce371a511b93def773f041f4037f3a904077cdb14bfceb37fca0e55"
+    }
+  ],
+  "processing": "Complete source sequence, native1280x720;25fps encoded, literal GIF12fps; no upscaling. Unused historical portrait poster not selected."
+}

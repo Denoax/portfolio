@@ -1,0 +1,7 @@
+ObsydianX: Interface SFX Pack1. Creator listing https://obsydianx.itch.io/interface-sfx-pack-1 expressly licenses CC0-1.0, records21April2016 release, creator authorship and No generative AI was used. Native publisher WAV pack downloaded via ordinary free itch.io download, no purchase. Selected originals and transparent trims/fades/gain derivatives are included. Credit retained even though CC0 does not require attribution.
+
+ezwa:6 Short water splashes, edited/submitted by Iwan Gabovitch (qubodup). https://opengameart.org/content/6-short-water-splashes lists CC0 and2009 publication. Source info.txt identifies emptying_syringe_in_water_slow/fast at pdsounds.org and explicitly permits public-domain reuse. Native six FLACs and source info are included. These are real published recordings, not generated audio.
+
+CC0-1.0 primary deed: https://creativecommons.org/publicdomain/zero/1.0/
+CC0-1.0 legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Each source/output hash and transformation is recorded in AUDIO_ASSETS.json. No headphone/speaker listening approval is asserted. Do not count pitch variants or echoes as distinct new recordings.

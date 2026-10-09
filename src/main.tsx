@@ -4,6 +4,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/App'
 import './styles/global.css'
+import './styles/theme.css'
+import './styles/v18.css'
+import './styles/v20.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

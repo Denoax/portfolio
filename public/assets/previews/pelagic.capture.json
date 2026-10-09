@@ -1,0 +1,221 @@
+{
+  "source_file": "pelagic-raw.webm",
+  "source_sha256": "67d9ae656e2a671dcd0e482d280878260c1f041bc694b8a815552a676e3feeec",
+  "source_revision": "66dff315da2290959aa3dd4bf92627e4850bab0d",
+  "source_probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "12.080000"
+    }
+  },
+  "start_seconds": 5.08,
+  "duration_seconds": 7.0,
+  "output_width": 1280,
+  "output_fps": 25,
+  "processing": "Actual latest canonical animal in the protected live world. Tail seven seconds, conventional crop/downscale/encode only; no upscaling or synthesized frames.",
+  "outputs": [
+    {
+      "file": "pelagic-portrait.gif",
+      "bytes": 5111735,
+      "sha256": "3265f663a29bbbc52ca484e87cf5e3ff85a1bde344c6e90faa8e8b441a0798c7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "gif",
+            "width": 290,
+            "height": 450,
+            "pix_fmt": "bgra",
+            "level": -99,
+            "avg_frame_rate": "25/2"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "pelagic-portrait.mp4",
+      "bytes": 844058,
+      "sha256": "6d6174e9607cf722b984957557fabded48dc8467c735d60c407ef776a1300afe",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 290,
+            "height": 450,
+            "pix_fmt": "yuv420p",
+            "level": 21,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "pelagic-portrait.webm",
+      "bytes": 483103,
+      "sha256": "0d110947400e4d7de557e5e3ac096366b7517147a8793ebcc01d0a135699c5e4",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vp9",
+            "profile": "Profile 0",
+            "width": 290,
+            "height": 450,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "pelagic-portrait.webp",
+      "bytes": 38782,
+      "sha256": "83aab05a76644c836fee0aedfe16145ab97d327862b06f4062d1ac1d39132a9e",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "webp",
+            "width": 580,
+            "height": 900,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {}
+      }
+    },
+    {
+      "file": "pelagic-poster.webp",
+      "bytes": 31566,
+      "sha256": "601f74e9c6771add65451b4ef86629826be8d8d982b3766261f32f1cb75fb27a",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "webp",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {}
+      }
+    },
+    {
+      "file": "pelagic.gif",
+      "bytes": 5124588,
+      "sha256": "8a5c3dfbc135456657aef16f005874d980cd727c6a15744b7e0a023600b46086",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "gif",
+            "width": 840,
+            "height": 472,
+            "pix_fmt": "bgra",
+            "level": -99,
+            "avg_frame_rate": "25/2"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "pelagic.mp4",
+      "bytes": 1371225,
+      "sha256": "89e8c895e8c6026c15b5c769367aca0ab177d6464770534725b64c50fb5549a8",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": 31,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    },
+    {
+      "file": "pelagic.webm",
+      "bytes": 762682,
+      "sha256": "d119224dc3165201876bb2199156aa465d25b9dd14b7c0c20f77d2fdb088435c",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "vp9",
+            "profile": "Profile 0",
+            "width": 1280,
+            "height": 720,
+            "pix_fmt": "yuv420p",
+            "level": -99,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "7.000000"
+        }
+      }
+    }
+  ],
+  "repository": "Denoax/pelagic-jellyfish-webgl",
+  "content": "Live canonical animal in the protected portfolio world",
+  "portrait_source_sha256": "f6c8aed87b9530b87ab77d7a18b161609f2d78efc8b83a234e2e3f4bfe023583",
+  "portrait_start_seconds": 4.48,
+  "portrait_video_crop": [
+    50,
+    100,
+    290,
+    450
+  ],
+  "portrait_poster_crop": [
+    100,
+    200,
+    580,
+    900
+  ],
+  "capture_rendering": "Desktop CSS/DPR1, portrait CSS390x844/DPR2 browser screenshot and CSS390x844 video. Actual renderer tier/DPR are in pelagic-capture-runtime.json; browser compositing respects its rendering budget. Encoder never scales up.",
+  "capture_backend": "NVIDIA RTX4070 Vulkan, actual active world time advances at wall-clock cadence; earlier software capture retained in masters-software-pelagic."
+}

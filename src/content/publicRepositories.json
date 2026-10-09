@@ -1,0 +1,143 @@
+{
+  "captured_utc": "2026-10-06T23:08:56.975135+00:00",
+  "complete": true,
+  "pages": 1,
+  "public_owner": "Denoax",
+  "count": 8,
+  "repositories": [
+    {
+      "id": 1367284706,
+      "name": "codex-hermes-router",
+      "full_name": "Denoax/codex-hermes-router",
+      "html_url": "https://github.com/Denoax/codex-hermes-router",
+      "description": "Authority-aware local inference offload for Codex.",
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "observed_head": "36d0bf560e3dcd99f1eadcaffe97da7af2d469cc"
+    },
+    {
+      "id": 1353608040,
+      "name": "Denoax",
+      "full_name": "Denoax/Denoax",
+      "html_url": "https://github.com/Denoax/Denoax",
+      "description": null,
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": null,
+      "observed_head": "c338be1625df776e6017c077978000a9ce78b36f"
+    },
+    {
+      "id": 1388326955,
+      "name": "farm-stand",
+      "full_name": "Denoax/farm-stand",
+      "html_url": "https://github.com/Denoax/farm-stand",
+      "description": "Private source for the Farm Stand website demonstration",
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": null,
+      "observed_head": "7349113bfd7218e8600b3d20576179a7749bfee1"
+    },
+    {
+      "id": 1353607509,
+      "name": "janktrace",
+      "full_name": "Denoax/janktrace",
+      "html_url": "https://github.com/Denoax/janktrace",
+      "description": "Stream Chrome performance traces and find main-thread stalls.",
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "observed_head": "cd18c04f1d17c624fbd635fad074162a7eafa52d"
+    },
+    {
+      "id": 1375135091,
+      "name": "Kattis",
+      "full_name": "Denoax/Kattis",
+      "html_url": "https://github.com/Denoax/Kattis",
+      "description": "C++ competitive-programming solutions and practice from the Open Kattis problem archive.",
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "observed_head": "0cc95c2c88cc19e93f87ff92e070932cb4ac1435"
+    },
+    {
+      "id": 1355818842,
+      "name": "konata-hyprland-dotfiles",
+      "full_name": "Denoax/konata-hyprland-dotfiles",
+      "html_url": "https://github.com/Denoax/konata-hyprland-dotfiles",
+      "description": "Konata Izumi-themed Arch + Hyprland desktop with a custom sidebar, Mono Rain scene, unified controls, system Light/Dark, and recovery tooling.",
+      "homepage": "https://manimarami.com",
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "observed_head": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6"
+    },
+    {
+      "id": 1357004367,
+      "name": "pelagic-jellyfish-webgl",
+      "full_name": "Denoax/pelagic-jellyfish-webgl",
+      "html_url": "https://github.com/Denoax/pelagic-jellyfish-webgl",
+      "description": "A silent interactive WebGL descent through a living jellyfish ocean, with pulse-driven swimming and a liquid-glass idle clock.",
+      "homepage": "https://denoax.github.io/pelagic-jellyfish-webgl/",
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "observed_head": "66dff315da2290959aa3dd4bf92627e4850bab0d"
+    },
+    {
+      "id": 1352586659,
+      "name": "portfolio",
+      "full_name": "Denoax/portfolio",
+      "html_url": "https://github.com/Denoax/portfolio",
+      "description": "Information under gravity \u2014 a cinematic React, TypeScript and Three.js portfolio with a continuous eight-state particle journey.",
+      "homepage": "https://manimarami.com",
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": null,
+      "observed_head": "5abd1ce0e3da3c441ff50063bda2f02b64e4d373"
+    }
+  ]
+}

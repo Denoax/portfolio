@@ -1,0 +1,3 @@
+Rare UI / Swami Malode: https://www.rareui.com/components/gooeynav
+Visible credit retained in About and Credits. Component is used within this portfolio, not republished as a standalone library.
+Pinned repository LICENSE contains MIT text. Current published site additionally requires attribution and prohibits standalone redistribution, mirrors, templates and competing registries. This application follows those stricter published usage conditions.

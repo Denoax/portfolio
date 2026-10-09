@@ -1,0 +1,49 @@
+{
+  "key": "profile",
+  "source_revision": "c338be1625df776e6017c077978000a9ce78b36f",
+  "source": "showcase/v11-evidence/masters/profile-raw.webm",
+  "source_sha256": "5ad79ccc7a38d0a77299e0f9a767e6a7c86d2af15e30bada2f4607e010c2ab22",
+  "processing": "Real browser-rendered README identity/link excerpt; banners excluded; still documentation is not fake app motion. Four seconds from source1s, no acceleration/upscaling.",
+  "outputs": [
+    {
+      "file": "profile.mp4",
+      "bytes": 41469,
+      "sha256": "19469abe41b9bce4f289b0ba1c175e6626b2b1843b9427f87f4748fc633346ca"
+    },
+    {
+      "file": "profile-portrait.mp4",
+      "bytes": 153716,
+      "sha256": "21034d7522d4770734e1a3a6108891f83017534de2df3c8cebb9d0f4aa643de3"
+    },
+    {
+      "file": "profile-portrait.gif",
+      "bytes": 400817,
+      "sha256": "a98479d075506230a71bd94c542012db9b22f15ada9aedc64d9651766b215022"
+    },
+    {
+      "file": "profile.gif",
+      "bytes": 56798,
+      "sha256": "e95d44c2e95af77fd03b07cd3d4c98591329f7a927ac94fcf98dc27ffb2baa6b"
+    },
+    {
+      "file": "profile.webm",
+      "bytes": 23570,
+      "sha256": "1d8a952e25de9993eb535c253451843944b8f76451628cb8f2a8e09fe447f372"
+    },
+    {
+      "file": "profile-portrait.webm",
+      "bytes": 67842,
+      "sha256": "ad57236a550e6568868a29befa88849512ec39ce0feaa7c46326e3c360cdfa30"
+    },
+    {
+      "file": "profile-portrait.webp",
+      "bytes": 35398,
+      "sha256": "0c6b766b964bfe8a49206ba10a7df448c623a46cdbc9098db4fb7bf4f6334bb2"
+    },
+    {
+      "file": "profile-poster.webp",
+      "bytes": 12010,
+      "sha256": "f1bea136116cc77ba2fa0a3742d0e55d6d8222f20ec00db0b3b356da30522705"
+    }
+  ]
+}

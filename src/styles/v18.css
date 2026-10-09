@@ -1,0 +1,382 @@
+/* Palette values are frame-updated by the shared theme owner, not independent transitions. */
+:is(
+  .hub-brand,
+  .gooey-label,
+  .menu-project,
+  .intro-hint,
+  .intro-skip,
+  .intro-zoom,
+  .global-proximity-rail,
+  .speed-ruler
+) {
+  text-shadow: 0 0 1px var(--ink-contour);
+}
+.theme-toggle {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border: 0;
+  background: transparent !important;
+  overflow: visible;
+}
+.theme-buddy {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  overflow: visible;
+  transform-origin: 50% 70%;
+  pointer-events: none;
+}
+.buddy-shadow {
+  position: absolute;
+  width: 38px;
+  height: 7px;
+  left: 13px;
+  bottom: 0;
+  background: #10182028;
+  filter: blur(3px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.theme-buddy :is(.buddy-smile, .buddy-sleep, .buddy-cross) {
+  display: none;
+}
+.theme-buddy[data-expression='smile'] .buddy-open,
+.theme-buddy[data-expression='sleep'] .buddy-open,
+.theme-buddy[data-expression='pressed'] .buddy-open {
+  display: none;
+}
+.theme-buddy[data-expression='smile'] .buddy-smile,
+.theme-buddy[data-expression='sleep'] .buddy-sleep,
+.theme-buddy[data-expression='pressed'] .buddy-cross {
+  display: initial;
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--hover-ink);
+  outline-offset: 4px;
+}
+.speed-ruler {
+  display: grid;
+  grid-template-columns: 44px 156px 44px;
+  align-items: center;
+  gap: 6px;
+  color: var(--site-ink);
+}
+.speed-endpoint {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 52px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 22px;
+  cursor: pointer;
+}
+.speed-body {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--site-base) 94%, transparent);
+}
+.speed-body[data-glass-mode='gpu'] {
+  background: color-mix(in srgb, var(--site-base) 48%, transparent);
+}
+.speed-endpoint[data-selected='true'] .speed-body {
+  border-color: var(--site-ink);
+}
+.speed-endpoint[aria-pressed='true'] .speed-body {
+  box-shadow: inset 0 0 0 1px var(--site-ink);
+}
+.speed-endpoint:focus-visible {
+  outline: 2px solid var(--hover-ink);
+  outline-offset: 1px;
+}
+.speed-body .auto-runner {
+  display: block;
+  width: 26px;
+  height: 26px;
+  color: inherit;
+}
+.speed-body .auto-runner svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+}
+.speed-readout {
+  width: 156px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.animated-counter {
+  display: inline-flex;
+  align-items: center;
+  font:
+    500 22px/1.5 'IBM Plex Mono',
+    monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  min-width: 4ch;
+  justify-content: center;
+}
+.counter-columns {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+.counter-fixed {
+  display: inline-block;
+}
+.counter-window {
+  position: relative;
+  display: inline-grid;
+  overflow: hidden;
+}
+.counter-sizer {
+  visibility: hidden;
+  grid-area: 1/1;
+}
+.counter-stack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+.counter-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.speed-ticks {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  padding: 0 1px;
+}
+.speed-tick-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 18px;
+}
+.speed-tick-row span {
+  width: 2px;
+  height: 7px;
+  background: var(--site-ink);
+  opacity: 0.6;
+  border-radius: 2px;
+  transition:
+    height 0.2s,
+    background-color 0.2s;
+}
+.speed-tick-row [data-passed='true'] {
+  height: 11px;
+  background: var(--site-ink);
+  opacity: 0.9;
+}
+.speed-tick-row [data-selected='true'] {
+  width: 3px;
+  margin: 0 -0.5px;
+  height: 18px;
+  background: var(--site-ink);
+  opacity: 1;
+}
+.speed-ticks input {
+  position: absolute;
+  inset: auto 0 0;
+  appearance: none;
+  width: 100%;
+  height: 52px;
+  margin: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+.speed-ticks:has(:focus-visible) {
+  outline: 2px solid var(--hover-ink);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+.portfolio-dock {
+  align-items: flex-end;
+  gap: 8px;
+}
+.global-proximity-rail {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-height: calc(100dvh - 200px);
+  overflow: visible;
+  pointer-events: none;
+}
+.global-proximity-rail button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 44px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+}
+.global-proximity-rail button span {
+  flex: 0 0 110px;
+  background: var(--site-muted);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.global-proximity-rail button[aria-current] span {
+  background: var(--location-hue);
+  opacity: 1;
+  box-shadow: 0 0 10px 1px var(--location-hue);
+}
+.global-proximity-rail button:focus-visible {
+  outline: 2px solid var(--hover-ink);
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+.global-proximity-rail[data-blocked='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+.selection-site:is(
+    [data-surface='launch'],
+    [data-surface='world'],
+    [data-surface='returning']
+  )
+  .hub-header {
+  background: color-mix(in srgb, var(--site-base) 93%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 719px) {
+  .portfolio-dock {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+  .global-proximity-rail {
+    right: max(14px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+  .global-proximity-rail button {
+    height: 36px;
+    min-height: 36px;
+  }
+}
+@media (pointer: coarse) and (min-height: 780px) {
+  .global-proximity-rail button {
+    height: 44px;
+    min-height: 44px;
+  }
+}
+@media (max-height: 620px) {
+  .global-proximity-rail {
+    top: 88px;
+    bottom: 100px;
+    max-height: none;
+    transform: none;
+    overflow-y: auto;
+    overflow-x: visible;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-left: 66px;
+    right: 12px;
+  }
+  .global-proximity-rail button {
+    height: 24px;
+    min-height: 24px;
+  }
+}
+@media (max-width: 359px) {
+  .portfolio-dock {
+    gap: 4px;
+  }
+  .speed-ruler {
+    grid-template-columns: 44px 128px 44px;
+    gap: 4px;
+  }
+  .speed-readout {
+    width: 128px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .speed-tick-row span {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .theme-buddy {
+    --buddy-body: Canvas;
+    --buddy-rim: ButtonText;
+    --buddy-face: CanvasText;
+  }
+  .speed-tick-row span,
+  .global-proximity-rail button span {
+    background: CanvasText;
+    opacity: 1;
+  }
+  .speed-tick-row [data-selected='true'],
+  .global-proximity-rail button[aria-current] span {
+    background: Highlight;
+  }
+}
+
+/* Preserve two pixels between the CTA and real dock hit areas on the
+  400x300 CSS surface produced by actual200% off-screen browser zoom. */
+@media (max-height: 420px) and (max-width: 719px) {
+  .portfolio-dock {
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+/* The protected world remains dark even with a light site preference. Its
+   travel readout owns a bounded neutral film, like the existing panes. */
+.world-controls > div > .speed-ruler {
+  --site-ink: #f4f6f8;
+  --site-muted: #d2dae2;
+  --site-base: #11161f;
+  --line: #d2dae2;
+  display: grid;
+  grid-template-columns: 44px 156px 44px;
+  gap: 6px;
+}
+.world-controls .speed-readout {
+  background: rgba(10, 14, 20, 0.74);
+  border-radius: 8px;
+}
+@media (max-width: 359px) {
+  .world-controls > div > .speed-ruler {
+    grid-template-columns: 44px 128px 44px;
+    gap: 4px;
+  }
+}
+
+/* Three decorative subdivisions fit inside each existing major interval. */
+.global-proximity-rail .rail-minor {
+  position: absolute;
+  right: 0;
+  width: 22px;
+  height: 1px;
+  background: var(--minor-hue);
+  transform-origin: right center;
+  pointer-events: none;
+}
+@media (forced-colors: active) {
+  .global-proximity-rail .rail-minor { background: CanvasText; }
+}
