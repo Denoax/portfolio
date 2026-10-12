@@ -40,18 +40,17 @@
   pointer-events: none;
   position: absolute;
   top: 0;
-  right: 100%;
+  overflow: visible;
   height: 100%;
 }
-.gooey-color-in {
-  transition:
-    background-color 400ms,
-    color 400ms;
-}
+.gooey-color-in,
 .gooey-color-out {
   transition:
-    background-color 0ms,
-    color 0ms;
+    background-color 180ms ease,
+    color 180ms ease;
+}
+.gooey-neck stop {
+  transition: stop-color 180ms ease;
 }
 .gooey-label {
   position: relative;
@@ -183,7 +182,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gooey-color-in {
+  .gooey-color-in,
+  .gooey-color-out {
     transition: none;
   }
 }

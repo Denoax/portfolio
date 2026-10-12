@@ -1,3 +1,4 @@
+import { clearIntroRipples } from '../core/introRipples'
 import { GlobalProximityRail, type RailLocation } from './GlobalProximityRail'
 import { useSiteTheme } from '../core/theme'
 import { ThemeToggle } from './ThemeToggle'
@@ -47,6 +48,7 @@ import { PelagicHandoffGate, PELAGIC_LIVE_URL } from '../core/pelagicHandoff'
 import { AutoScrollControl } from './AutoScrollControl'
 import { ResourceTransition } from './ResourceTransition'
 import type { ResourceRequest } from './ResourceTransition'
+import { useRouteFade } from '../hooks/useRouteFade'
 
 function navigate(url: string, replace = false, state: unknown = null) {
   history[replace ? 'replaceState' : 'pushState'](state, '', url)
@@ -136,7 +138,8 @@ function Home({ route }: { route: string }) {
     [settingsOpen, setSettingsOpen] = useState(false),
     [infoOpen, setInfoOpen] = useState(false)
   const theme = useSiteTheme(settings.theme, settings.motion === 'less')
-  const [dockSlot, setDockSlot] = useState<HTMLDivElement | null>(null)
+  const routeSurface = useRef<HTMLDivElement>(null)
+  const navGroup = useRef<HTMLDivElement>(null)
   const [help, setHelp] = useState<HelpRequest | null>(null)
   const presentation = useRef(createMenuPresentation())
   const [resource, setResource] = useState<ResourceRequest | null>(null)
@@ -182,8 +185,8 @@ function Home({ route }: { route: string }) {
     audio.current?.setScene(
       hub.surface === 'intro'
         ? 'intro'
-        : resource || hub.surface === 'loading'
-          ? 'loading'
+        : hub.surface === 'loading'
+          ? 'selection'
           : hub.surface === 'hub' || hub.surface === 'returning'
             ? 'selection'
             : 'world',
@@ -217,8 +220,10 @@ function Home({ route }: { route: string }) {
   const [quality, setQuality] = useState(() =>
       selectQuality(settings.graphics),
     ),
-    [adjusted, setAdjusted] = useState(false),
     [storageUnavailable, setStorageUnavailable] = useState(false)
+  useEffect(() => {
+    setStorageUnavailable(!saveSettings(settings))
+  }, [])
   const [failed, setFailed] = useState(false),
     [ready, setReady] = useState(false),
     [hubReady, setHubReady] = useState(false),
@@ -243,12 +248,13 @@ function Home({ route }: { route: string }) {
     setUtilitiesOpen(false)
     if (dismissIndex) setDismissIndexRequest((value) => value + 1)
   }
+  const worldChrome = world && hub.surface !== 'loading'
   const panelOpen = settingsOpen || infoOpen || projectsOpen || Boolean(help)
   presentation.current.paused = hub.surface !== 'hub' || Boolean(resource)
   presentation.current.reduced = reduced
   presentation.current.intro.active = hub.surface === 'intro'
   presentation.current.decorativeRunning =
-    ['intro', 'hub'].includes(hub.surface) && !reduced && !resource
+    ['intro', 'hub'].includes(hub.surface) && !reduced
   presentation.current.intro.paused = reduced
   presentation.current.intro.inputBlocked = Boolean(resource)
   const preferences = useRef({ settings, panelOpen, theme })
@@ -284,13 +290,11 @@ function Home({ route }: { route: string }) {
   const onFailure = useCallback(() => setFailed(true), [])
   const onOverload = useCallback(() => {
     setQuality(lowerQuality)
-    setAdjusted(true)
   }, [])
   const updateSettings = (value: Settings) => {
     const next = validateSettings(value)
     if (next.graphics !== settings.graphics) {
       setQuality(selectQuality(next.graphics))
-      setAdjusted(false)
     }
     const changed = (Object.keys(next) as (keyof Settings)[]).filter(
       (key) => next[key] !== settings[key],
@@ -317,7 +321,7 @@ function Home({ route }: { route: string }) {
     setSettings(next)
     setStorageUnavailable(!saveSettings(next))
   }
-  const setAutoSpeed = (value: number) =>
+  const setWorldSpeed = (value: number) =>
     updateSettings({ ...settings, autoScrollSpeed: value })
   const skipIntro = useCallback(() => {
     markIntro()
@@ -410,25 +414,11 @@ function Home({ route }: { route: string }) {
   }, [route])
   useEffect(() => {
     if (hub.surface !== 'loading') return
-    if (!destinationMounted) {
-      const token = hub.request
-      const alignment = setTimeout(
-        () => {
-          if (
-            hubRef.current.request === token &&
-            hubRef.current.surface === 'loading'
-          )
-            setDestinationMounted(true)
-        },
-        reduced ? 0 : 700,
-      )
-      return () => clearTimeout(alignment)
-    }
     setSlow(false)
     const timer = setTimeout(() => setSlow(true), 15000)
     if (
       ((ready && assets !== 'loading' && preparedFrame) || reduced || failed) &&
-      (!resource || resource.animationDone)
+      !resource
     )
       dispatch({ type: 'ready', request: hub.request })
     return () => clearTimeout(timer)
@@ -459,14 +449,6 @@ function Home({ route }: { route: string }) {
     )
       setCover(false)
     previousSurface.current = hub.surface
-    if (
-      ['launch', 'world'].includes(hub.surface) &&
-      resourceRef.current?.project.action.kind === 'pelagic'
-    ) {
-      const next = { ...resourceRef.current, revealing: true }
-      resourceRef.current = next
-      setResource(next)
-    }
     if (hub.surface === 'world')
       document
         .querySelector<HTMLElement>('#world-title')
@@ -522,8 +504,8 @@ function Home({ route }: { route: string }) {
     presentation.current.saved = presentation.current.target
     presentation.current.paused = true
     setUtilitiesOpen(false)
-    setCover(!resourceRef.current)
-    setDestinationMounted(false)
+    setCover(false)
+    setDestinationMounted(true)
     preparedFrameRef.current = false
     setPreparedFrame(false)
     setHubReady(false)
@@ -546,11 +528,10 @@ function Home({ route }: { route: string }) {
     const request = {
       token: ++resourceSequence.current,
       project,
-      animationDone: false,
     }
     resourceRef.current = request
     audio.current?.unlock()
-    audio.current?.begin(request.token)
+    cue('activate')
     resourceOrigin.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -575,9 +556,9 @@ function Home({ route }: { route: string }) {
     if (current.project.action.kind === 'link')
       location.assign(current.project.action.href)
     else {
-      const next = { ...current, animationDone: true }
-      resourceRef.current = next
-      setResource(next)
+      resourceRef.current = null
+      setResource(null)
+      dispatch({ type: 'ready', request: hubRef.current.request })
     }
   }
   useEffect(() => {
@@ -600,6 +581,10 @@ function Home({ route }: { route: string }) {
       }
       resourceRef.current = null
       setResource(null)
+      presentation.current.intro.exiting = false
+      presentation.current.intro.exitProgress = 0
+      setIntroExiting(false)
+      routeSurface.current?.style.removeProperty('opacity')
       try {
         const saved = history.state?.returnToMenu
           ? history.state.menu
@@ -617,6 +602,7 @@ function Home({ route }: { route: string }) {
     return () => window.removeEventListener('pageshow', restore)
   }, [])
   const returnToHub = () => {
+    routeSurface.current?.style.removeProperty('opacity')
     handoffGate.current.disarm()
     departing.current = false
     setOutbound(false)
@@ -688,6 +674,15 @@ function Home({ route }: { route: string }) {
     ) {
       preparedFrameRef.current = true
       setPreparedFrame(true)
+      window.dispatchEvent(
+        new CustomEvent('portfolio:world-prepared', {
+          detail: {
+            request: hubRef.current.request,
+            at: performance.now(),
+            assets,
+          },
+        }),
+      )
     }
     const token = handoffGate.current.observe(
       narrative.state,
@@ -725,28 +720,6 @@ function Home({ route }: { route: string }) {
       return
     event.preventDefault()
     departPelagic()
-  }
-  const replayIntro = () => {
-    if (hubRef.current.surface !== 'hub' || resourceRef.current) return
-    presentation.current.stopAuto?.()
-    closeOrdinaryPanes()
-    previews.stop()
-    const intro = presentation.current.intro
-    Object.assign(intro, {
-      zoomReset: false,
-      resetActive: false,
-      zoomVelocity: 0,
-      zoomDelta: 0,
-      elapsed: 0,
-      cueEpoch: null,
-      completed: false,
-      exiting: false,
-      exitProgress: 0,
-      holding: false,
-      pulseAt: -20,
-    })
-    setIntroEntryRequest(0)
-    dispatch({ type: 'replay' })
   }
   const jumpTo = (progress: number) => {
     if (jumpTimer.current) clearTimeout(jumpTimer.current)
@@ -804,16 +777,23 @@ function Home({ route }: { route: string }) {
     [],
   )
   const staticWorld = world && (failed || reduced)
-  const showHub = !world
+  const showHub = !world || hub.surface === 'loading'
   return (
     <div
+      ref={routeSurface}
       className="site selection-site"
       data-surface={hub.surface}
       data-resource={Boolean(resource)}
       data-outbound={outbound}
       data-reduced={reduced}
       data-static={failed || reduced}
-      style={{ '--scroll-pace': settings.scrollPace / 100 } as CSSProperties}
+      style={
+        {
+          '--scroll-pace': settings.scrollPace / 100,
+          '--fallback-brightness':
+            failed || reduced ? settings.displayBrightness / 100 : undefined,
+        } as CSSProperties
+      }
     >
       <a className="skip-link" href={pelagic.caseStudy}>
         Skip to Pelagic case study
@@ -923,74 +903,81 @@ function Home({ route }: { route: string }) {
               Return to projects
             </button>
           )}
-          <GooeyNav
-            aria-label="Portfolio navigation"
-            reduced={reduced}
-            value={
-              settingsOpen
-                ? world
-                  ? 1
-                  : 2
-                : infoOpen
-                  ? world
-                    ? 0
-                    : 1
-                  : projectsOpen || hub.surface === 'hub'
-                    ? 0
-                    : -1
-            }
-            items={[
-              ...(world
-                ? []
-                : [
-                    {
-                      label: 'Projects',
-                      id: 'projects-trigger',
-                      icon: <NavIcon kind="projects" />,
-                      expanded: projectsOpen,
-                      controls: 'projects-index',
-                    },
-                  ]),
-              {
-                label: 'About me',
-                id: 'about-trigger',
-                icon: <NavIcon kind="about" />,
-                expanded: infoOpen,
-                controls: 'info-panel',
-                buttonRef: infoButton,
-              },
-              {
-                label: 'Settings',
-                id: 'settings-trigger',
-                expanded: settingsOpen,
-                controls: 'experience-settings',
-                buttonRef: settingsButton,
-              },
-              {
-                label: 'Contact',
-                icon: <NavIcon kind="contact" />,
-                href: `mailto:${contact.email}`,
-              },
-            ]}
-            onChange={(index) => {
-              setUtilitiesOpen(false)
-              const action = world ? index + 1 : index
-              if (action === 3) return
-              cue('toggle')
-              closeOrdinaryPanes(action !== 0)
-              if (action === 0) setIndexRequest((x) => x + 1)
-              else if (action === 1) setInfoOpen(true)
-              else if (action === 2) setSettingsOpen(true)
-            }}
-          />
+          <div ref={navGroup} className="portfolio-nav-group">
+            <GooeyNav
+              aria-label="Portfolio navigation"
+              reduced={reduced}
+              value={
+                settingsOpen
+                  ? worldChrome
+                    ? 1
+                    : 2
+                  : infoOpen
+                    ? worldChrome
+                      ? 0
+                      : 1
+                    : projectsOpen
+                      ? 0
+                      : -1
+              }
+              items={[
+                ...(worldChrome
+                  ? []
+                  : [
+                      {
+                        label: 'Projects',
+                        id: 'projects-trigger',
+                        icon: <NavIcon kind="projects" />,
+                        expanded: projectsOpen,
+                        controls: 'projects-index',
+                      },
+                    ]),
+                {
+                  label: 'About me',
+                  id: 'about-trigger',
+                  icon: <NavIcon kind="about" />,
+                  expanded: infoOpen,
+                  controls: 'info-panel',
+                  buttonRef: infoButton,
+                },
+                {
+                  label: 'Settings',
+                  id: 'settings-trigger',
+                  expanded: settingsOpen,
+                  controls: 'experience-settings',
+                  buttonRef: settingsButton,
+                },
+                {
+                  label: 'Contact',
+                  icon: <NavIcon kind="contact" />,
+                  href: `mailto:${contact.email}`,
+                },
+              ]}
+              onChange={(index) => {
+                setUtilitiesOpen(false)
+                const action = worldChrome ? index + 1 : index
+                if (action === 3) return
+                cue('toggle')
+                closeOrdinaryPanes(action !== 0)
+                if (action === 0) setIndexRequest((x) => x + 1)
+                else if (action === 1) setInfoOpen(true)
+                else if (action === 2) setSettingsOpen(true)
+              }}
+            />
+          </div>
         </div>
       </header>
       {showHub && (
         <SelectionHub
-          staticView={failed || reduced || !hubReady}
+          staticView={
+            failed || reduced || !hubReady || hub.surface === 'loading'
+          }
           notice={hub.notice}
           aligning={hub.surface === 'loading'}
-          active={hub.surface === 'hub' && !resource}
+          active={
+            hub.surface === 'hub' ||
+            (hub.surface === 'loading' && Boolean(resource))
+          }
           presentation={presentation}
           previews={previews}
           actionRef={enterButton}
@@ -1007,10 +994,8 @@ function Home({ route }: { route: string }) {
           onIndexChange={setProjectsOpen}
           onIntroEnter={() => setIntroEntryRequest((value) => value + 1)}
           selectionEpoch={hub.request}
-          speed={settings.autoScrollSpeed}
-          onSpeed={setAutoSpeed}
           onCue={cue}
-          dockSlot={dockSlot}
+          navGroup={navGroup}
         />
       )}
       {!introExiting &&
@@ -1042,10 +1027,7 @@ function Home({ route }: { route: string }) {
                 if (id in points && hubRef.current.surface === 'world')
                   jumpTo(points[id])
               } else if (id === 'intro') {
-                if (hubRef.current.surface === 'hub') {
-                  cue('activate')
-                  replayIntro()
-                }
+                return // A stale hub rail action never replays the opening.
               } else if (hubRef.current.surface === 'intro') {
                 queuedIntroProject.current = id
                 setIntroEntryRequest((value) => value + 1)
@@ -1066,7 +1048,6 @@ function Home({ route }: { route: string }) {
               })
             }
           />
-          <div className="portfolio-speed-slot" ref={setDockSlot} />
         </div>
       )}
       {hub.surface === 'intro' && (
@@ -1086,32 +1067,23 @@ function Home({ route }: { route: string }) {
             cue('enter')
           }}
           onInteract={() => audio.current?.unlock()}
-          onRipple={() => audio.current?.play('ripple')}
+          onRipple={(id) => audio.current?.playRipple(id)}
           ready={hubReady || failed || reduced}
         />
       )}
       <ResourceTransition
-        presentation={presentation}
+        surface={routeSurface}
         request={resource}
+        ready={Boolean(
+          resource?.project.action.kind === 'link' ||
+            (ready && assets !== 'loading' && preparedFrame) ||
+            failed ||
+            reduced,
+        )}
         reduced={failed || reduced}
+        slow={slow}
         onComplete={completeResource}
-        onPhase={(token, phase) => {
-          if (resourceRef.current?.token !== token) return
-          audio.current?.phase(token, phase)
-        }}
-        onRetire={(token) => audio.current?.retireSfx(token)}
         onCancel={returnToHub}
-        onRevealed={(token) => {
-          if (resourceRef.current?.token !== token) return
-          const resumeLaunch =
-            resourceRef.current.project.action.kind === 'pelagic' &&
-            hubRef.current.surface === 'launch'
-          resourceRef.current = null
-          setResource(null)
-          // The blocking resource gate pauses travel while preparing. Release
-          // that same transaction into the existing authored launch clock.
-          if (resumeLaunch) controllerRef.current.resume()
-        }}
       />
       {world && (
         <main className="world-scroll" aria-label="Pelagic journey">
@@ -1184,7 +1156,7 @@ function Home({ route }: { route: string }) {
                   running={controller.playing}
                   suspended={controller.resumeAvailable}
                   speed={settings.autoScrollSpeed}
-                  onSpeed={setAutoSpeed}
+                  onSpeed={setWorldSpeed}
                   onCommit={() => cue('speed')}
                   label={
                     controller.resumeAvailable ? 'Resume travel' : 'Auto-scroll'
@@ -1212,29 +1184,16 @@ function Home({ route }: { route: string }) {
           </div>
         </>
       )}
-      {hub.surface === 'loading' && world && !resource && (
-        <div className="world-loader">
-          <div className="world-loading-field" aria-hidden="true" />
-          <p className="sr-only" role="status">
-            {!ready
-              ? 'Preparing graphics'
-              : assets === 'loading'
-                ? 'Loading Earth detail'
-                : 'Ready'}
-          </p>
-          <div className="loader-actions">
-            <button type="button" onClick={returnToHub}>
-              Cancel · Return to projects
-            </button>
-            <a href={pelagic.caseStudy}>View Pelagic ↗</a>
-          </div>
+      {hub.surface === 'loading' && !resource && (
+        <div className="route-preparation" role="status">
+          Preparing graphics.{' '}
+          <button type="button" onClick={returnToHub}>
+            Cancel
+          </button>
           {slow && (
-            <>
-              <p>Graphics are taking longer than expected.</p>
-              <button type="button" onClick={() => setFailed(true)}>
-                Use static experience
-              </button>
-            </>
+            <button type="button" onClick={() => setFailed(true)}>
+              Use static experience
+            </button>
           )}
         </div>
       )}
@@ -1255,9 +1214,6 @@ function Home({ route }: { route: string }) {
         <p className="hub-degraded" role="status">
           Earth detail unavailable; procedural fallback active.
         </p>
-      )}
-      {hub.surface === 'launch' && (
-        <div className="launch-veil" aria-hidden="true" />
       )}
       <div
         className={`journey-cover ${cover ? 'journey-cover--on' : ''}`}
@@ -1294,6 +1250,7 @@ function Home({ route }: { route: string }) {
           setInfoOpen(false)
         }}
         trigger={infoButton}
+        anchor={navGroup}
         onReplay={
           world
             ? undefined
@@ -1312,7 +1269,7 @@ function Home({ route }: { route: string }) {
                 presentation.current.intro.exiting = false
                 presentation.current.intro.exitProgress = 0
                 presentation.current.intro.holding = false
-                presentation.current.intro.pulseAt = -20
+                clearIntroRipples(presentation.current.intro.ripples)
                 dispatch({ type: 'replay' })
               }
         }
@@ -1324,12 +1281,10 @@ function Home({ route }: { route: string }) {
           setSettingsOpen(false)
         }}
         trigger={settingsButton}
+        anchor={navGroup}
         settings={settings}
         onChange={updateSettings}
-        onCue={cue}
         reduced={reduced}
-        staticView={failed || reduced}
-        adjusted={adjusted}
         storageUnavailable={storageUnavailable}
       />
     </div>

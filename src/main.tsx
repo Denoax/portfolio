@@ -6,7 +6,8 @@ import { App } from './app/App'
 import './styles/global.css'
 import './styles/theme.css'
 import './styles/v18.css'
-import './styles/v20.css'
+import './styles/v21.css'
+import './styles/v22.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

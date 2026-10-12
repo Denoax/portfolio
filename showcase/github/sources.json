@@ -1,0 +1,86 @@
+{
+  "runtimeRevision": "60d83a3c76f62a747893a4e9f93443a4e49c923f",
+  "reference": {
+    "url": "https://github.com/Denoax/konata-hyprland-dotfiles",
+    "revision": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
+    "borrowed": "wide banner, centered intro, navigation, screenshot sections, comparison tables and collapsible portrait gallery; no reference artwork"
+  },
+  "files": [
+    {
+      "path": "opening-dark.webp",
+      "source": "showcase/v23-evidence/delivered/1440-900-dark-intro.png",
+      "sourceSHA256": "63de822f0376718c5c7147500b6dbc5846361d013e966ec996a3e0a1246ec350",
+      "sha256": "2e8f04450bcce2f177d924805cd9535e4c100e5d32777877965a52471e1f5a5e",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "projects-light.webp",
+      "source": "showcase/v23-evidence/delivered/1440-900-light-hub.png",
+      "sourceSHA256": "01a332779f7937dcb1e3db3802a6896409ea11c83a858b644b4080b5dbdf25f9",
+      "sha256": "ab83734c3b97a664f99b2f48dd5fe3f746e2969f2007593573adb67c0a822a45",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "projects-dark.webp",
+      "source": "showcase/v23-evidence/delivered/1440-900-dark-hub.png",
+      "sourceSHA256": "eea3e4bb2d05e2a30ee7010e70bf7dbe28af4cc4b1a9494d3dad5ee84046e1e6",
+      "sha256": "dd8052d58a2847e24012a0e0c31e060a1781556cd1114c0986656c70e4e4b879",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "settings-light.webp",
+      "source": "showcase/v23-evidence/delivered/1440-900-light-Settings.png",
+      "sourceSHA256": "8f6b1ed699a6dd46eadaa2b48265808136a19c8b3832c461dd7421483291ff2c",
+      "sha256": "0559711181209c8080a110ff21fe55f034fa9b91bf51bd76d24166a4f6b30315",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "settings-dark.webp",
+      "source": "showcase/v23-evidence/delivered/1440-900-dark-Settings.png",
+      "sourceSHA256": "92a518a81c742cbbc11dc2d698d39686c8ef19128515a265328b234041ef6ff8",
+      "sha256": "6f83bdcb6f71a38a1b782f3091e0a10cfc3ed8b9edb450342dbb330ab27d06ce",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "mobile-opening.webp",
+      "source": "showcase/v23-evidence/delivered/390-844-dark-intro.png",
+      "sourceSHA256": "0de0e3c526ea82de148ef8b6e1d84fd153985c8b1358ee232dc55eed2e1ce62e",
+      "sha256": "08461d83f5e959f441fd632b886bf732829edfae6154d67696ea8456d1ab08ef",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "mobile-projects.webp",
+      "source": "showcase/v23-evidence/delivered/390-844-light-hub.png",
+      "sourceSHA256": "89b2007b21d15d41b17b33a74d0bd7123b30f384fa9aec5e635926cd0fb92772",
+      "sha256": "f000c7aa0600285b3343f6bae1780b9db32cb59ac6afd93d5051258201f854e0",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "mobile-settings.webp",
+      "source": "showcase/v23-evidence/delivered/390-844-dark-Settings.png",
+      "sourceSHA256": "e66b04764125bab21b4aef78ddb72d35c29ee225702b65150f3d03fedb36c119",
+      "sha256": "3feabc1d4b81e4333d2e470402a06db560b7fa18bf294b71c56b238315bc60b5",
+      "operation": "lossless PNG to WebP; no crop or pixel change"
+    },
+    {
+      "path": "pelagic.webp",
+      "source": "public/assets/previews/pelagic-poster.webp",
+      "sourceSHA256": "601f74e9c6771add65451b4ef86629826be8d8d982b3766261f32f1cb75fb27a",
+      "sha256": "601f74e9c6771add65451b4ef86629826be8d8d982b3766261f32f1cb75fb27a",
+      "operation": "byte-identical owned poster"
+    },
+    {
+      "path": "portfolio-banner.webp",
+      "sha256": "9b503e0f2ce67677a98383cf39fbe3838ae1f84047c7e062878259c8c568b905",
+      "source": "banner.html and public/assets/previews/pelagic-poster.webp",
+      "operation": "original HTML/CSS typography composed with existing owned Pelagic poster; Chromium capture"
+    },
+    {
+      "path": "interaction.gif",
+      "source": "showcase/v23-evidence/delivered/1440-900-dark-production-review-unedited.webm",
+      "sourceSHA256": "a91de8a47344ee218b936cd7f32858292da9b4923a9264ad164658df313c7e45",
+      "sha256": "6a285153ca80df751ce09072e5293770dc4f268302337ef616c11b38f947f0c8",
+      "operation": "entire 3.96-second silent recording; original pace, 15fps, 960px wide, GIF palette"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { clamp } from './math'
+import { createIntroRipples, type IntroRipples } from './introRipples'
 import { projects } from '../content/projects'
 
 export const menuViews = projects
@@ -44,6 +45,7 @@ export interface MenuPresentation {
   rendered: number
   saved: number
   selectedId: string
+  settledId: string | null
   savedProjectId: string
   savedOffset: number
   paused: boolean
@@ -53,7 +55,6 @@ export interface MenuPresentation {
   mediaTarget: HTMLElement | null
   nativeTargets: Map<string, HTMLElement>
   selectProject: ((id: string, silent?: boolean) => void) | null
-  stopAuto: (() => void) | null
   scrollReelBy: ((delta: number) => void) | null
   intro: {
     zoom: import('./introZoom').IntroZoom
@@ -73,7 +74,7 @@ export interface MenuPresentation {
     exiting: boolean
     exitProgress: number
     holding: boolean
-    pulseAt: number
+    ripples: IntroRipples
     finish: (() => void) | null
   }
 }
@@ -120,6 +121,7 @@ export function createMenuPresentation(): MenuPresentation {
     rendered: progress,
     saved: progress,
     selectedId: id,
+    settledId: null,
     savedProjectId: id,
     savedOffset: offset,
     paused: false,
@@ -129,7 +131,6 @@ export function createMenuPresentation(): MenuPresentation {
     mediaTarget: null,
     nativeTargets: new Map(),
     selectProject: null,
-    stopAuto: null,
     scrollReelBy: null,
     intro: {
       zoom: { octave: 0n, phase: 0 },
@@ -149,7 +150,7 @@ export function createMenuPresentation(): MenuPresentation {
       exiting: false,
       exitProgress: 0,
       holding: false,
-      pulseAt: -20,
+      ripples: createIntroRipples(),
       finish: null,
     },
   }

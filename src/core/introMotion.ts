@@ -35,6 +35,7 @@ export function stepIntroZoom(
     }
   } else intro.zoomDelta -= step
 }
+
 export function hintOpacity(age: number) {
   const smooth = (x: number) => {
     x = Math.max(0, Math.min(1, x))

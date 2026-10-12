@@ -24,9 +24,11 @@ const names: readonly string[] = [
   ...legacy,
 ]
 const urlFor = (name: string) =>
-  name.startsWith('v18-')
-    ? `/assets/audio/v18/${name.slice(4)}.wav`
-    : `/assets/audio/${legacy.includes(name) ? 'v13' : 'v16'}/${name}.wav`
+  name.startsWith('v22-')
+    ? `/assets/audio/v22/${name.slice(4)}.wav`
+    : name.startsWith('v18-')
+      ? `/assets/audio/v18/${name.slice(4)}.wav`
+      : `/assets/audio/${legacy.includes(name) ? 'v13' : 'v16'}/${name}.wav`
 // Conservative role gains reserve measured peak headroom for four SFX voices
 // plus both existing crossfaded beds. No sample is pitch-shifted.
 const roleGain = {
@@ -71,6 +73,7 @@ export class InterfaceAudio {
   private bedEpoch = 0
   private lastUI = -Infinity
   private lastHover = -Infinity
+  private lastRippleId = 0
   private token: number | null = null
   private phases = new Set<ResourcePhase>()
   private abort = new AbortController()
@@ -244,10 +247,13 @@ export class InterfaceAudio {
     if (phase === 'settle')
       for (const bed of this.beds.values()) this.fadeBed(bed, 0, 0.3)
   }
-  play(cue: SoundCue, token?: number) {
+  playRipple(id: number) {
+    this.play('ripple', undefined, id)
+  }
+  play(cue: SoundCue, token?: number, rippleId?: number) {
     const at = performance.now()
     const drop = (reason: string) =>
-      this.journal({ type: 'drop', cue, token, reason })
+      this.journal({ type: 'drop', cue, token, rippleId, reason })
     const ctx = this.context
     if (document.hidden) return drop('hidden-document')
     if (this.disposed || !this.enabled || !this.volume)
@@ -255,6 +261,11 @@ export class InterfaceAudio {
     if (!ctx || ctx.state !== 'running' || !this.sfx)
       return drop('locked-context')
     if (token !== undefined && token !== this.token) return drop('stale-epoch')
+    if (
+      rippleId !== undefined &&
+      (!Number.isSafeInteger(rippleId) || rippleId <= this.lastRippleId)
+    )
+      return drop('duplicate-or-invalid-ripple')
     const role: Role =
       cue === 'buddy'
         ? 'buddy'
@@ -283,11 +294,18 @@ export class InterfaceAudio {
     let delay = Math.max(0, this.admitAfter - ctx.currentTime)
     if (delay > 0.025) return drop('stale-event')
     if (this.voices.size >= 4) {
-      this.stopVoice(this.voices.values().next().value!, 0.008)
+      // UI hovering cannot clip a protected wave's swish. Prefer retiring an
+      // incidental UI voice; four live ripple voices decline extra sounds.
+      const disposable = [...this.voices].find(
+        (voice) => voice.role !== 'ripple',
+      )
+      if (!disposable) return drop('protected-voice-budget')
+      this.stopVoice(disposable, 0.008)
       delay = Math.max(delay, 0.008)
       this.journal({ type: 'retire', reason: 'voice-budget' })
     }
     const name = transition ? 'transition-soft' : bag!.next()
+    if (rippleId !== undefined) this.lastRippleId = rippleId
     if (role === 'hover') this.lastHover = at
     else if (role !== 'ripple') this.lastUI = at
     const source = ctx.createBufferSource(),
@@ -309,6 +327,7 @@ export class InterfaceAudio {
       cue,
       role,
       token,
+      rippleId,
       pcmHash: audioBank.find((item) => item.id === name)?.pcmHash,
       voices: this.voices.size,
       eventTime: at,

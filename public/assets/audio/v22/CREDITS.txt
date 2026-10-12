@@ -1,0 +1,12 @@
+Swishes Sound Pack — artisticdude, OpenGameArt, 2011.
+Source: https://opengameart.org/content/swishes-sound-pack
+Download: https://opengameart.org/sites/default/files/swishes.zip
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+Runtime: eight distinct human recordings (original swishes 1, 2, 3, 4, 7, 9,
+10, 11), filtered and edge-faded at natural rate. Exact source/file/PCM hashes,
+processing, levels and durations: ASSET_CREDITS.json. All thirteen original
+recordings remain in the research handoff and full-source audition evidence.
+No pitch/time duplicates, generated media or reference soundtrack reused.
+Selection is technically verified but subjective speaker/headphone listening
+and final mix approval are UNREVIEWED.

@@ -26,7 +26,7 @@ export function useGlassDialogMotion(
       {
         duration: matchMedia('(prefers-reduced-motion:reduce)').matches
           ? 0
-          : 240,
+          : 140,
         easing: 'cubic-bezier(.2,.7,.2,1)',
         fill: 'forwards',
       },

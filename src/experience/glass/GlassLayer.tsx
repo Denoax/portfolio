@@ -7,7 +7,7 @@ import { GlassDomMirror } from './GlassDomMirror'
 
 const CAPACITY = 16
 const selectors =
-  '[data-glass-lens],.utility-toggle,.intro-zoom>button,.intro-skip,.menu-actions>.ui-action,.auto-scroll-control,.world-controls button:not(.speed-endpoint)'
+  '[data-glass-lens],.utility-toggle,.menu-actions>.ui-action,.auto-scroll-control,.world-controls button:not(.speed-endpoint)'
 
 // An additive final-output adapter: one renderer, one shared GPU copy, one
 // instanced lens draw. The protected world continues to own its final frame.

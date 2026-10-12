@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { IntroProgress } from './IntroProgress'
+import { admitIntroRipple } from '../core/introRipples'
+import { useRouteFade } from '../hooks/useRouteFade'
 import type { RefObject } from 'react'
 import { advanceZoom, boundedZoom } from '../core/introZoom'
 import type { MenuPresentation } from '../core/menuReel'
@@ -28,7 +29,7 @@ export function IdentityIntro({
   onExitStateChange: (value: boolean) => void
   onActivate: () => void
   onInteract: () => void
-  onRipple: () => void
+  onRipple: (id: number) => void
   ready: boolean
 }) {
   const root = useRef<HTMLDivElement>(null)
@@ -42,6 +43,29 @@ export function IdentityIntro({
   const touchPointers = useRef(new Set<number>())
   const pinched = useRef(false)
   const [staticZoom, setStaticZoom] = useState(0)
+  useEffect(() => {
+    const cancel = () => {
+      const id = gesture.current?.id
+      gesture.current = null
+      touchPointers.current.clear()
+      pinched.current = false
+      presentation.current.intro.holding = false
+      if (id !== undefined && root.current?.hasPointerCapture(id))
+        root.current.releasePointerCapture(id)
+    }
+    const hidden = () => {
+      if (document.hidden) cancel()
+    }
+    window.addEventListener('blur', cancel)
+    window.addEventListener('pagehide', cancel)
+    document.addEventListener('visibilitychange', hidden)
+    return () => {
+      cancel()
+      window.removeEventListener('blur', cancel)
+      window.removeEventListener('pagehide', cancel)
+      document.removeEventListener('visibilitychange', hidden)
+    }
+  }, [presentation])
   const zoom = (delta: number) => {
     if (paused || exiting) return
     if (staticView) {
@@ -141,10 +165,31 @@ export function IdentityIntro({
   done.current = onDone
   const activate = () => {
     if (paused || exiting) return
+    if (presentation.current.intro.exiting) return
     onActivate()
     presentation.current.intro.exiting = true
     onExitStateChange(true)
   }
+  const cancelEntry = () => {
+    presentation.current.intro.exiting = false
+    presentation.current.intro.exitProgress = 0
+    root.current?.style.removeProperty('--intro-exit-opacity')
+    onEntryCancel()
+    onExitStateChange(false)
+  }
+  useRouteFade({
+    token: exiting ? 1 : null,
+    ready,
+    reduced: staticView,
+    onProgress: (p) => {
+      presentation.current.intro.exitProgress = p
+      root.current?.style.setProperty('--intro-exit-opacity', String(1 - p))
+    },
+    onComplete: () => {
+      if (presentation.current.intro.exiting) done.current()
+    },
+    onCancel: cancelEntry,
+  })
   useEffect(() => {
     if (paused) {
       const pointer = gesture.current?.id
@@ -169,7 +214,9 @@ export function IdentityIntro({
         paused ||
         exiting ||
         (e.target instanceof Element &&
-          e.target.closest('button,a,input,dialog'))
+          e.target.closest(
+            'button,a,input,textarea,select,dialog,[contenteditable="true"]',
+          ))
       )
         return
       if (e.ctrlKey || e.metaKey || e.altKey) return
@@ -200,135 +247,108 @@ export function IdentityIntro({
     return () => node?.removeEventListener('wheel', wheel)
   }, [paused, exiting, staticView])
   return (
-    <div
-      ref={root}
-      className="identity-intro"
-      data-exiting={exiting}
-      inert={paused}
-      aria-describedby="intro-instructions"
-      onPointerDown={(e) => {
-        if (e.pointerType === 'touch') {
-          touchPointers.current.add(e.pointerId)
-          if (touchPointers.current.size > 1) pinched.current = true
-        }
-        if (
-          exiting ||
-          (e.target instanceof Element && e.target.closest('button,a'))
-        )
-          return
-        onInteract()
-        gesture.current = {
-          id: e.pointerId,
-          x: e.clientX,
-          y: e.clientY,
-          at: performance.now(),
-          moved: false,
-        }
-        presentation.current.intro.holding = true
-        e.currentTarget.setPointerCapture(e.pointerId)
-      }}
-      onPointerMove={(e) => {
-        const g = gesture.current
-        if (g && Math.hypot(e.clientX - g.x, e.clientY - g.y) > 10)
-          g.moved = true
-      }}
-      onPointerCancel={() => {
-        gesture.current = null
-        touchPointers.current.clear()
-        pinched.current = false
-        presentation.current.intro.holding = false
-      }}
-      onPointerUp={(e) => {
-        touchPointers.current.delete(e.pointerId)
-        if (pinched.current) {
-          if (!touchPointers.current.size) pinched.current = false
-          gesture.current = null
-          presentation.current.intro.holding = false
-          return
-        }
-        const g = gesture.current
-        gesture.current = null
-        const intro = presentation.current.intro
-        intro.holding = false
-        if (!g || g.id !== e.pointerId) return
-        if (g.moved || performance.now() - g.at > 260) {
-          intro.pulseAt = intro.elapsed
-          onRipple()
-        } else activate()
-      }}
-    >
-      {exiting && (
-        <IntroProgress
-          presentation={presentation}
-          ready={ready}
-          reduced={staticView}
-          blocked={paused}
-          onDone={() => done.current()}
-          onCancel={() => {
-            onEntryCancel()
-            presentation.current.intro.exiting = false
-            presentation.current.intro.exitProgress = 0
-            onExitStateChange(false)
-          }}
-        />
-      )}
-      {staticView && (
-        <div className="intro-static-rings" aria-hidden="true">
-          {Array.from({ length: 12 }, (_, i) => (
-            <span
-              key={i}
-              style={{
-                width: `${200 * 2 ** (((((Math.log2(0.08 + i * 0.04) + staticZoom + 5) % 6) + 6) % 6) - 5)}vmin`,
-                height: `${200 * 2 ** (((((Math.log2(0.08 + i * 0.04) + staticZoom + 5) % 6) + 6) % 6) - 5)}vmin`,
-              }}
-            >
-              MANI · SELECT A PROJECT
-            </span>
-          ))}
+    <>
+      {exiting && !ready && (
+        <div className="route-preparation" role="status">
+          Preparing graphics.{' '}
+          <button type="button" onClick={cancelEntry}>
+            Cancel
+          </button>
         </div>
       )}
-      <p id="intro-instructions" className="sr-only">
-        Hold the artwork to ripple. Click or tap to enter. Use plus and minus to
-        zoom, or zero to reset.
-      </p>
-      <div ref={hint} className="intro-hint" aria-hidden="true">
-        <span>Hold to ripple</span>
-        <span className="intro-hint-pointer">Click to enter</span>
-        <span className="intro-hint-touch">Tap to enter</span>
-      </div>
-      <div className="intro-zoom" role="group" aria-label="Artwork zoom">
-        <button
-          type="button"
-          aria-label="Zoom out"
-          onClick={() => {
-            onInteract()
-            zoom(-0.25)
-          }}
-        >
-          −
-        </button>
-        <button type="button" aria-label="Reset artwork zoom" onClick={reset}>
-          ↺
-        </button>
-        <button
-          type="button"
-          aria-label="Zoom in"
-          onClick={() => {
-            onInteract()
-            zoom(0.25)
-          }}
-        >
-          +
-        </button>
-      </div>
-      <button
-        type="button"
-        className="intro-skip"
-        disabled={exiting}
-        onClick={activate}
+      <div
+        ref={root}
+        className="identity-intro"
+        data-exiting={exiting}
+        aria-disabled={exiting}
+        inert={paused}
+        role="button"
+        tabIndex={0}
+        aria-label="Enter projects through the artwork"
+        aria-describedby="intro-instructions"
+        onPointerDown={(e) => {
+          if (e.pointerType === 'touch') {
+            touchPointers.current.add(e.pointerId)
+            if (touchPointers.current.size > 1) pinched.current = true
+          }
+          if (
+            paused ||
+            exiting ||
+            !e.isPrimary ||
+            e.button !== 0 ||
+            (e.target instanceof Element && e.target.closest('button,a'))
+          )
+            return
+          onInteract()
+          gesture.current = {
+            id: e.pointerId,
+            x: e.clientX,
+            y: e.clientY,
+            at: performance.now(),
+            moved: false,
+          }
+          presentation.current.intro.holding = true
+          e.currentTarget.setPointerCapture(e.pointerId)
+        }}
+        onPointerMove={(e) => {
+          const g = gesture.current
+          if (g && Math.hypot(e.clientX - g.x, e.clientY - g.y) > 10)
+            g.moved = true
+        }}
+        onPointerCancel={() => {
+          gesture.current = null
+          touchPointers.current.clear()
+          pinched.current = false
+          presentation.current.intro.holding = false
+        }}
+        onLostPointerCapture={() => {
+          gesture.current = null
+          presentation.current.intro.holding = false
+        }}
+        onPointerUp={(e) => {
+          touchPointers.current.delete(e.pointerId)
+          if (pinched.current) {
+            if (!touchPointers.current.size) pinched.current = false
+            gesture.current = null
+            presentation.current.intro.holding = false
+            return
+          }
+          const g = gesture.current
+          gesture.current = null
+          const intro = presentation.current.intro
+          intro.holding = false
+          if (!g || g.id !== e.pointerId) return
+          if (g.moved || performance.now() - g.at > 260) {
+            const id = admitIntroRipple(intro.ripples, intro.elapsed)
+            if (id !== null) onRipple(id)
+          } else activate()
+        }}
       >
-        Enter portfolio ↗
-      </button>
-    </div>
+        {staticView && (
+          <div className="intro-static-rings" aria-hidden="true">
+            {Array.from({ length: 12 }, (_, i) => (
+              <span
+                key={i}
+                style={{
+                  width: `${200 * 2 ** (((((Math.log2(0.08 + i * 0.04) + staticZoom + 5) % 6) + 6) % 6) - 5)}vmin`,
+                  height: `${200 * 2 ** (((((Math.log2(0.08 + i * 0.04) + staticZoom + 5) % 6) + 6) % 6) - 5)}vmin`,
+                }}
+              >
+                MANI · SELECT A PROJECT
+              </span>
+            ))}
+          </div>
+        )}
+        <p id="intro-instructions" className="sr-only">
+          Hold the artwork to ripple. Click, tap, Enter or Space to enter.
+          Scroll to zoom. Plus and minus zoom the artwork; zero resets it.
+        </p>
+        <div ref={hint} className="intro-hint" aria-hidden="true">
+          <span>Hold to ripple</span>
+          <span className="intro-hint-pointer">Click to enter</span>
+          <span className="intro-hint-touch">Tap to enter</span>
+        </div>
+      </div>
+    </>
   )
 }

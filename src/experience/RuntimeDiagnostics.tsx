@@ -19,11 +19,18 @@ interface Diagnostics {
     cueAge: number | null
     inputBlocked: boolean
     holding: boolean
+    ripples: {
+      id: number
+      startedAt: number
+      age: number
+      active: boolean
+    }[]
   }
   menu: {
     clock: number
     target: number
     rendered: number
+    settledId: string | null
     inputBlocked: boolean
   }
   backend: string
@@ -89,6 +96,7 @@ export function RuntimeDiagnostics({
         cueAge: null,
         inputBlocked: false,
         holding: false,
+        ripples: [],
       },
       flash: 0,
       clouds: 0,
@@ -101,7 +109,13 @@ export function RuntimeDiagnostics({
       altitude: 0,
       cloudSteps: quality.cloudSteps,
       cloudResolution: quality.cloudResolution,
-      menu: { clock: 0, target: 0, rendered: 0, inputBlocked: false },
+      menu: {
+        clock: 0,
+        target: 0,
+        rendered: 0,
+        settledId: null,
+        inputBlocked: false,
+      },
       backend: 'WebGL2 / Three 0.180',
       renderer: extension
         ? context.getParameter(extension.UNMASKED_RENDERER_WEBGL)
@@ -148,9 +162,14 @@ export function RuntimeDiagnostics({
       intro.cueEpoch === null ? null : intro.elapsed - intro.cueEpoch
     owned.current.introZoom.inputBlocked = intro.inputBlocked
     owned.current.introZoom.holding = intro.holding
+    owned.current.introZoom.ripples = intro.ripples.slots.map((slot) => ({
+      ...slot,
+      age: intro.elapsed - slot.startedAt,
+    }))
     owned.current.menu.clock = presentation.current.clock
     owned.current.menu.target = presentation.current.target
     owned.current.menu.rendered = presentation.current.rendered
+    owned.current.menu.settledId = presentation.current.settledId
     owned.current.menu.inputBlocked = presentation.current.paused
     const ring = scene.getObjectByName(
       'Ringwriter-independent-instanced-typography',

@@ -1,0 +1,91 @@
+/* v21 scopes new chrome to its real owners; approved scene styling stays intact. */
+.portfolio-nav-group {
+  display: flex;
+}
+.projects-index.glass-window {
+  --pane-ink: #ffffff;
+  --pane-muted: #e4e7eb;
+  color: var(--pane-ink);
+  padding: 22px;
+  overscroll-behavior: contain;
+}
+.projects-index-rows > button,
+.projects-index > .index-heading,
+.projects-index .settings-close {
+  color: #ffffff;
+}
+.projects-index-rows > button span {
+  color: #d5d9df;
+}
+.projects-index-rows > button:is(:hover, :focus-visible) {
+  background: #ffffff12;
+}
+.projects-index-rows > button {
+  position: relative;
+  z-index: 2;
+}
+.projects-index > .index-heading {
+  position: relative;
+  z-index: 2;
+}
+.identity-intro .intro-static-rings,
+.identity-intro .intro-hint {
+  opacity: var(--intro-exit-opacity, 1);
+}
+.route-preparation {
+  position: fixed;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  right: max(24px, env(safe-area-inset-right));
+  z-index: 30;
+  padding: 8px 12px;
+  max-width: calc(100vw - 32px);
+  color: var(--site-ink);
+  background: color-mix(in srgb, var(--site-base) 94%, transparent);
+  border-radius: 12px;
+  font-size: 13px;
+}
+.route-preparation button {
+  min-height: 44px;
+  margin-left: 8px;
+  padding: 0 12px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.selection-site[data-surface='loading'] .selection-hub {
+  z-index: 5;
+  background: var(--site-base);
+}
+/* Static controls need their fill and ink from the same theme owner. The old
+   dark fallback fill survived the light ink override after graphics loss. */
+@media (max-width: 719px) {
+  .projects-index.glass-window {
+    padding: 18px;
+  }
+  .projects-index-rows > button {
+    min-height: 48px;
+    gap: 12px;
+  }
+  .route-preparation {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+/* Keep Close above the list when the anchored pane must fit a short viewport. */
+.projects-index.glass-window[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.projects-index .index-heading {
+  flex: 0 0 auto;
+}
+.projects-index-rows {
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import type { RefObject } from 'react'
+import { restoreFocus } from '../core/restoreFocus'
 
 // Ordinary panes share Escape ownership, but never browser modal inertness or
 // a focus trap. Closing cannot reclaim focus deliberately moved to the site.
@@ -73,10 +74,14 @@ export function useNonmodalDialog(
       if (
         restore &&
         origin instanceof HTMLElement &&
-        origin.isConnected &&
         !origin.closest('[inert]')
       )
-        origin.focus({ preventScroll: true })
+        restoreFocus(
+          origin,
+          matchMedia('(max-width:899px)').matches
+            ? '.utility-toggle'
+            : '.hub-brand',
+        )
     }
   }, [dialog, open, trigger, initialFocus])
 }

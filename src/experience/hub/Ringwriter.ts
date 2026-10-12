@@ -1,3 +1,4 @@
+import { pruneIntroRipples, clearIntroRipples } from '../../core/introRipples'
 import { stepIntroZoom, hintOpacity } from '../../core/introMotion'
 import { boundedZoom } from '../../core/introZoom'
 import * as THREE from 'three'
@@ -18,7 +19,7 @@ export class Ringwriter {
   private viewport = ''
   private holding = false
   private charge = 0
-  private pulseAt = -20
+  private pulseAges = new Float32Array(4).fill(-1)
   private pointer = new THREE.Vector2(4, 4)
   private ready = false
   private running = false
@@ -51,12 +52,12 @@ export class Ringwriter {
         uCenter: { value: new THREE.Vector2() },
         uPointer: { value: this.pointer },
         uCharge: { value: 0 },
-        uPulseTime: { value: 20 },
+        uPulseAges: { value: this.pulseAges },
         uOpacity: { value: 0 },
       },
       vertexShader: `attribute float aRadius,aTheta,aChar,aOpacity,aSpeed,aKind,aFamily;
       uniform float uDetachedBase;uniform float uPrimaryRadii[24];uniform int uRingCount;
-      uniform float uTime,uScale,uGlyph,uCharge,uPulseTime,uZoom;uniform vec2 uCenter,uPointer;
+      uniform float uTime,uScale,uGlyph,uCharge,uZoom;uniform float uPulseAges[4];uniform vec2 uCenter,uPointer;
       varying vec2 vUv;varying float vChar,vOpacity,vDissolve,vKind;
       void main(){
         float radius=exp2(mod(log2(aRadius)+uZoom+5.,6.)-5.);
@@ -79,7 +80,16 @@ export class Ringwriter {
           }
           glyph=min(glyph,uGlyph*1.15);
         }
-        float age=max(0.,uPulseTime-radius*.65);float pulse=(1.-exp(-age*4.))*exp(-age*1.2);
+        float pulse=0.;
+        for(int i=0;i<4;i++){
+          if(uPulseAges[i]>=0.){
+            float age=max(0.,uPulseAges[i]-radius*.65);
+            pulse+=(1.-exp(-age*4.))*exp(-age*1.2);
+          }
+        }
+        // A single wave retains the original envelope. Additional waves combine
+        // continuously; their ages are never overwritten by later admissions.
+        if(pulse>.65)pulse=.65+.30*(1.-exp(-(pulse-.65)/.30));
         float theta=aTheta+aSpeed*uTime+pulse*(.16+radius*.15);
         vec2 radial=vec2(cos(theta),sin(theta)),tangent=vec2(radial.y,-radial.x);
         vec2 center=radial*(radius+pulse*.018*(.5+radius))+uCenter;
@@ -169,7 +179,8 @@ export class Ringwriter {
       this.running = false
       this.holding = false
       this.charge = 0
-      this.pulseAt = -20
+      clearIntroRipples(intro.ripples)
+      this.pulseAges.fill(-1)
       return
     }
     if (this.ready && menuReady && !intro.paused && !document.hidden) {
@@ -188,7 +199,6 @@ export class Ringwriter {
         )
       this.material.uniforms.uZoom.value = boundedZoom(intro.zoom)
       this.holding = intro.holding
-      this.pulseAt = intro.pulseAt
       this.charge = THREE.MathUtils.clamp(
         this.charge +
           (this.holding
@@ -213,7 +223,11 @@ export class Ringwriter {
       0.75
     uniforms.uCenter.value.set(0, (height * 0.025) / Math.min(width, height))
     uniforms.uCharge.value = this.charge
-    uniforms.uPulseTime.value = intro.elapsed - this.pulseAt
+    pruneIntroRipples(intro.ripples, intro.elapsed)
+    for (let i = 0; i < 4; i++) {
+      const slot = intro.ripples.slots[i]
+      this.pulseAges[i] = slot.active ? intro.elapsed - slot.startedAt : -1
+    }
     uniforms.uOpacity.value =
       Math.min(1, intro.elapsed / 0.28) * (1 - intro.exitProgress)
   }

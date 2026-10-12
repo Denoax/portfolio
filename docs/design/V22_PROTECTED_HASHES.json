@@ -1,0 +1,8 @@
+{
+  "baseline": "ab338a6ce6ff60d329cb2fc9b4cc1b1e2011833c",
+  "files": {
+    "src/core/introZoom.ts": "f5f0934016dbfe6316957744a39fe71335110089721867cae2e22d1c685a63e6",
+    "src/core/descent.ts": "558133822a9439522c147be33d66e4c06d1f2bd06a8631f00a1b5831a9c6c492",
+    "src/experience/WorldScene.tsx": "246ff483d8917bd5831eb428619ffd18969ac6dc8e4055343822c2ea49d40345"
+  }
+}

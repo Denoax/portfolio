@@ -50,7 +50,7 @@ export function Credits() {
           . Original SVG transaction; source footage is research only.
         </p>
         <p>
-          Ripple recordings by{' '}
+          Archived water-ripple recordings by{' '}
           <a href="https://opengameart.org/content/6-short-water-splashes">
             ezwa, edited by Iwan Gabovitch (qubodup)
           </a>
@@ -59,6 +59,25 @@ export function Credits() {
             v16 audio sources and edits
           </a>
           .
+        </p>
+        <p>
+          Current airy ripple swishes: Swishes Sound Pack by{' '}
+          <a href="https://opengameart.org/content/swishes-sound-pack">
+            artisticdude
+          </a>
+          , CC0. Eight distinct human recordings at their natural rates.{' '}
+          <a href="/assets/audio/v22/ASSET_CREDITS.json">
+            Sources, edits and hashes
+          </a>
+          .
+        </p>
+        <p>
+          Elastic Settings sliders studied from{' '}
+          <a href="https://www.inspora.design/posts/angry-sliders">
+            Angry Sliders by gsimone / @ggsimm
+          </a>
+          . Original gesture and ballistic implementation; the creator's footage
+          and soundtrack are research only.
         </p>
         <p>
           Buddy: independent vector/material implementation from Mani's supplied

@@ -72,6 +72,9 @@ function RendererHandover({ world }: { world: boolean }) {
     if (previous.current === world) return
     previous.current = world
     if (!world) gl.resetState()
+    // HubScene owns its theme clear color. Retiring it must restore the
+    // protected world's original dark clear, including its first visible frame.
+    if (world) gl.setClearColor('#020205', 1)
     gl.setRenderTarget(null)
     gl.setScissorTest(false)
     gl.autoClear = true

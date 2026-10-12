@@ -1,6 +1,6 @@
 import PortfolioGravity from './rare/PortfolioGravity'
 import { ProfileActivity } from './rare/ProfileActivity'
-import { CloseIcon } from './UiIcons'
+import { PaneCloseButton } from './PaneCloseButton'
 import { createPortal } from 'react-dom'
 import { useNonmodalDialog } from '../hooks/useNonmodalDialog'
 import { restoreFocus } from '../core/restoreFocus'
@@ -22,9 +22,9 @@ import {
 import type { MenuPresentation } from '../core/menuReel'
 import { PreviewPlayback } from '../core/previewPlayback'
 import type { Project } from '../content/projects'
-import { AutoScrollControl } from './AutoScrollControl'
-import { useMenuAutoScroll } from '../hooks/useMenuAutoScroll'
+import { useAnchoredProjects } from '../hooks/useAnchoredProjects'
 import { deferScrollSnap } from '../core/deferScrollSnap'
+import { createReelSnapTracker, updateReelSnap } from '../core/reelSnap'
 
 export function SelectionHub({
   staticView,
@@ -43,10 +43,8 @@ export function SelectionHub({
   onIntroEnter,
   selectionEpoch,
   previews,
-  speed,
-  onSpeed,
   onCue,
-  dockSlot,
+  navGroup,
 }: {
   staticView: boolean
   notice: string
@@ -64,10 +62,8 @@ export function SelectionHub({
   onIntroEnter: () => void
   selectionEpoch: number
   previews: PreviewPlayback
-  speed: number
-  onSpeed: (value: number) => void
   onCue: (cue: import('../audio/InterfaceAudio').SoundCue) => void
-  dockSlot: HTMLElement | null
+  navGroup: RefObject<HTMLDivElement | null>
 }) {
   const scroll = useRef<HTMLDivElement>(null),
     stage = useRef<HTMLDivElement>(null)
@@ -84,19 +80,10 @@ export function SelectionHub({
     pendingSelection.current = null
     selectionSequence.current++
   }, [selectionEpoch])
-  const auto = useMenuAutoScroll(
-    scroll,
-    active,
-    presentation.current.reduced,
-    menuViews.length,
-    speed,
-    false,
-  )
   const helpSnap = useRef<(() => void) | null>(null)
   useLayoutEffect(() => {
     const element = scroll.current
-    if (active || hidden || !element || element.dataset.auto === 'running')
-      return
+    if (active || hidden || !element) return
     // Native smooth scroll otherwise continues behind the modal while its
     // scroll handler is paused. Freeze at the actual offset without rounding.
     helpSnap.current?.()
@@ -133,9 +120,15 @@ export function SelectionHub({
   }, [indexRequest])
   useEffect(() => () => onIndexChange(false), [])
   useNonmodalDialog(indexDialog, indexOpen, dismissIndex, indexTrigger)
+  useAnchoredProjects(indexDialog, navGroup, indexOpen)
   useEffect(() => {
     if (!dismissIndexRequest) return
-    pendingSelection.current = null
+    // Entry closes ordinary panes after a Projects row has already closed
+    // its own pane. Preserve that accepted ticket until the hub is eligible.
+    if (indexOpen) {
+      pendingSelection.current = null
+      selectionSequence.current++
+    }
     setIndexOpen(false)
     onIndexChange(false)
   }, [dismissIndexRequest])
@@ -234,6 +227,7 @@ export function SelectionHub({
     )
     state.saved = state.target
     state.rendered = state.target
+    state.settledId = null
     let previousWidth = element.clientWidth,
       previousHeight = element.clientHeight
     const restore = () => {
@@ -279,6 +273,7 @@ export function SelectionHub({
       ),
       next = activeMenuView(target)
     state.target = target
+    state.settledId = null
     state.saved = target
     state.selectedId = menuViews[next].id
     state.savedProjectId = state.selectedId
@@ -289,11 +284,11 @@ export function SelectionHub({
   const select = (index: number, silent = false) => {
     if (!active && !indexOpen) return
     if (!silent) onCue('activate')
-    auto.stop()
     previews.stop()
     presentation.current.hovered = false
     const next = menuViews[index],
       state = presentation.current
+    state.settledId = null
     if (staticView) {
       state.target = index / Math.max(1, menuViews.length - 1)
       state.saved = state.target
@@ -314,17 +309,14 @@ export function SelectionHub({
   }
   useLayoutEffect(() => {
     const state = presentation.current
-    state.stopAuto = auto.stop
     state.scrollReelBy = (delta) => {
       if (!active || hidden || presentation.current.paused) return
-      auto.stop()
       scroll.current?.scrollBy({ top: delta, behavior: 'instant' })
     }
     state.selectProject = (id, silent) => {
       const index = menuViews.findIndex((item) => item.id === id)
       if (index < 0) return
       if (hidden) {
-        auto.stop()
         pendingSelection.current = {
           id,
           token: ++selectionSequence.current,
@@ -335,7 +327,6 @@ export function SelectionHub({
     }
     return () => {
       state.selectProject = null
-      state.stopAuto = null
       state.scrollReelBy = null
     }
   })
@@ -370,7 +361,6 @@ export function SelectionHub({
   const navigate = (event: KeyboardEvent<HTMLDivElement>) => {
     if (
       event.defaultPrevented ||
-      auto.mode === 'running' ||
       event.target !== event.currentTarget ||
       !active
     )
@@ -418,7 +408,6 @@ export function SelectionHub({
       return
     event.preventDefault()
     if (!active || (media && gesture.current.dragged)) return
-    auto.stop()
     onResource(
       event.detail > 0 ? (gesture.current.project ?? project) : project,
     )
@@ -429,9 +418,23 @@ export function SelectionHub({
   useEffect(() => {
     let raf = 0,
       eligible = false
+    const snap = createReelSnapTracker()
     const sync = () => {
       const target = mediaTarget.current,
         m = presentation.current
+      const native = scroll.current
+      const locked =
+        active && !hidden && !document.hidden && native
+          ? updateReelSnap(
+              snap,
+              native.scrollTop,
+              native.scrollHeight - native.clientHeight,
+              m.rendered,
+              menuViews.length,
+              performance.now(),
+            )
+          : null
+      m.settledId = locked === null ? null : menuViews[locked].id
       const settled =
         active &&
         !hidden &&
@@ -459,6 +462,7 @@ export function SelectionHub({
     sync()
     const visibility = () => {
       if (!document.hidden) return
+      presentation.current.settledId = null
       // A tab switch retires intent as well as the decoder. Returning cannot
       // start a fresh video from a stale pointer coordinate or touch tap.
       pointer.current = { x: NaN, y: NaN }
@@ -733,27 +737,6 @@ export function SelectionHub({
               </p>
             )}
           </div>
-          {dockSlot &&
-            !hidden &&
-            createPortal(
-              <div className="menu-auto">
-                <AutoScrollControl
-                  running={auto.mode === 'running'}
-                  suspended={
-                    auto.mode === 'suspended' || auto.mode === 'stopped'
-                  }
-                  speed={speed}
-                  reduced={presentation.current.reduced}
-                  onSpeed={onSpeed}
-                  onCommit={() => onCue('speed')}
-                  onToggle={() => {
-                    onCue('auto')
-                    auto.toggle()
-                  }}
-                />
-              </div>,
-              dockSlot,
-            )}
         </div>
         {menuViews.map((item) => (
           <section
@@ -780,38 +763,36 @@ export function SelectionHub({
         >
           <div className="index-heading">
             <h2>Projects</h2>
-            <button
-              type="button"
-              className="settings-close"
-              aria-label="Close projects index"
-              onClick={() => {
+            <PaneCloseButton
+              label="Close projects index"
+              onClose={() => {
                 pendingSelection.current = null
                 selectionSequence.current++
                 dismissIndex()
               }}
-            >
-              <CloseIcon />
-            </button>
+            />
           </div>
-          {menuViews.map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-current={view === index ? 'true' : undefined}
-              onClick={() => {
-                pendingSelection.current = {
-                  id: item.id,
-                  token: ++selectionSequence.current,
-                  fromIntro: hidden,
-                }
-                dismissIndex()
-              }}
-            >
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              {item.title}
-              <b aria-hidden="true">↗</b>
-            </button>
-          ))}
+          <div className="projects-index-rows">
+            {menuViews.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-current={view === index ? 'true' : undefined}
+                onClick={() => {
+                  pendingSelection.current = {
+                    id: item.id,
+                    token: ++selectionSequence.current,
+                    fromIntro: hidden,
+                  }
+                  dismissIndex()
+                }}
+              >
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {item.title}
+                <b aria-hidden="true">↗</b>
+              </button>
+            ))}
+          </div>
         </dialog>,
         document.body,
       )}

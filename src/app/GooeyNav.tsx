@@ -6,23 +6,31 @@
 import {
   useEffect,
   useId,
+  useMemo,
   type ComponentProps,
   type CSSProperties,
   type ReactNode,
 } from 'react'
-import { motion, useReducedMotion, useSpring, useTransform } from 'motion/react'
+import {
+  animate,
+  motion,
+  motionValue,
+  useReducedMotion,
+  useTransform,
+  type MotionValue,
+} from 'motion/react'
+import { navConnection } from '../core/navConnection'
 import '../styles/gooey-nav.css'
 const cn = (...parts: (string | false | undefined)[]) =>
   parts.filter(Boolean).join(' ')
 
 // the duration picker's spring, damped so nothing overshoots
-const SPRING = { type: 'spring', stiffness: 200, damping: 28, mass: 1 } as const
-
-// the neck has thinned to nothing by the time the gap is this far open
-const NECK_BREAK = 0.22
-
-// nominal viewBox height; the svg stretches to whatever the tile actually is
-const NECK_H = 100
+const SPRING = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 28,
+  mass: 1,
+} as const
 
 const FADE_IN = 'gooey-color-in'
 const FADE_OUT = 'gooey-color-out'
@@ -82,75 +90,67 @@ export type GooeyNavProps = Omit<ComponentProps<'nav'>, 'onChange'> & {
   radius?: number
 }
 
-// two concave curves pinching toward the middle, drawn in the gap the tiles leave
-function neckPath(gap: number, span: number) {
-  // a NaN or negative span would otherwise emit a path full of NaN coordinates
-  if (
-    !Number.isFinite(gap) ||
-    !Number.isFinite(span) ||
-    gap <= 0 ||
-    span <= 0
-  ) {
-    return ''
-  }
-  const waist = NECK_H * (1 - gap / (span * NECK_BREAK))
-  if (waist <= 0) return ''
-  const start = span - gap
-  const mid = start + gap / 2
-  return `M${start} 0 Q${mid} ${NECK_H - waist} ${span} 0 L${span} ${NECK_H} Q${mid} ${waist} ${start} ${NECK_H} Z`
-}
-
 type SegmentProps = {
-  gap: number
+  left: MotionValue<number>
+  right: MotionValue<number> | null
   span: number
-  hasSeam: boolean
+  height: number
+  radius: number
+  first: boolean
   leftFill: string
   rightFill: string
-  reduced: boolean
-  radii: Record<string, number>
   className?: string
   style?: CSSProperties
   children: ReactNode
 }
 
 function Segment({
-  gap,
+  left,
+  right,
   span,
-  hasSeam,
+  height,
+  radius,
+  first,
   leftFill,
   rightFill,
-  reduced,
-  radii,
   className,
   style,
   children,
 }: SegmentProps) {
-  const marginLeft = useSpring(gap, SPRING)
   const gradientId = `gooey-neck-${useId().replace(/:/g, '')}`
-
-  useEffect(() => {
-    if (reduced) marginLeft.jump(gap)
-    else marginLeft.set(gap)
-  }, [gap, marginLeft, reduced])
-
-  const d = useTransform(marginLeft, (g) => neckPath(g, span))
-
+  const d = useTransform(
+    left,
+    (gap) => navConnection(gap, height, radius, span).path,
+  )
+  const leftRadius = useTransform(left, (gap) =>
+    first ? radius : navConnection(gap, height, radius, span).corner,
+  )
+  const rightRadius = useTransform(right ?? left, (gap) =>
+    right ? navConnection(gap, height, radius, span).corner : radius,
+  )
+  const windowLeft = -span - radius - 2
+  const windowWidth = span + 2 * radius + 4
   return (
     <motion.li
       data-slot="gooey-nav-segment"
       className={cn('gooey-segment', className)}
-      style={{ ...style, marginLeft }}
-      initial={false}
-      animate={radii}
-      transition={reduced ? { duration: 0 } : SPRING}
+      style={{
+        ...style,
+        marginLeft: left,
+        borderTopLeftRadius: leftRadius,
+        borderBottomLeftRadius: leftRadius,
+        borderTopRightRadius: rightRadius,
+        borderBottomRightRadius: rightRadius,
+      }}
     >
-      {hasSeam && (
+      {!first && (
         <svg
           aria-hidden
-          width={span}
-          viewBox={`0 0 ${span} ${NECK_H}`}
+          width={windowWidth}
+          viewBox={`${windowLeft} 0 ${windowWidth} ${height}`}
           preserveAspectRatio="none"
           className={cn('gooey-neck', BAR_TEXT)}
+          style={{ left: windowLeft }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0" x2="1">
@@ -241,6 +241,25 @@ export function GooeyNav({
     seam - 1 === active ||
     seam === active
 
+  const gaps = useMemo(
+    () =>
+      Array.from({ length: items.length }, (_, i) =>
+        motionValue(i === 0 ? 0 : -1),
+      ),
+    [items.length],
+  )
+  useEffect(() => {
+    const controls = gaps.map((gap, i) => {
+      const target = i === 0 ? 0 : open(i) ? span : -1
+      if (reduced) {
+        gap.jump(target)
+        return null
+      }
+      return animate(gap, target, SPRING)
+    })
+    return () => controls.forEach((control) => control?.stop())
+  }, [gaps, active, span, reduced])
+  const height = { xs: 28, sm: 32, md: 40, lg: 48 }[size]
   const fill = (i: number) => (i === active ? activeColor : 'currentColor')
 
   return (
@@ -257,21 +276,18 @@ export function GooeyNav({
           return (
             <Segment
               key={`${i}-${navItem.label}`}
-              // closed seams pull in a pixel so no hairline shows through
-              gap={i === 0 ? 0 : open(i) ? span : -1}
+              left={gaps[i]}
+              right={gaps[i + 1] ?? null}
               span={span}
-              hasSeam={i > 0}
+              height={height}
+              radius={corner}
+              first={i === 0}
               leftFill={fill(i - 1)}
               rightFill={fill(i)}
-              reduced={reduced}
-              radii={{
-                borderTopLeftRadius: open(i) ? corner : 0,
-                borderBottomLeftRadius: open(i) ? corner : 0,
-                borderTopRightRadius: open(i + 1) ? corner : 0,
-                borderBottomRightRadius: open(i + 1) ? corner : 0,
-              }}
               className={cn(BAR, isActive ? FADE_IN : FADE_OUT)}
-              style={{ backgroundColor: isActive ? activeColor : undefined }}
+              style={{
+                backgroundColor: isActive ? activeColor : undefined,
+              }}
             >
               <NavLabel
                 {...navItem}

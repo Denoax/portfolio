@@ -2,12 +2,13 @@ import type { ThemePreference, ResolvedTheme } from './theme'
 import type { QualityTier } from './quality'
 
 export interface ExperienceSettings {
-  version: 1
+  version: 2
   theme: ThemePreference
   displayBrightness: number
   cursorSize: number
   scrollPace: number
   cloudDepth: number
+  // Kept for protected-world travel and legacy preference compatibility only.
   autoScrollSpeed: number
   soundVolume: number
   ambienceVolume: number
@@ -19,9 +20,19 @@ export interface ExperiencePreferences {
   panelOpen: boolean
   theme: ResolvedTheme
 }
+export function resetVisibleSettings(
+  settings: ExperienceSettings,
+): ExperienceSettings {
+  return {
+    ...settings,
+    displayBrightness: 100,
+    soundVolume: 35,
+    motion: 'system',
+  }
+}
 export const SETTINGS_KEY = 'portfolio:experience-settings:v1'
 export const DEFAULT_SETTINGS: Readonly<ExperienceSettings> = Object.freeze({
-  version: 1,
+  version: 2,
   theme: 'light',
   displayBrightness: 100,
   cursorSize: 100,
@@ -43,7 +54,9 @@ export const SETTING_BOUNDS = {
   ambienceVolume: [0, 100],
 } as const
 export function quantizeAutoSpeed(value: number) {
-  return Number.isFinite(value) ? Math.round(Math.max(.5, Math.min(4, value)) * 10) / 10 : 1
+  return Number.isFinite(value)
+    ? Math.round(Math.max(0.5, Math.min(4, value)) * 10) / 10
+    : 1
 }
 export function validateSettings(value: unknown): ExperienceSettings {
   const result = { ...DEFAULT_SETTINGS }
@@ -51,31 +64,24 @@ export function validateSettings(value: unknown): ExperienceSettings {
     !value ||
     typeof value !== 'object' ||
     !('version' in value) ||
-    value.version !== 1
+    (value.version !== 1 && value.version !== 2)
   )
     return result
   const input = value as Record<string, unknown>
   for (const key of Object.keys(
     SETTING_BOUNDS,
   ) as (keyof typeof SETTING_BOUNDS)[]) {
-    if (key === 'autoScrollSpeed') continue // Fractional speed is validated below.
+    if (!['displayBrightness', 'soundVolume'].includes(key)) continue
     const number = input[key],
       [min, max] = SETTING_BOUNDS[key]
     if (typeof number === 'number' && Number.isFinite(number))
       result[key] = Math.max(min, Math.min(max, Math.round(number)))
   }
   if (
-    input.graphics === 'auto' ||
-    input.graphics === 'balanced' ||
-    input.graphics === 'high'
-  )
-    result.graphics = input.graphics
-  if (
     typeof input.autoScrollSpeed === 'number' &&
     Number.isFinite(input.autoScrollSpeed)
   )
-    result.autoScrollSpeed =
-      quantizeAutoSpeed(input.autoScrollSpeed)
+    result.autoScrollSpeed = quantizeAutoSpeed(input.autoScrollSpeed)
   // The old mute switch migrates once. Saved v14 values have no switch, so
   // deliberately raising master volume cannot be blocked by a stale flag.
   if (input.soundEnabled === false) result.soundVolume = 0
@@ -88,10 +94,9 @@ export function validateSettings(value: unknown): ExperienceSettings {
 export function loadSettings(): ExperienceSettings {
   try {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? 'null')
-    const next = validateSettings(saved)
-    // v16 System had no opt-in provenance. Migrate once, retaining all values.
-    if (saved?.version === 1 && saved.theme === 'system') saveSettings(next)
-    return next
+    // Home's preference owner persists the validated migration. Reading this
+    // function (including from Credits) never writes storage as a side effect.
+    return validateSettings(saved)
   } catch {
     return { ...DEFAULT_SETTINGS }
   }

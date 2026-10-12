@@ -4,8 +4,8 @@
   --site-base: #080808;
   --site-ink: #f4f4f2;
   --site-muted: #b1b7c0;
-  --hover-ink: #a8d8f2;
-  --hover-surface: #182631;
+  --hover-ink: #fff;
+  --hover-surface: #202020;
   --line: #ffffff38;
   --nav-body: #262626;
   --nav-selected: #f4f4f2;
@@ -23,8 +23,8 @@
   --site-base: #f3f5f7;
   --site-ink: #161a20;
   --site-muted: #525d68;
-  --hover-ink: #15202b;
-  --hover-surface: #c9e8f8;
+  --hover-ink: #000;
+  --hover-surface: #dde1e5;
   --line: #161a2038;
   --nav-body: #e2e6ea;
   --nav-selected: #161a20;
@@ -202,12 +202,6 @@ html {
 :root[data-color-theme='light'] .intro-static-rings span {
   border-color: #161a2030;
   color: var(--site-ink);
-}
-:root[data-color-theme='light']
-  :is(.intro-skip, .intro-zoom > button, .hub-utilities, .portfolio-nav-shell) {
-  color: var(--site-ink);
-  border-color: var(--line);
-  background-color: var(--button);
 }
 :root[data-color-theme='light'] .menu-project,
 :root[data-color-theme='light'] .menu-description,

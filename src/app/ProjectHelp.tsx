@@ -1,5 +1,5 @@
 import { useAnchoredHelp } from '../hooks/useAnchoredHelp'
-import { CloseIcon } from './UiIcons'
+import { PaneCloseButton } from './PaneCloseButton'
 import { PELAGIC_LIVE_URL } from '../core/pelagicHandoff'
 import { useNonmodalDialog } from '../hooks/useNonmodalDialog'
 import { useGlassDialogMotion } from '../hooks/useGlassDialogMotion'
@@ -84,14 +84,7 @@ export function ProjectHelp({
     >
       <div className="help-heading">
         <p id="project-help-title">{project.title}</p>
-        <button
-          className="settings-close"
-          type="button"
-          aria-label="Close project help"
-          onClick={close}
-        >
-          <CloseIcon />
-        </button>
+        <PaneCloseButton label="Close project help" onClose={close} />
       </div>
       <div className="help-body">
         <div
