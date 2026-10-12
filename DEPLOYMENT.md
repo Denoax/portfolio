@@ -1,5 +1,48 @@
 # manimarami.com deployment
 
+## Current v23 rollout — 2026-10-11 local / 2026-10-12 UTC
+
+Mani authorized publication of all completed changes and the visual GitHub
+repository update. Runtime publication `0125ee7dca9dc12c6a8d12d92df643d62ebfb118`
+is a normal fast-forward from the existing remote main; its117 source and221 public
+files are byte-identical to the reviewed v23 runtime `60d83a3`. The new README
+uses original Pelagic imagery, actual v23 captures and a real recording, following
+the inspected Kona Desktop repository's banner/gallery/documentation structure.
+
+Live image: `sha256:afceb2e2e11bf8bbc0980b63810307a00013bed9e55335322b316c8c0a823afc`.
+Build/typecheck and six model contracts pass. All229 Docker output files, all229
+loopback-origin responses and all229 public HTTPS responses match the reviewed
+build. `/credits` SPA routing, missing-asset404 and canonical Pelagic HTTP200 pass.
+Actual Chromium1440×900 and390×844 flows verify entry, eight rail markers/21 fine
+marks, two-way selection, intentional media playback, keyboard brightness/Reset,
+Escape focus return, protected launch/return, persisted theme and opening replay,
+with no page errors or failed assets. Actual GitHub1440×1000/390×1000 renders load
+every visual and expand the portrait gallery. No new physical-device, WebKit,
+assistive-technology, high-refresh or listening checks are claimed.
+
+Release checkout: `/home/mani/.local/share/portfolio-releases/v23-live-20261012`.
+Checkpoint: `/home/mani/.local/share/portfolio-checkpoints/pre-v23-live-20261012T012036Z`;
+branch: `checkpoint/pre-v23-publish-20261012T012036Z`. Prior v20 image retained as
+`portfolio-portfolio:rollback-pre-v23-20261012t012036z`, pointing to
+`sha256:637107ab7b502e8f9811dc626104634b30b9a51cf5b69a78bbc3b2f6508cc69b`.
+The checkpoint stores previous container/Compose configuration and a service-only
+rollback override. Restore only the portfolio service if needed:
+
+```sh
+docker compose -p portfolio \
+  -f /home/mani/.local/share/portfolio-releases/v23-live-20261012/docker-compose.yml \
+  -f /home/mani/.local/share/portfolio-checkpoints/pre-v23-live-20261012T012036Z/rollback-v20.yaml \
+  up -d --no-build --no-deps portfolio
+```
+
+The gateway image and start time remain unchanged. Approved v2 on4173 and current
+development on4174 still return200. Full local historical source, retired worlds,
+review archive and original recordings are retained; remote main's earlier cleanup
+is preserved. [Public receipt](showcase/releases/v23/deployment.json) and
+[release provenance](RELEASE.md) identify the published authority. Full rollout
+hashes, captures and unedited flow recordings remain locally under
+`showcase/v23-evidence/deployment`.
+
 The live origin is the `portfolio` Docker Compose project in this repository on
 Mani's Linux host. Its `manimarami-portfolio` container serves compiled Vite output
 with Caddy on `http://127.0.0.1:18088`. The existing `mani-web-gateway` container

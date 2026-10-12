@@ -1,0 +1,68 @@
+{
+  "releaseRuntimeCommit": "0125ee7dca9dc12c6a8d12d92df643d62ebfb118",
+  "reviewedRuntime": "60d83a3c76f62a747893a4e9f93443a4e49c923f",
+  "reviewedEvidence": "2723359cdd5db817b855489eca6584b1cf70a6a9",
+  "reviewArchiveSHA256": "fd7d292c4d63784408f8f3807ffa8fe3f191459a65cbe6f771012f01e3e9166b",
+  "site": "https://manimarami.com/",
+  "github": "https://github.com/Denoax/portfolio",
+  "dateUTC": "2026-10-12",
+  "image": "sha256:afceb2e2e11bf8bbc0980b63810307a00013bed9e55335322b316c8c0a823afc",
+  "previousImage": "sha256:637107ab7b502e8f9811dc626104634b30b9a51cf5b69a78bbc3b2f6508cc69b",
+  "rollbackTag": "portfolio-portfolio:rollback-pre-v23-20261012t012036z",
+  "verified": {
+    "source": {
+      "src": 117,
+      "public": 221,
+      "byteIdenticalToReviewed": true
+    },
+    "outputFiles": 229,
+    "dockerMatchesReviewed": true,
+    "originMatchesReviewed": 229,
+    "httpsMatchesReviewed": 229,
+    "creditsSPA": true,
+    "missingAssets404": true,
+    "publicBrowserViewportSizes": [
+      "1440x900",
+      "390x844"
+    ],
+    "publicFlows": [
+      "opening",
+      "entry",
+      "8 majors / 21 minor marks",
+      "two-way rail selection",
+      "intentional video playback",
+      "keyboard brightness / functional reset",
+      "About Escape focus return",
+      "protected Pelagic launch / return",
+      "theme change / persisted reload",
+      "explicit opening replay"
+    ],
+    "pageErrors": 0,
+    "failedAssets": 0,
+    "githubViewportSizes": [
+      "1440x1000",
+      "390x1000"
+    ],
+    "githubVisuals": "all images loaded and gallery expanded",
+    "canonicalPelagicHTTP": 200,
+    "approvedV2AndDevelopmentPreviewHTTP": 200,
+    "gatewayImageAndStartTimeUnchanged": true
+  },
+  "limits": [
+    "No new Safari/WebKit or physical-device checks",
+    "No new assistive-technology/high-refresh/display/listening checks",
+    "Live flow recordings retained unedited; continuous human motion/listening approval not claimed"
+  ],
+  "adverse": [
+    {
+      "kind": "test harness",
+      "detail": "Initial rail count checked while route fade was still in intro because preview is preloaded. Corrected test to wait for actual hub and rail; application source unchanged."
+    }
+  ],
+  "preservation": {
+    "approvedV2": true,
+    "localReviewAndEvidence": true,
+    "previousLiveImage": true,
+    "remoteCleanup": true
+  }
+}

@@ -30,3 +30,10 @@ replaced; the public HTTPS gateway and other services are preserved. See
 Unavailable physical-device, Safari/WebKit, assistive-technology, high-refresh
 and listening checks remain unavailable. Publication is not a claim that these
 checks or continuous human motion review occurred.
+
+## Verified publication
+
+Runtime publication: `0125ee7dca9dc12c6a8d12d92df643d62ebfb118`. Live image,
+exact output matches, public browser checks and preserved rollback are recorded in
+[the deployment receipt](showcase/releases/v23/deployment.json). The active live
+portfolio and public repository showcase were checked at desktop and portrait sizes.
