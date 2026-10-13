@@ -18,6 +18,8 @@ Current scoped preview refresh: [source and decisions](docs/design/PREVIEW_MEDIA
 Recoverable checks, static manifest and current rollout evidence are at
 `/home/mani/.local/share/portfolio-checkpoints/worlds-media-20261013`.
 
+[Current preview-media deployment receipt](showcase/releases/preview-media-20261013.json).
+
 ## Historical Docker releases
 
 

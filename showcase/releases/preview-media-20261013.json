@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-13",
+  "site": "https://manimarami.com/#worlds",
+  "provider": "Vercel Hobby",
+  "project": "manimarami-portfolio",
+  "runtimeSourceCommit": "97401f08453410dea2eca6104444e5cfe4ecdb11",
+  "deploymentId": "dpl_8duL6qDaDWhjhp79RjfQudnQsjr3",
+  "previousLiveDeploymentId": "dpl_CLLhoyXA5LAzAEEYys2mZxbkvjEZ",
+  "profileSeparatorCommit": "95b016acaa558786dcb1e428c94a36a00bcecf11",
+  "mediaEntries": [
+    "Pelagic",
+    "Konatachan Desktop",
+    "Codex \u00d7 Hermes",
+    "Kattis"
+  ],
+  "verified": {
+    "buildAndTypecheck": true,
+    "stagedNewMediaAndCompiledFilesByteIdentical": 29,
+    "publicNewGifsByteIdentical": 6,
+    "publicDesktopMobilePlaybackCases": 8,
+    "localFullLoopPlaybackCases": 8,
+    "gifAndReducedMotionCases": 8,
+    "profileSeparatorCssPixels": 1,
+    "profileAdjacentGapsCssPixels": 0,
+    "creditsSpa": true,
+    "missingAsset404": true,
+    "byteCorrectVideoRange": true,
+    "temporaryBypassesRevoked": true
+  },
+  "preserved": [
+    "eight IDs/order/actions",
+    "native Portfolio gravity and GitHub activity",
+    "old preview files",
+    "approved opening and protected rendering",
+    "original Pelagic anatomy/camera/descent/Back",
+    "DNS and preview authentication",
+    "running Docker origin and gateway"
+  ],
+  "limits": [
+    "Chromium desktop/mobile emulation; physical-device/Brave/Safari approval unverified",
+    "30fps source/export cadence is not a physical display benchmark",
+    "Human visual approval not claimed"
+  ]
+}
