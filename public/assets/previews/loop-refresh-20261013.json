@@ -1,0 +1,182 @@
+{
+  "date": "2026-10-13",
+  "sourceMap": "src/content/previewRefresh.json",
+  "outputs": [
+    {
+      "key": "pelagic",
+      "variant": "landscape",
+      "frames": 225,
+      "fps": 30,
+      "files": [
+        {
+          "file": "pelagic-loop-20261013.mp4",
+          "sha256": "11da2c9724f87057a0309cdfc4c6c96379833815d604ba2d2f2e0af46614699a",
+          "bytes": 1015174
+        },
+        {
+          "file": "pelagic-loop-20261013.webm",
+          "sha256": "3259bf172ff684719ce1ea9decaf96bc7f71a84d76270a7ad76c05aa4e87faad",
+          "bytes": 792573
+        },
+        {
+          "file": "pelagic-loop-20261013.gif",
+          "sha256": "a48fe9b8c6f43afd2c2bc215f30e046af2fa015b398243eae625c5b99e83efe2",
+          "bytes": 11100314
+        },
+        {
+          "file": "pelagic-loop-20261013-poster.webp",
+          "sha256": "8e136ad960c98ef6ea359bce891ec3bfb92e1311a7484dc15c83872fd0b86363",
+          "bytes": 35314
+        }
+      ],
+      "loopEdit": "Native source lap dissolve: 0.5 seconds for Pelagic, 0.3 seconds for Kona"
+    },
+    {
+      "key": "kona",
+      "variant": "landscape",
+      "frames": 431,
+      "fps": 30,
+      "files": [
+        {
+          "file": "kona-loop-20261013.mp4",
+          "sha256": "2cec84abd63ff042aa38496a6160c62652e3d1650e7f4d25609187e6007fcda9",
+          "bytes": 1424201
+        },
+        {
+          "file": "kona-loop-20261013.webm",
+          "sha256": "5a62da92cc9de81409d8257108e1987cb475cafa018bdf50caa562cc71b312df",
+          "bytes": 856038
+        },
+        {
+          "file": "kona-loop-20261013.gif",
+          "sha256": "58d19ab8cbf52a1b66b3338f5c2c5aa3cbb58205b502c83c81e06b58d336e7b6",
+          "bytes": 14277687
+        },
+        {
+          "file": "kona-loop-20261013-poster.webp",
+          "sha256": "8b809f43874d0dd4378c3d18287836545f9fa8cb92433a7ce7b29d9c8f84beb6",
+          "bytes": 51456
+        }
+      ],
+      "loopEdit": "Native source lap dissolve: 0.5 seconds for Pelagic, 0.3 seconds for Kona"
+    },
+    {
+      "key": "codex-hermes",
+      "variant": "landscape",
+      "frames": 240,
+      "fps": 30,
+      "files": [
+        {
+          "file": "codex-hermes-loop-20261013.mp4",
+          "sha256": "b18ea46859f8c1a94705412c97c6a9bcef4823509fd43201f7247b1a4ae8efe1",
+          "bytes": 253500
+        },
+        {
+          "file": "codex-hermes-loop-20261013.webm",
+          "sha256": "04e5c4d218bf5c0be745d5c60a48fe5055ad3435c3a8c4c7f75f144fbd699ba3",
+          "bytes": 353253
+        },
+        {
+          "file": "codex-hermes-loop-20261013.gif",
+          "sha256": "c5c6b6ac641a5a2f01ceb21325cb8a8cb8d97e6d1efca9e15726e4c355ed3e35",
+          "bytes": 15675214
+        },
+        {
+          "file": "codex-hermes-loop-20261013-poster.webp",
+          "sha256": "3955c0305fea644dbdede9178d29606a5177066c5adf7a88a6841437344cccea",
+          "bytes": 55094
+        }
+      ],
+      "loopEdit": "Periodic actual-output replay"
+    },
+    {
+      "key": "codex-hermes",
+      "variant": "portrait",
+      "frames": 240,
+      "fps": 30,
+      "files": [
+        {
+          "file": "codex-hermes-loop-20261013-portrait.mp4",
+          "sha256": "9957c1d1987d6d2c1a60b47b55652cf6f530429fb9754e679a7d340ef788f843",
+          "bytes": 575803
+        },
+        {
+          "file": "codex-hermes-loop-20261013-portrait.webm",
+          "sha256": "a44c69b9c9e9a29e0d8f1086f256d64dcacfd91cb4e81ce5bf73eea365a8c9a0",
+          "bytes": 614660
+        },
+        {
+          "file": "codex-hermes-loop-20261013-portrait.gif",
+          "sha256": "6382996aaeb295349ec3bc77818b768efc5fc498dc1874d665bdc72e6268d392",
+          "bytes": 10680050
+        },
+        {
+          "file": "codex-hermes-loop-20261013-portrait.webp",
+          "sha256": "69191ba3a8118b56485ab33ea7df1fc19999bcbcd4342f26841392634bf2ad1b",
+          "bytes": 26998
+        }
+      ],
+      "loopEdit": "Periodic actual-output replay"
+    },
+    {
+      "key": "kattis",
+      "variant": "landscape",
+      "frames": 240,
+      "fps": 30,
+      "files": [
+        {
+          "file": "kattis-loop-20261013.mp4",
+          "sha256": "e6e9b3d8dd2e51e94965e7c6e831aed7d28c2f9dbf1298a8d16abb689793c684",
+          "bytes": 129855
+        },
+        {
+          "file": "kattis-loop-20261013.webm",
+          "sha256": "84478be5ff578a40e030f1664187cc926f4745b9cf54103d5fb39a60d13cecda",
+          "bytes": 154379
+        },
+        {
+          "file": "kattis-loop-20261013.gif",
+          "sha256": "85b638d8ae62f8ee8d3ab473d34cecff11e07a9bf333ccef8824b7bc0c3fdd20",
+          "bytes": 5332228
+        },
+        {
+          "file": "kattis-loop-20261013-poster.webp",
+          "sha256": "aa85d68b5c3bbe7fde9af2ead78a52ee4c3529649bfad6c84ce2b92b16257a10",
+          "bytes": 23406
+        }
+      ],
+      "loopEdit": "Periodic actual-output replay"
+    },
+    {
+      "key": "kattis",
+      "variant": "portrait",
+      "frames": 240,
+      "fps": 30,
+      "files": [
+        {
+          "file": "kattis-loop-20261013-portrait.mp4",
+          "sha256": "b14bd3e9e4852daee5f4fa9c93948d628e520820be8b355714bff1d74ccc9f41",
+          "bytes": 300057
+        },
+        {
+          "file": "kattis-loop-20261013-portrait.webm",
+          "sha256": "a9a3d166164f3e7fc8520d82b3a3e51459fc5ea16f077c9e11349651f2344f0f",
+          "bytes": 318304
+        },
+        {
+          "file": "kattis-loop-20261013-portrait.gif",
+          "sha256": "76b6e5d51f67539d47a7fd5fc6fb0b8e96f559a4003a08e76fdcc871580f611c",
+          "bytes": 5330358
+        },
+        {
+          "file": "kattis-loop-20261013-portrait.webp",
+          "sha256": "780b1033a2a6507c588059820de572b91606dd993d662f90f64b6a79ef82c743",
+          "bytes": 20112
+        }
+      ],
+      "loopEdit": "Periodic actual-output replay"
+    }
+  ],
+  "cadence": "30fps export; GIF delay quantization is 30/40ms. Not a physical device performance claim.",
+  "scope": "Pelagic, Kona, Hermes and Kattis. Other previews and native Portfolio/GitHub presentations unchanged."
+}

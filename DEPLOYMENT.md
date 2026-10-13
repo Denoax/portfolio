@@ -1,5 +1,26 @@
 # manimarami.com deployment
 
+## Current public host — 2026-10-13
+
+The public domain now uses the existing Vercel Hobby project
+`manimarami-portfolio` (`prj_JuCj3zJeUXPwe7UjZxGZmOHIod9m`) in
+`denoaxlp-4452`. Earlier Docker origin instructions below are historical/local
+recovery; they no longer publish the public website. DNS, gateway, other services
+and preview protection remain outside routine media updates.
+
+Publish a verified static build through the existing authenticated CLI and linked
+project, staging production with `deploy --prebuilt --prod --skip-domain` and
+promoting the tested build. Preserve the existing Build Output API routes and
+security/cache headers. Retain the prior production deployment ID for rollback.
+No automatic Git deployment is configured. Do not print or copy token files.
+
+Current scoped preview refresh: [source and decisions](docs/design/PREVIEW_MEDIA_REFRESH_20261013.md).
+Recoverable checks, static manifest and current rollout evidence are at
+`/home/mani/.local/share/portfolio-checkpoints/worlds-media-20261013`.
+
+## Historical Docker releases
+
+
 ## Current v24 rollout —2026-10-12
 
 Mani authorizes GitHub publication and deployment. Release a42e088dadbf0be4988cac9deb982ec402bc0a2d matches reviewed runtime 36e626398f76954f64999dbdafc83ffc62eb1209:124 source/221 public files. Build/typecheck and6 model contracts pass. All229 Docker outputs,229 origin and229 public HTTPS responses match reviewed hashes. Credits SPA/missing-asset404 and actual1440x900/390x844 public flows pass, with zero page/shader errors/missing assets. Seven refreshed GitHub gallery assets match public hashes.

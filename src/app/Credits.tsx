@@ -211,13 +211,15 @@ export function Credits() {
         </p>
         <p>
           Profile collage selected and supplied by Mani. Konatachan Desktop uses
-          genuine published Kona V3 UI footage, revision e1e8ad65, 720×405
-          at10fps. This is an unofficial fan desktop; Konata Izumi/Lucky Star
+          genuine published Kona V3 UI footage, revision e1e8ad65, 960×540
+          at 30fps. This is an unofficial fan desktop; Konata Izumi/Lucky Star
           character artwork belongs to its rights holders and is not relicensed
           by MIT. This local review does not assert artwork publication
-          clearance. Terminal demonstrations execute real source in a PTY, with
-          faithful progressive output and a coloured presentation prompt; no
-          invented tool output.
+          clearance. Hermes and Kattis previews replay actual program output in
+          original HTML at 30fps. Pelagic uses the original deepest rock-lit sanctuary.
+          Native footage loops have disclosed short lap dissolves; no
+          optical-flow or generated frames. Preview motion stays limited to the selected
+          project and stops under reduced motion.
         </p>
         <h2>Tools and typography</h2>
         <p>

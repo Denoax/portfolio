@@ -1,5 +1,6 @@
 import snapshot from './publicRepositories.json'
 import order from './projectOrder.json'
+import previewRefresh from './previewRefresh.json'
 
 export interface Project {
   id: string
@@ -111,7 +112,8 @@ const catalogue: Project[] = content.map(
       throw new Error(
         `Public catalogue entry is absent from the verified snapshot: ${name}`,
       )
-    const base = `/assets/previews/${media}`
+    const refreshed = previewRefresh.entries.find((entry) => entry.name === name)
+    const base = `/assets/previews/${refreshed?.mediaStem ?? media}`
     return {
       id: String(repo.id),
       fullName: repo.full_name,
@@ -129,11 +131,12 @@ const catalogue: Project[] = content.map(
         .accent_preserved,
       publishedRevision: repo.observed_head ?? '',
       capturedSourceRevision:
-        name === 'codex-hermes-router'
+        refreshed?.sourceRevision ??
+        (name === 'codex-hermes-router'
           ? 'ed330a88b60013a0e9377a0d4802331f4ecbd965'
           : name === 'portfolio'
             ? 'local v11 candidate based on 45c06c2; see capture manifest'
-            : (repo.observed_head ?? ''),
+            : (repo.observed_head ?? '')),
       repository: repo.html_url,
       action:
         name === 'pelagic-jellyfish-webgl'
