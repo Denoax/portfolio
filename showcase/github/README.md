@@ -3,12 +3,15 @@
 These visuals describe the actual v24 portfolio. They are documentation assets,
 excluded from the production Docker context.
 
-- Banner: the actual live site's light-theme typographic opening, captured by Iris
-  at a 1800×640 CSS-pixel viewport and 2× device scale. The full frame is converted
-  to lossless WebP without cropping, retouching, overlays or altered pixels. The
-  GitHub profile uses the same bytes. [sources-banner-intro.json](sources-banner-intro.json)
-  records the capture and output hashes. The previous Pelagic documentation
-  composition in [banner.html](banner.html) and `portfolio-banner.webp` is historical.
+- Banner: a six-second looping GIF of the actual live site's dark-theme opening.
+  Chromium captured the uninterrupted idle scene as PNG samples at a 1800×640
+  CSS-pixel viewport and 1× device scale. Recorded capture timestamps preserve its
+  original pace; the first six seconds become a 990×352, 10fps GIF with a 64-color
+  palette. No crop, overlays, retouching, camera or application changes. GIF color
+  quantization and resizing are lossy. The GitHub profile uses the same bytes.
+  [sources-banner-intro.json](sources-banner-intro.json) records the source/output
+  identity. The previous light WebP and Pelagic composition in [banner.html](banner.html)
+  and `portfolio-banner.webp` are historical.
 - Desktop and portrait stills: lossless WebP conversions of the final frozen v24
   browser captures, with no cropping, retouching or changed pixels.
 - Pelagic: byte-identical owned project poster; original anatomy and scene preserved.
