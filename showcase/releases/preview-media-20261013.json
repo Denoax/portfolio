@@ -40,5 +40,32 @@
     "Chromium desktop/mobile emulation; physical-device/Brave/Safari approval unverified",
     "30fps source/export cadence is not a physical display benchmark",
     "Human visual approval not claimed"
-  ]
+  ],
+  "currentFollowup": {
+    "date": "2026-10-13",
+    "request": "Restore original coding panels in Worlds",
+    "sourceCommit": "77345e52dca8fea4805c10f29feab61a26d51980",
+    "deploymentId": "dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq",
+    "previousLiveDeploymentId": "dpl_8duL6qDaDWhjhp79RjfQudnQsjr3",
+    "restored": [
+      "Codex \u00d7 Hermes",
+      "Kattis"
+    ],
+    "retainedRefresh": [
+      "Pelagic",
+      "Konatachan Desktop"
+    ],
+    "verified": {
+      "buildAndTypecheck": true,
+      "originalCodingAssetsByteIdentical": 16,
+      "publicOriginalCodingGifVariantsByteIdentical": 4,
+      "localDesktopMobilePlaybackCases": 4,
+      "publicDesktopMobilePlaybackCases": 4,
+      "pageErrors": 0,
+      "missingAssets": 0,
+      "previewProtectionPreserved": true,
+      "temporaryBypassesRevoked": true
+    },
+    "limits": "Chromium desktop/mobile emulation; physical-device/Safari/Brave and human visual approval unclaimed"
+  }
 }

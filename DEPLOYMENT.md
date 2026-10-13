@@ -16,7 +16,8 @@ No automatic Git deployment is configured. Do not print or copy token files.
 
 Current scoped preview refresh: [source and decisions](docs/design/PREVIEW_MEDIA_REFRESH_20261013.md).
 Recoverable checks, static manifest and current rollout evidence are at
-`/home/mani/.local/share/portfolio-checkpoints/worlds-media-20261013`.
+`/home/mani/.local/share/portfolio-checkpoints/worlds-media-20261013`; the coding-panel
+restoration is at `/home/mani/.local/share/portfolio-checkpoints/worlds-code-preview-revert-20261013`.
 
 [Current preview-media deployment receipt](showcase/releases/preview-media-20261013.json).
 
