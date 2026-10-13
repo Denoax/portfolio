@@ -1,0 +1,29 @@
+{
+  "capture": {
+    "url": "https://manimarami.com/",
+    "capturedAtUTC": "2026-10-13T03:38:32.987603+00:00",
+    "tool": "Iris",
+    "cssViewport": {
+      "width": 1800,
+      "height": 640
+    },
+    "deviceScaleFactor": 2,
+    "pixelDimensions": {
+      "width": 3600,
+      "height": 1280
+    },
+    "theme": "light (live default)",
+    "sourceFilename": "iris-live-opening.png",
+    "sourceSHA256": "3adab959682e1e9fd839b2abfefd15897c4b738444166958dff77da1488622e3",
+    "publishedPortfolioMain": "637c4441a92b8981750bc3e5378ffd848e19700f",
+    "reviewedRuntime": "36e626398f76954f64999dbdafc83ffc62eb1209"
+  },
+  "output": {
+    "file": "portfolio-intro-banner.webp",
+    "sha256": "016766899da3db60177384cae55b1b44c40c6b505c2b54c79f731687c564dd6e",
+    "bytes": 1078082,
+    "conversion": "Lossless WebP. Whole frame; no crop, resize, retouching or overlays. Decoded RGB pixels verified identical to the PNG.",
+    "profileCopy": "Denoax/Denoax: assets/tabs/portfolio-intro.webp"
+  },
+  "scope": "Documentation only. No application or deployment changes. Previous banner artwork retained as historical."
+}

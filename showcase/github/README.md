@@ -3,9 +3,12 @@
 These visuals describe the actual v24 portfolio. They are documentation assets,
 excluded from the production Docker context.
 
-- Banner: original HTML/CSS in [banner.html](banner.html), composed with the existing
-  original Pelagic poster and licensed Inter font. It is a documentation composition,
-  not a screenshot of an additional application screen.
+- Banner: the actual live site's light-theme typographic opening, captured by Iris
+  at a 1800×640 CSS-pixel viewport and 2× device scale. The full frame is converted
+  to lossless WebP without cropping, retouching, overlays or altered pixels. The
+  GitHub profile uses the same bytes. [sources-banner-intro.json](sources-banner-intro.json)
+  records the capture and output hashes. The previous Pelagic documentation
+  composition in [banner.html](banner.html) and `portfolio-banner.webp` is historical.
 - Desktop and portrait stills: lossless WebP conversions of the final frozen v24
   browser captures, with no cropping, retouching or changed pixels.
 - Pelagic: byte-identical owned project poster; original anatomy and scene preserved.
@@ -13,7 +16,7 @@ excluded from the production Docker context.
   at 15fps at its original pace. Its palette conversion is for GitHub preview only.
   Original WebM evidence remains local.
 
-Exact source/output hashes and runtime revision are in [sources-v24.json](sources-v24.json), with retained banner/opening provenance in [sources.json](sources.json).
+Gallery source/output hashes and runtime revision are in [sources-v24.json](sources-v24.json), with historical banner/opening provenance in [sources.json](sources.json).
 The reference is [Kona Desktop](https://github.com/Denoax/konata-hyprland-dotfiles)
 at `e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6`. Actual GitHub layout was inspected.
 Its wide banner, centered intro, screenshot-led sections, paired comparisons and
