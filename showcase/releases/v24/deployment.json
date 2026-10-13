@@ -1,0 +1,65 @@
+{
+  "releaseRuntimeCommit": "a42e088dadbf0be4988cac9deb982ec402bc0a2d",
+  "reviewedRuntime": "36e626398f76954f64999dbdafc83ffc62eb1209",
+  "reviewedEvidence": "68f48b15a4da998fd44969847fd57c6ad79903a4",
+  "reviewArchiveSHA256": "598fa56b6a7490f2f7f6af8fa94621ff57e66aa3ceb6786dd0561135c9809ee9",
+  "site": "https://manimarami.com/",
+  "github": "https://github.com/Denoax/portfolio",
+  "dateLocal": "2026-10-12",
+  "image": "sha256:e1c5a2d4ffb9cb491508c6717086bf50921c6551b278057d5dc29dfc6d95a8a6",
+  "previousImage": "sha256:afceb2e2e11bf8bbc0980b63810307a00013bed9e55335322b316c8c0a823afc",
+  "rollbackTag": "portfolio-portfolio:rollback-pre-v24-20261013t030501z",
+  "verified": {
+    "source": {
+      "src": 124,
+      "public": 221,
+      "byteIdenticalToReviewed": true
+    },
+    "outputFiles": 229,
+    "dockerMatchesReviewed": true,
+    "originMatchesReviewed": 229,
+    "httpsMatchesReviewed": 229,
+    "creditsSPA": true,
+    "missingAssets404": true,
+    "publicBrowserViewportSizes": [
+      "1440x900",
+      "390x844"
+    ],
+    "publicFlows": [
+      "opening/entry",
+      "8 major/21 minor ticks and two-way selection",
+      "actual hover video",
+      "keyboard brightness/Reset",
+      "Escape/focus return",
+      "protected Pelagic launch/return",
+      "theme/persisted reload",
+      "opening replay"
+    ],
+    "pageErrors": 0,
+    "shaderConsoleErrors": 0,
+    "failedAssets": 0,
+    "githubVisualHashesMatched": [
+      "projects-light.webp",
+      "projects-dark.webp",
+      "settings-light.webp",
+      "settings-dark.webp",
+      "mobile-projects.webp",
+      "mobile-settings.webp",
+      "interaction.gif"
+    ],
+    "gatewayIdImageStartUnchanged": true,
+    "previewsHTTP": 200
+  },
+  "limits": [
+    "No new physical-device/Safari/AT/high-refresh/listening approval",
+    "Continuous human motion approval not claimed",
+    "Private handoffs/full recordings/history retained locally"
+  ],
+  "preservation": {
+    "approvedV2": true,
+    "originalPelagic": true,
+    "localPreviewAndEvidence": true,
+    "previousV23Image": true,
+    "remoteCleanup": true
+  }
+}

@@ -1,6 +1,23 @@
 # manimarami.com deployment
 
-## Current v23 rollout — 2026-10-11 local / 2026-10-12 UTC
+## Current v24 rollout —2026-10-12
+
+Mani authorizes GitHub publication and deployment. Release a42e088dadbf0be4988cac9deb982ec402bc0a2d matches reviewed runtime 36e626398f76954f64999dbdafc83ffc62eb1209:124 source/221 public files. Build/typecheck and6 model contracts pass. All229 Docker outputs,229 origin and229 public HTTPS responses match reviewed hashes. Credits SPA/missing-asset404 and actual1440x900/390x844 public flows pass, with zero page/shader errors/missing assets. Seven refreshed GitHub gallery assets match public hashes.
+
+[Deployment receipt](showcase/releases/v24/deployment.json). Image: `sha256:e1c5a2d4ffb9cb491508c6717086bf50921c6551b278057d5dc29dfc6d95a8a6`.
+
+Release checkout: `/home/mani/.local/share/portfolio-releases/v24-live-20261013T030501Z`. Checkpoint: `/home/mani/.local/share/portfolio-checkpoints/pre-v24-live-20261013T030501Z`. Previous v23 image retained under `portfolio-portfolio:rollback-pre-v24-20261013t030501z`. Only portfolio service recreated; gateway ID/image/start unchanged. Approved v2 4173/development4174/evidence4180 restored and return200. Full history/review ZIP preserved. No new physical/Safari/AT/high-refresh/listening approval.
+
+Service-only rollback:
+
+```sh
+docker compose -p portfolio \
+  -f /home/mani/.local/share/portfolio-releases/v24-live-20261013T030501Z/docker-compose.yml \
+  -f /home/mani/.local/share/portfolio-checkpoints/pre-v24-live-20261013T030501Z/rollback-v23.yaml \
+  up -d --no-build --no-deps portfolio
+```
+
+## Historical v23 rollout — 2026-10-11 local / 2026-10-12 UTC
 
 Mani authorized publication of all completed changes and the visual GitHub
 repository update. Runtime publication `0125ee7dca9dc12c6a8d12d92df643d62ebfb118`

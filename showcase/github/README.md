@@ -19,9 +19,9 @@ at `e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6`. Actual GitHub layout was inspecte
 Its wide banner, centered intro, screenshot-led sections, paired comparisons and
 collapsible gallery informed the format. Kona's artwork was not copied.
 
-Rebuild with `node scripts/github-showcase.mjs` from the complete local checkout,
-or set `EVIDENCE_ROOT` to the preserved v23 evidence directory. The compact public
-release excludes internal handoff packages and full historical recordings.
+V24 uses exact owned captures recorded in sources-v24.json. Full originals remain
+in the local review archive. scripts/github-showcase.mjs is the historical v23
+generator; public release excludes private handoffs and full recordings.
 Pelagic, font and project-media notices remain under `public/licenses` and
 `public/assets/notices`; complete attribution is available on the live `/credits` page.
 No model-generated media were used.

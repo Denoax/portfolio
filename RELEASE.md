@@ -24,3 +24,9 @@ input/AT/Safari/high-refresh/hearing or continuous human motion approval.
 The runtime/asset hashes, live checks and final push identity are recorded in
 showcase/releases/v24/deployment.json after rollout. The previous v23 image is
 retained for service-only rollback. No gateway, driver or external Pelagic edits.
+
+## Verified publication
+
+All229 image/origin/HTTPS outputs match reviewed hashes. Actual public desktop/
+portrait flows pass; seven updated GitHub assets match served hashes. V23 rollback
+retained, gateway unchanged, previews restored. [Receipt](showcase/releases/v24/deployment.json).
