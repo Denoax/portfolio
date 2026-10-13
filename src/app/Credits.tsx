@@ -215,11 +215,12 @@ export function Credits() {
           at 30fps. This is an unofficial fan desktop; Konata Izumi/Lucky Star
           character artwork belongs to its rights holders and is not relicensed
           by MIT. This local review does not assert artwork publication
-          clearance. Hermes and Kattis previews replay actual program output in
-          original HTML at 30fps. Pelagic uses the original deepest rock-lit sanctuary.
-          Native footage loops have disclosed short lap dissolves; no
-          optical-flow or generated frames. Preview motion stays limited to the selected
-          project and stops under reduced motion.
+          clearance. Terminal demonstrations execute real source in a PTY, with
+          faithful progressive output and a coloured presentation prompt; no
+          invented tool output. Pelagic uses the original deepest rock-lit
+          sanctuary. Native footage loops have disclosed short lap dissolves;
+          no optical-flow or generated frames. Preview motion stays limited to
+          the selected project and stops under reduced motion.
         </p>
         <h2>Tools and typography</h2>
         <p>

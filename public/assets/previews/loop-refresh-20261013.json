@@ -178,5 +178,13 @@
     }
   ],
   "cadence": "30fps export; GIF delay quantization is 30/40ms. Not a physical device performance claim.",
-  "scope": "Pelagic, Kona, Hermes and Kattis. Other previews and native Portfolio/GitHub presentations unchanged."
+  "scope": "Pelagic and Kona remain active. Codex \u00d7 Hermes and Kattis use the original preview files again; their loop exports below are historical and unchanged. Other previews/native presentations unchanged.",
+  "activeKeys": [
+    "pelagic",
+    "kona"
+  ],
+  "archivedKeys": [
+    "codex-hermes",
+    "kattis"
+  ]
 }

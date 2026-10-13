@@ -1,6 +1,6 @@
 {
   "date": "2026-10-13",
-  "scope": "Four existing media entries only. Keep Portfolio live gravity and GitHub live activity, other media, eight real project IDs/order/actions and protected travel unchanged.",
+  "scope": "Active refresh for Pelagic and Kona only. Codex \u00d7 Hermes and Kattis restored to their original Worlds previews at the user request. Preserve other media, eight IDs/order/actions, native fields and protected travel.",
   "entries": [
     {
       "name": "pelagic-jellyfish-webgl",
@@ -15,20 +15,6 @@
       "sourceRevision": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
       "source": "https://github.com/Denoax/konata-hyprland-dotfiles/tree/e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
       "note": "Original native Kona V3 master at 1000/33fps, sampled at 30fps. Reused full 960x540 frames; Wi-Fi SSID and weather privacy edits retained, 0.3s lap dissolve. No upscale or optical-flow frames. Konata artwork remains owned by its rights holders."
-    },
-    {
-      "name": "codex-hermes-router",
-      "mediaStem": "codex-hermes-loop-20261013",
-      "sourceRevision": "36d0bf560e3dcd99f1eadcaffe97da7af2d469cc",
-      "source": "https://github.com/Denoax/codex-hermes-router/tree/36d0bf560e3dcd99f1eadcaffe97da7af2d469cc",
-      "note": "Actual hermes-worker scout --help transcript, replayed in independently authored HTML. Clean 1280x720 and 720x405 compositions, 240 frames at 30fps. No worker invocation or invented output. Output/replay captions removed."
-    },
-    {
-      "name": "Kattis",
-      "mediaStem": "kattis-loop-20261013",
-      "sourceRevision": "0cc95c2c88cc19e93f87ff92e070932cb4ac1435",
-      "source": "https://github.com/Denoax/Kattis/tree/0cc95c2c88cc19e93f87ff92e070932cb4ac1435",
-      "note": "Actual compiled Baloni.cpp result: input 5 / 2 1 5 4 3, output 2. Original HTML documentation replay, 1280x720 and 720x405 compositions, 240 frames at 30fps. Output/replay captions removed."
     }
   ]
 }
