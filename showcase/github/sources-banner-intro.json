@@ -1,36 +1,55 @@
 {
   "capture": {
-    "url": "https://manimarami.com/",
-    "capturedAtUTC": "2026-10-13T03:59:09.925602+00:00",
-    "tool": "Playwright / Chromium (actual live page)",
+    "source": "Original portfolio Ringwriter renderer in the existing local preview",
+    "url": "http://127.0.0.1:4174/",
+    "capturedAtUTC": "2026-10-13T04:21:41.729304+00:00",
     "cssViewport": {
-      "width": 1800,
-      "height": 640
+      "width": 1440,
+      "height": 512
     },
     "deviceScaleFactor": 1,
     "theme": "dark",
     "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4070/PCIe/SSE2, OpenGL ES 3.2)",
-    "source": "Chronological original PNG browser samples with recorded capture timestamps. First six seconds only. Full originals retained locally.",
-    "sourceFrameManifestSHA256": "855e7523ccfc1ca6032c0d99ae82dbc476b824891bc782d0f738363298874f16",
-    "capturedFrames": 72,
-    "publishedPortfolioMain": "cbb5880be64f128d971da1d7208988155f9cbb77",
-    "reviewedRuntime": "36e626398f76954f64999dbdafc83ffc62eb1209"
+    "method": "Deterministic original-scene export at 240 evenly spaced phases. Real hint already faded; rotational phase fixed; original shader six-octave zoom cycle. Capture-only scale1.2 and initial zoom0.38. Site source/deployment unchanged.",
+    "sourceFilesSHA256": {
+      "src/experience/hub/Ringwriter.ts": "17f8ded9e82872d59457beca2a58a1864c469093aeb3cf745e0a660173196fdd",
+      "src/core/introZoom.ts": "f5f0934016dbfe6316957744a39fe71335110089721867cae2e22d1c685a63e6",
+      "src/experience/hub/HubScene.tsx": "d78197efbb514460e6b633b0c1105d8c820a2efc145f779ee483d4c7504862c8"
+    },
+    "frameManifestSHA256": "939c8d52d8b3039878381125cacc21feee2d03977f83ae204b011e88fbf0977a",
+    "exportScriptSHA256": "149b08a570b65dc16a823524e378d984705a126dce7b42f2f0e9a81ebfa35a04",
+    "reviewedRuntime": "36e626398f76954f64999dbdafc83ffc62eb1209",
+    "publishedPortfolioMainBeforeBannerUpdate": "425abe55f2fd931e989a55ad1053fc57ed395be0"
   },
   "output": {
-    "file": "portfolio-intro-dark.gif",
-    "sha256": "2eafd0ef6a2ca02f78b624b8657689f5298e5791722c96e5e615a1ab71817de4",
-    "bytes": 6869492,
+    "file": "portfolio-intro-zoom-loop.gif",
+    "sha256": "5fdeaec8956918e0aab31765976447df34dd5825f6836390cae5409c0a6f499f",
+    "bytes": 15321794,
     "dimensions": {
       "width": 990,
       "height": 352
     },
-    "frames": 60,
-    "durationMs": 6000,
-    "framesPerSecond": 10,
-    "paletteColors": 64,
+    "frames": 240,
+    "uniqueFrames": 240,
+    "durationMs": 8000,
+    "framesPerSecond": 30,
+    "frameDelaysMs": [
+      30,
+      40
+    ],
+    "paletteColors": 32,
     "loop": "infinite",
-    "conversion": "Original capture timing, whole frame, Lanczos resize and GIF color quantization. No overlays, retouching, invented motion or application/camera changes. Resize/palette conversion is lossy.",
-    "profileCopy": "Denoax/Denoax: assets/tabs/portfolio-intro-dark.gif"
+    "zoomOctavesPerCycle": 6,
+    "framingScale": 1.2,
+    "conversion": "Original shader scene exported as PNG frames, Lanczos resize, global GIF palette. No crossfade, reverse playback, duplicated hold frames or model-generated imagery. GIF resizing/palette conversion is lossy.",
+    "profileCopy": "Denoax/Denoax: assets/tabs/portfolio-intro-zoom-loop.gif"
   },
-  "scope": "Documentation only. Application and deployed image unchanged. Prior static banners retained as historical."
+  "validation": {
+    "hintOpacityAtCapture": "0",
+    "sourceCycleEndpointMeanRGBError": 0.020247395833333334,
+    "encodedLastToFirstMeanRGBDifference": 9.343702173247628,
+    "encodedAdjacentMeanRGBDifferenceMax": 11.476768633302724,
+    "scope": "Source/encoded cycle continuity and frame timing, not human approval or a physical-display performance measurement."
+  },
+  "scope": "Documentation GIFs only. Application/deployed image unchanged. Full export frames and previous banner backups retained locally."
 }

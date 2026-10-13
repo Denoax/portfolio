@@ -3,15 +3,18 @@
 These visuals describe the actual v24 portfolio. They are documentation assets,
 excluded from the production Docker context.
 
-- Banner: a six-second looping GIF of the actual live site's dark-theme opening.
-  Chromium captured the uninterrupted idle scene as PNG samples at a 1800×640
-  CSS-pixel viewport and 1× device scale. Recorded capture timestamps preserve its
-  original pace; the first six seconds become a 990×352, 10fps GIF with a 64-color
-  palette. No crop, overlays, retouching, camera or application changes. GIF color
-  quantization and resizing are lossy. The GitHub profile uses the same bytes.
+- Banner: an eight-second, 30fps infinite zoom GIF exported from the original
+  dark-theme Ringwriter renderer: 240 distinct frames, 990×352 and a 32-color palette.
+  Capture begins after the real opening hint has faded. A documentation-only export
+  renders the shader's complete six-octave period, with 20% closer framing and its
+  rotational phase held fixed so the cycle closes. This is a controlled scene export,
+  not an unedited live recording. Application code and deployed behavior are unchanged.
+  The cycle endpoint matches its start within 0.021 mean RGB levels out of 255;
+  the encoded wrap step stays within the cycle's ordinary adjacent-frame range.
+  GIF resizing/palette conversion is lossy. The profile uses the same bytes.
   [sources-banner-intro.json](sources-banner-intro.json) records the source/output
-  identity. The previous light WebP and Pelagic composition in [banner.html](banner.html)
-  and `portfolio-banner.webp` are historical.
+  identity. The previous 10fps GIF, light WebP and Pelagic composition in
+  [banner.html](banner.html) are historical.
 - Desktop and portrait stills: lossless WebP conversions of the final frozen v24
   browser captures, with no cropping, retouching or changed pixels.
 - Pelagic: byte-identical owned project poster; original anatomy and scene preserved.

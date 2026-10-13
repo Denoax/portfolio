@@ -3,7 +3,7 @@
 > V24 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
 
 <a href="https://manimarami.com/">
-  <img src="showcase/github/portfolio-intro-dark.gif" alt="Portfolio intro — animated dark-mode concentric typography, captured from the live site" width="100%">
+  <img src="showcase/github/portfolio-intro-zoom-loop.gif" alt="Portfolio intro — closer dark-mode infinite zoom loop from the original site renderer" width="100%">
 </a>
 
 # Mani Marami Milani · Portfolio
