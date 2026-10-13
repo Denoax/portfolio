@@ -411,8 +411,6 @@ html[data-static-pose='pelagic'] .static-earth {
   width: 38%;
   height: 58%;
   pointer-events: auto;
-  opacity: var(--menu-opacity);
-  transform: translateY(var(--menu-offset));
 }
 .menu-project h1 {
   font-family: 'Six Caps', sans-serif;
@@ -876,8 +874,6 @@ html:has(.selection-hub) {
 /* R3F retires asynchronously after context loss. Static content must remain
    visible even if that renderer writes one last intro/scroll frame inline. */
 .selection-hub[data-static='true'] .menu-stage {
-  --menu-opacity: 1 !important;
-  --menu-offset: 0px !important;
 }
 .menu-projected-target {
   position: absolute;

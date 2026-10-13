@@ -4,9 +4,10 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityProfile } from '../../core/quality'
 import type { ExperiencePreferences } from '../../core/experienceSettings'
-import { menuViews, reelPose } from '../../core/menuReel'
+import { menuViews } from '../../core/menuReel'
 import type { MenuPresentation } from '../../core/menuReel'
 import { panelTransform } from '../../core/projectedPanel'
+import { counterReelPose, pairedReelLayout } from '../../core/pairedReel'
 import { HoverPerimeter, perimeterGLSL } from './HoverPerimeter'
 import { Ringwriter } from './Ringwriter'
 import { displayedThemeMix } from '../../core/theme'
@@ -42,6 +43,25 @@ export function HubScene({
   onFailure: () => void
   previews: PreviewPlayback
 }) {
+  const textProjection = useMemo(() => new THREE.Object3D(), [])
+  const textCorners = useMemo(
+    () => [
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+    ],
+    [],
+  )
+  const textPoints = useMemo(
+    () => [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    [],
+  )
   const { gl, size, scene, camera } = useThree()
   const groups = useRef<(THREE.Group | null)[]>([])
   const loaded = useRef(false)
@@ -364,36 +384,24 @@ export function HubScene({
     for (let i = 0; i < menuViews.length; i++) {
       const group = groups.current[i]
       if (!group) continue
-      const pose = reelPose(i, menu.rendered)
-      const cssWidth = portrait
-        ? Math.min(
-            size.width - 96,
-            ((short ? size.height * 0.25 : size.height * 0.32) * 16) / 9,
-          )
-        : Math.min(
-            size.width * (short ? 0.42 : 0.49),
-            (size.height * 0.64 * 16) / 9,
-          )
-      const cssHeight = (cssWidth * 9) / 16
+      const pose = counterReelPose(i, menu.rendered, menuViews.length, 'media')
+      const layout = pairedReelLayout(size.width, size.height)
+      const {
+        width: cssWidth,
+        height: cssHeight,
+        x: centerX,
+        y: centerY,
+      } = layout.media
       const panelWidth = (cssWidth / size.height) * height,
-        panelHeight = (panelWidth * 9) / 16
-      const centerX = portrait
-        ? (size.width - 56) / 2
-        : size.width * (short ? 0.62 : 0.675)
-      const centerY = portrait
-        ? short
-          ? size.height * 0.32
-          : size.height * 0.265
-        : size.height * 0.47
-      const spacing =
-        (((cssHeight + (portrait ? 10 : 36)) / size.height) * height) / 1.9
+        panelHeight = (cssHeight / size.height) * height
+      const spacing = ((layout.spacing / size.height) * height) / 1.9
       group.position.set(
         (centerX / size.width - 0.5) * width,
         (0.5 - centerY / size.height) * height + pose.y * spacing,
-        pose.z * 0.55,
+        pose.z,
       )
       group.rotation.set(
-        -pose.angle,
+        pose.pitch,
         portrait ? -0.025 : 0.1,
         portrait ? -0.006 : -0.012,
       )
@@ -494,13 +502,76 @@ export function HubScene({
         `${(0.05 / 2.25) * size.height}px`,
       )
     }
-    if (menu.stage) {
-      const phase = Math.sin(menu.rendered * (menuViews.length - 1) * Math.PI)
-      menu.stage.style.setProperty(
-        '--menu-opacity',
-        String(reveal * (1 - 0.65 * phase * phase)),
+    // Frameless native text shares the right reel's actual camera and pose.
+    const layout = pairedReelLayout(size.width, size.height)
+    for (const [id, target] of menu.textTargets) {
+      const index = menuViews.findIndex((view) => view.id === id)
+      if (index < 0) continue
+      const pose = counterReelPose(
+        index,
+        menu.rendered,
+        menuViews.length,
+        'text',
       )
-      menu.stage.style.setProperty('--menu-offset', `${-phase * 14}px`)
+      const bounds = layout.text
+      textProjection.position.set(
+        (bounds.x / size.width - 0.5) * width,
+        (0.5 - bounds.y / size.height) * height +
+          (pose.y * (layout.spacing / size.height) * height) / 1.9,
+        pose.z,
+      )
+      textProjection.rotation.set(
+        pose.pitch,
+        portrait ? 0.025 : -0.035,
+        portrait ? 0.006 : 0.004,
+      )
+      textProjection.scale.set(
+        (bounds.width / size.height) * height,
+        (bounds.height / size.height) * height,
+        1,
+      )
+      textProjection.updateMatrixWorld()
+      for (let corner = 0; corner < 4; corner++) {
+        const p = textCorners[corner]
+        p.set(
+          corner === 0 || corner === 3 ? -0.5 : 0.5,
+          corner < 2 ? 0.5 : -0.5,
+          0,
+        )
+        p.applyMatrix4(textProjection.matrixWorld).project(camera)
+        textPoints[corner].x = ((p.x + 1) * size.width) / 2
+        textPoints[corner].y = ((1 - p.y) * size.height) / 2
+      }
+      const points = textPoints
+      if (index === selected) {
+        const xs = points.map((p) => p.x),
+          ys = points.map((p) => p.y)
+        resources.glass.material.uniforms.uQuiet.value.set(
+          Math.min(...xs) / size.width,
+          Math.min(...ys) / size.height,
+          Math.max(...xs) / size.width,
+          Math.max(...ys) / size.height,
+        )
+      }
+      target.style.left = '0px'
+      target.style.top = '0px'
+      target.style.width = `${bounds.width}px`
+      target.style.height = `${bounds.height}px`
+      target.style.transform = panelTransform(
+        points,
+        bounds.width,
+        bounds.height,
+      )
+      target.style.setProperty('--text-slot-width', `${bounds.width}px`)
+      target.style.setProperty('--text-slot-height', `${bounds.height}px`)
+      const distance = Math.abs(index - menu.rendered * (menuViews.length - 1))
+      target.style.opacity = String(
+        reveal * Math.max(0, 1 - Math.pow(distance / 1.12, 2)),
+      )
+      target.style.visibility =
+        distance < 1.12 && reveal > 0.001 ? 'visible' : 'hidden'
+      target.dataset.ready = 'true'
+      target.dataset.displayedPose = String(menu.rendered)
     }
   }, -1)
   useFrame((_, dt) => {

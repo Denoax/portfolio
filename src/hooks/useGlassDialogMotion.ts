@@ -1,63 +1,55 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { RefObject } from 'react'
+import { paneFlights } from '../experience/glass/PaneFlights'
 
-// Retarget from the displayed pane, including an opening interrupted by Close.
-// The parent retains the pane until the closing frame settles. Input ownership
-// belongs to its modal or nonmodal controller.
+// Visibility/focus belongs to the native owner. Decorative exit paint never
+// holds a pane open or gates a resource selection behind its settling time.
 export function useGlassDialogMotion(
   dialog: RefObject<HTMLElement | null>,
   open: boolean,
   onClose: () => void,
+  trigger?: RefObject<HTMLElement | null> | HTMLElement | string,
 ) {
-  const animation = useRef<Animation | null>(null)
-  const closing = useRef(false)
-  const callback = useRef(onClose)
+  const callback = useRef(onClose),
+    closing = useRef(false),
+    generation = useRef(0)
   callback.current = onClose
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open || !dialog.current) return
-    closing.current = false
-    const node = dialog.current
-    animation.current?.cancel()
-    animation.current = node.animate(
-      [
-        { opacity: 0, transform: 'translateY(12px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ],
-      {
-        duration: matchMedia('(prefers-reduced-motion:reduce)').matches
-          ? 0
-          : 140,
-        easing: 'cubic-bezier(.2,.7,.2,1)',
-        fill: 'forwards',
-      },
-    )
-    return () => {
-      animation.current?.cancel()
-      animation.current = null
-    }
-  }, [open, dialog])
-  return () => {
-    if (closing.current || !dialog.current) return
-    closing.current = true
     const node = dialog.current,
-      style = getComputedStyle(node)
-    const current = { opacity: style.opacity, transform: style.transform }
-    animation.current?.cancel()
-    const exit = node.animate(
-      [current, { opacity: 0, transform: 'translateY(8px)' }],
-      {
-        duration: matchMedia('(prefers-reduced-motion:reduce)').matches
-          ? 0
-          : 160,
-        easing: 'ease-out',
-        fill: 'forwards',
-      },
-    )
-    animation.current = exit
-    exit.finished
-      .then(() => {
-        if (animation.current === exit) callback.current()
-      })
-      .catch(() => {})
+      token = ++generation.current
+    closing.current = false
+    const supplied =
+      typeof trigger === 'string'
+        ? document.querySelector<HTMLElement>(trigger)
+        : trigger instanceof HTMLElement
+          ? trigger
+          : trigger?.current
+    const origin =
+      supplied ??
+      (document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null)
+    // All native show()/anchor layout effects complete before measuring paint.
+    // This microtask still runs before the browser presents an opening frame.
+    queueMicrotask(() => {
+      if (generation.current !== token || !node.isConnected || closing.current)
+        return
+      const visibleOrigin = origin?.getClientRects().length
+        ? origin
+        : document.querySelector<HTMLElement>('.utility-toggle')
+      paneFlights.request(node, true, visibleOrigin)
+    })
+    return () => {
+      generation.current++
+      if (!closing.current) paneFlights.request(node, false)
+    }
+  }, [open, dialog, trigger])
+  return () => {
+    if (closing.current) return
+    closing.current = true
+    generation.current++
+    if (dialog.current) paneFlights.request(dialog.current, false)
+    callback.current()
   }
 }

@@ -7,7 +7,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import type { MenuPresentation } from '../core/menuReel'
 import { menuViews } from '../core/menuReel'
-import { railPosition } from '../core/railPosition'
+import { fineTickWeight, fineTickWidth } from '../core/fineTickWave'
 export interface RailLocation {
   id: string
   label: string
@@ -114,6 +114,7 @@ function MinorDash({
   scrollY,
   pose,
   reduced,
+  envelope,
 }: {
   y: number
   coordinate: number
@@ -123,17 +124,19 @@ function MinorDash({
   scrollY: MotionValue<number>
   pose: MotionValue<number>
   reduced: boolean
+  envelope: MotionValue<number>
 }) {
   const distance = useTransform(
     () => mouseY.get() - (rootY.get() + y - scrollY.get()),
   )
-  const target = useTransform(distance, [-75, 0, 75], [10 / 32, 1, 10 / 32], {
-    clamp: true,
-  })
+  const target = useTransform(
+    () =>
+      fineTickWidth(pose.get(), coordinate, distance.get(), envelope.get()) /
+      32,
+  )
   const scale = useSpring(target, { stiffness: 420, damping: 36, mass: 0.65 })
   const opacity = useTransform(
-    pose,
-    (p) => 0.25 + 0.55 * Math.max(0, 1 - Math.abs(p - coordinate) * 2),
+    () => 0.25 + 0.4 * fineTickWeight(pose.get(), coordinate) * envelope.get(),
   )
   return (
     <motion.span
@@ -165,7 +168,14 @@ function MinorMarks({
   locked: MotionValue<string | null>
 }) {
   const [centers, setCenters] = useState<number[]>([])
-  const position = useRef<HTMLSpanElement>(null)
+  const envelopeTarget = useTransform(locked, (id): number =>
+    id === null ? 1 : 0,
+  )
+  const envelope = useSpring(envelopeTarget, {
+    stiffness: 420,
+    damping: 36,
+    mass: 0.65,
+  })
   const rootY = useMotionValue(0),
     scrollY = useMotionValue(0)
   useEffect(() => {
@@ -198,29 +208,6 @@ function MinorMarks({
       window.visualViewport?.removeEventListener('scroll', measure)
     }
   }, [root, locations, rootY, scrollY])
-  useLayoutEffect(() => {
-    const paintPosition = (p: number) => {
-      if (position.current)
-        position.current.style.top = `${railPosition(p, centers)}px`
-    }
-    paintPosition(pose.get())
-    // Paint with the displayed-pose update, not a later Motion render frame.
-    return pose.on('change', paintPosition)
-  }, [pose, centers])
-  const positionHue = useTransform(pose, (p) => {
-    const index = Math.max(0, Math.min(locations.length - 1, p)),
-      i = Math.floor(index),
-      fraction = index - i
-    return `color-mix(in srgb, ${locations[i].hue} ${(1 - fraction) * 100}%, ${locations[Math.min(i + 1, locations.length - 1)].hue})`
-  })
-  const opacityTarget = useTransform(locked, (id): number =>
-    id === null ? 0.85 : 0,
-  )
-  const opacity = useSpring(opacityTarget, {
-    stiffness: 420,
-    damping: 36,
-    mass: 0.65,
-  })
   return (
     <>
       {centers
@@ -237,18 +224,10 @@ function MinorMarks({
               scrollY={scrollY}
               pose={pose}
               reduced={reduced}
+              envelope={reduced ? envelopeTarget : envelope}
             />
           )),
         )}
-      <motion.span
-        ref={position}
-        className="rail-position"
-        aria-hidden="true"
-        style={{
-          backgroundColor: positionHue,
-          opacity: reduced ? opacityTarget : opacity,
-        }}
-      />
     </>
   )
 }
@@ -343,10 +322,7 @@ export function GlobalProximityRail({
     }
     // Clear cached glow in the actual native scroll event, before a React
     // commit/RAF can leave a stale major lit. This never writes scroll/selection.
-    const native =
-      surface === 'hub'
-        ? presentation.current.stage?.closest('.menu-scroll')
-        : null
+    const native = surface === 'hub' ? presentation.current.scrollElement : null
     const departed = () => locked.set(null)
     native?.addEventListener('scroll', departed, { passive: true })
     tick()

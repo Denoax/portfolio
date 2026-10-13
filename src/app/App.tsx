@@ -206,8 +206,11 @@ function Home({ route }: { route: string }) {
   const previews = useMemo(() => new PreviewPlayback(), [])
   const [utilitiesOpen, setUtilitiesOpen] = useState(false)
   const utilityPanel = useRef<HTMLDivElement>(null)
-  const closeUtilities = useGlassDialogMotion(utilityPanel, utilitiesOpen, () =>
-    setUtilitiesOpen(false),
+  const closeUtilities = useGlassDialogMotion(
+    utilityPanel,
+    utilitiesOpen,
+    () => setUtilitiesOpen(false),
+    '.utility-toggle',
   )
   const returnStarted = useRef(0)
   const settingsButton = useRef<HTMLButtonElement>(null),

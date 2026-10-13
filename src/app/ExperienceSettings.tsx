@@ -28,7 +28,7 @@ export function ExperienceSettings({
 }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const [cancelEpoch, setCancelEpoch] = useState(0)
-  const animateClose = useGlassDialogMotion(dialog, open, onClose)
+  const animateClose = useGlassDialogMotion(dialog, open, onClose, trigger)
   const close = () => {
     setCancelEpoch((n) => n + 1)
     animateClose()
@@ -90,7 +90,8 @@ export function ExperienceSettings({
           </label>
           <button
             type="button"
-            className="settings-reset"
+            className="ui-action settings-reset"
+            data-glass-lens="button"
             onClick={() => {
               // Sliders reconcile in layout effects before another input/RAF.
               setCancelEpoch((epoch) => epoch + 1)

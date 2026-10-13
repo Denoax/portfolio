@@ -12,6 +12,27 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
+          Flying pane tiles studied from{' '}
+          <a href="https://www.inspora.design/posts/flying-dropdown-menu">
+            George / @vanjek — Flying Dropdown Menu
+          </a>
+          . Original instanced fan, assembly and retraction with this site's
+          measured native content. Creator code and exact source fidelity are
+          unverified; no reference footage is used in the interface.
+        </p>
+        <p>
+          Glass curvature studied from{' '}
+          <a href="https://codepen.io/shingidad/pen/jEPxMgW">
+            shingidad — Liquid Glass Shader
+          </a>
+          ; coherent coordinate motion studied from{' '}
+          <a href="https://codepen.io/TomHinton/pen/EajJrBd">
+            Tom Hinton — Waves
+          </a>
+          . Independently authored bounded optics and depth in the existing
+          renderer; reference photos and patterns are not runtime assets.
+        </p>
+        <p>
           Interface SFX Pack 1 by{' '}
           <a href="https://obsydianx.itch.io/interface-sfx-pack-1">ObsydianX</a>
           ; Ambient Relaxing Loop and Underwater Ambient Pad by{' '}

@@ -1,5 +1,7 @@
 <div align="center">
 
+> V24 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
+
 <a href="https://manimarami.com/">
   <img src="showcase/github/portfolio-banner.webp" alt="Information under gravity — Mani Marami Milani's interactive portfolio, with the original Pelagic jellyfish" width="100%">
 </a>
@@ -30,10 +32,10 @@ The opening is an infinite field of type. Scroll to move through its rings, clic
 
 | Opening | Project reel |
 |:---:|:---:|
-| <img src="showcase/github/opening-dark.webp" alt="Dark Ringwriter opening with concentric type and the portfolio navigation" width="100%"> | <img src="showcase/github/projects-dark.webp" alt="Dark Pelagic project presentation with the continuous position rail" width="100%"> |
-| Infinite type, pointer ripples and held zoom | Manual browsing, intentional media previews and exact project position |
+| <img src="showcase/github/opening-dark.webp" alt="Dark Ringwriter opening with concentric type and the portfolio navigation" width="100%"> | <img src="showcase/github/projects-dark.webp" alt="Dark Pelagic project presentation with the fine-tick position wave" width="100%"> |
+| Infinite type, pointer ripples and held zoom | Counter-traveling native text and media, intentional previews and exact project position |
 
-<img src="showcase/github/interaction.gif" alt="Actual v23 browser recording: opening, entry, About and Settings" width="100%">
+<img src="showcase/github/interaction.gif" alt="Actual v24 browser recording: opening, entry, About and Settings" width="100%">
 
 The motion preview is a silent, resized copy of a real browser recording at its original pace. It does not replace the interactive site.
 
@@ -49,9 +51,9 @@ Pelagic retains its original anatomy, underwater lighting and motion. Travel has
 
 | Light | Dark |
 |:---:|:---:|
-| <img src="showcase/github/settings-light.webp" alt="Light Settings pane with brightness, volume, Less motion and Reset settings" width="100%"> | <img src="showcase/github/settings-dark.webp" alt="The same functional Settings pane in Dark mode" width="100%"> |
+| <img src="showcase/github/settings-light.webp" alt="Light Settings pane with brightness, volume, Less motion and Reset settings" width="100%"> | <img src="showcase/github/settings-dark.webp" alt="The same functional live-glass Settings pane in Dark mode" width="100%"> |
 
-The theme buddy changes the appearance. Brightness, sound volume and Less motion control actual rendering and playback behavior. Elastic sliders keep their numeric values bounded while allowing the thumb to travel beyond the pane. Reset restores those three visible preferences without changing the selected theme or tour speed.
+The theme buddy changes the appearance. Brightness, sound volume and Less motion control actual rendering and playback behavior. Elastic sliders keep their numeric values bounded while allowing the thumb to travel beyond the pane. The compact shared-glass Reset restores those three visible preferences without changing the selected theme or tour speed.
 
 <details>
 <summary><strong>Portrait gallery</strong></summary>
@@ -74,8 +76,8 @@ Mobile has its own composition, safe edge spacing, scrollable pane bodies and pe
 |:---|:---|
 | Opening | Continuous Ringwriter, independent pointer ripples and held zoom |
 | Projects | Eight real entries, manual scrolling, hover media and direct selection |
-| Position rail | Continuous rendered-position tick, bounded hover and one settled project marker |
-| Panes | Anchored About, Projects and Settings; accessible focus return and shared Close controls |
+| Position rail | Displayed-position bulge on21 fine ticks, stronger pointer hover and8 settled markers |
+| Panes | Real-content4px flying panes, native controls, immediate dismissal and shared Close |
 | Preferences | Light/dark, bounded brightness, sound volume, Less motion and a scoped Reset |
 | Pelagic | Original procedural jellyfish, reversible descent, tour speed and canonical handoff |
 | Resilience | Readiness-gated route fades, cancellation, graphics retry and static content |
@@ -128,11 +130,11 @@ React 19 · TypeScript 5.9 · Three.js 0.180 · React Three Fiber 9 · Motion 14
 
 ## Validation
 
-This release publishes the completed v23 source. Build/type checks and focused model/input/rail checks accompany actual desktop and portrait renders. Chromium, installed Brave and Firefox were checked; keyboard, reduced motion, forced colors, storage denial, native browser zoom and emulated touch received targeted checks. Unavailable checks include Safari/WebKit, physical touch/assistive technology/high-refresh displays and listening approval.
+This release publishes the completed v24 source. Build/type checks and focused model/input/rail checks accompany actual desktop and portrait renders. Chromium, installed Brave and Firefox were checked; keyboard, reduced motion, forced colors, storage denial, native browser zoom and emulated touch received targeted checks. Unavailable checks include Safari/WebKit, physical touch/assistive technology/high-refresh displays and listening approval.
 
 ```sh
 npm run typecheck
-node scripts/v23-model-checks.mjs
+node scripts/v24-model-checks.mjs
 ```
 
 Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.

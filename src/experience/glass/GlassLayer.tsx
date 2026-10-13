@@ -4,6 +4,9 @@ import type { RefObject } from 'react'
 import * as THREE from 'three'
 import { displayedThemeMix } from '../../core/theme'
 import { GlassDomMirror } from './GlassDomMirror'
+import { glassOptics } from '../../core/glassOptics'
+import { FlyingPanes } from './FlyingPanes'
+import { paneFlights } from './PaneFlights'
 
 const CAPACITY = 16
 const selectors =
@@ -35,6 +38,21 @@ export function GlassLayer({
       new Float32Array(CAPACITY * 4),
       4,
     ).setUsage(THREE.DynamicDrawUsage)
+    const optics = new THREE.InstancedBufferAttribute(
+      new Float32Array(CAPACITY * 4),
+      4,
+    ).setUsage(THREE.DynamicDrawUsage)
+    const front = new THREE.InstancedBufferAttribute(
+      new Float32Array(CAPACITY),
+      1,
+    ).setUsage(THREE.DynamicDrawUsage)
+    const parentOptics = new THREE.InstancedBufferAttribute(
+      new Float32Array(CAPACITY * 4),
+      4,
+    ).setUsage(THREE.DynamicDrawUsage)
+    geometry.setAttribute('aParent', parentOptics)
+    geometry.setAttribute('aFront', front)
+    geometry.setAttribute('aOptics', optics)
     geometry.setAttribute('aRect', rect)
     geometry.setAttribute('aShape', shape)
     geometry.instanceCount = 0
@@ -50,10 +68,11 @@ export function GlassLayer({
       depthWrite: false,
       toneMapped: false,
       transparent: true,
-      vertexShader: `precision highp float;attribute vec3 position;attribute vec4 aRect,aShape;uniform vec2 uSize;varying vec4 vRect,vShape;void main(){vRect=aRect;vShape=aShape;vec2 p=aRect.xy-vec2(2.)+(position.xy+.5)*(aRect.zw+vec2(4.));gl_Position=vec4(p/uSize*2.-1.,0.,1.);}`,
-      fragmentShader: `precision highp float;uniform sampler2D uBase;uniform vec2 uSize;uniform float uPixelRatio,uLight;varying vec4 vRect,vShape;
+      vertexShader: `precision highp float;attribute vec3 position;attribute vec4 aRect,aShape,aOptics,aParent;attribute float aFront;uniform vec2 uSize;varying vec4 vRect,vShape,vOptics,vParent;varying float vFront;void main(){vRect=aRect;vShape=aShape;vOptics=aOptics;vParent=aParent;vFront=aFront;vec2 p=aRect.xy-vec2(2.)+(position.xy+.5)*(aRect.zw+vec2(4.));gl_Position=vec4(p/uSize*2.-1.,0.,1.);}`,
+      fragmentShader: `precision highp float;uniform sampler2D uBase;uniform vec2 uSize;uniform float uPixelRatio,uLight;varying vec4 vRect,vShape,vOptics,vParent;varying float vFront;
       void main(){
         vec2 p=gl_FragCoord.xy/uPixelRatio;
+        if(p.y<vRect.y+vRect.w-vFront)discard;
         vec2 halfSize=vRect.zw*.5;
         vec2 local=p-vRect.xy-halfSize;
         float radius=vShape.x,bevel=vShape.y;
@@ -67,18 +86,23 @@ export function GlassLayer({
         float rim=clamp(1.+distance/bevel,0.,1.);
         // A bounded smooth rim keeps the sampling Jacobian positive. The
         // former steep Snell edge could fold small text at the outer bevel.
-        float shift=bevel*.16*rim*rim*(3.-2.*rim);
+        float shift=bevel*vOptics.y*rim*rim*(3.-2.*rim);
         // The center magnifies the actual clean backdrop about this pane;
         // rim displacement is continuous with that affine sample map.
-        float magnification=vShape.z>.5?1.035:1.;
+        float magnification=vOptics.x;
         vec2 center=vRect.xy+halfSize;
-        vec2 uv=(center+local/magnification)/uSize;
+        vec2 samplePoint=center+local/magnification;
+        if(vParent.w>.5)samplePoint=vParent.xy+(samplePoint-vParent.xy)/vParent.z;
+        vec2 uv=samplePoint/uSize;
         vec2 bend=normal*shift/uSize;
-        float fringe=.6*rim*rim;
+        float fringe=vOptics.z*rim*rim;
         vec2 rgbOffset=normal*fringe/uSize;
         vec3 color=vec3(texture2D(uBase,clamp(uv-bend-rgbOffset,0.,1.)).r,
           texture2D(uBase,clamp(uv-bend,0.,1.)).g,
           texture2D(uBase,clamp(uv-bend+rgbOffset,0.,1.)).b);
+        vec2 rough=vec2(vOptics.w)/uSize;
+        vec3 softened=(texture2D(uBase,clamp(uv-bend+vec2(rough.x,0.),0.,1.)).rgb+texture2D(uBase,clamp(uv-bend-vec2(rough.x,0.),0.,1.)).rgb+texture2D(uBase,clamp(uv-bend+vec2(0.,rough.y),0.,1.)).rgb+texture2D(uBase,clamp(uv-bend-vec2(0.,rough.y),0.,1.)).rgb)*.25;
+        color=mix(color,softened,.24);
         bool panel=vShape.z>.5;
         // Neutral absorption preserves the source detail instead of lifting
         // light-mode image luma toward white. Panels own white text in both modes.
@@ -86,7 +110,7 @@ export function GlassLayer({
         color=mix(color,film,panel?0.:vShape.z);
         // Pane absorption is applied once above both the GL and native DOM layers.
         float lighting=max(0.,dot(normal,normalize(vec2(-.5,1.))));
-        float rimLight=pow(rim,3.)*(.006+.035*lighting);
+        float rimLight=pow(rim,3.)*(.012+.07*lighting);
         color+=vec3(rimLight);
         color+=pow(rim,2.)*.005;
         gl_FragColor=vec4(color,vShape.w*(1.-smoothstep(-aa,aa,distance)));
@@ -113,6 +137,10 @@ export function GlassLayer({
       geometry,
       rect,
       shape,
+      optics,
+      front,
+      parentOptics,
+      flying: new FlyingPanes(uniforms),
       material,
       scene,
       restoreScene,
@@ -131,6 +159,14 @@ export function GlassLayer({
         textureBytes: 0,
         lensDraws: 0,
         mirrorMaps: 0,
+        mirrorMapCache: 0,
+        mirrorContentBuilds: 0,
+        mirrorFrameMs: 0,
+        mirrorMaxMs: 0,
+        mirrorTotalMs: 0,
+        flightTextureBytes: 2048 * 2048 * 4,
+        flightCapacity: 32768,
+        lensTextureReads: 7,
         mode: 'inactive',
       },
     }
@@ -140,10 +176,16 @@ export function GlassLayer({
       surface.current = Array.from(
         document.querySelectorAll<HTMLElement>(selectors),
       )
-        .sort(
-          (a, b) =>
-            Number(a.dataset.paneOrder ?? 0) - Number(b.dataset.paneOrder ?? 0),
-        )
+        .sort((a, b) => {
+          const order = (element: HTMLElement) =>
+            Number(
+              element.closest<HTMLElement>('[data-pane-order]')?.dataset
+                .paneOrder ?? 0,
+            )
+          return (
+            order(a) - order(b) || (a.contains(b) ? -1 : b.contains(a) ? 1 : 0)
+          )
+        })
         .slice(0, 40)
     }
     const observer = new MutationObserver(update)
@@ -162,10 +204,42 @@ export function GlassLayer({
     update()
     const diagnostic = window as unknown as { __glass?: typeof state.metrics }
     diagnostic.__glass = state.metrics
+    ;(
+      window as unknown as { __paneFlights: typeof paneFlights.metrics }
+    ).__paneFlights = paneFlights.metrics
+    const flightDiagnostic = window as unknown as {
+      __paneFlightState?: () => unknown
+    }
+    flightDiagnostic.__paneFlightState = () =>
+      [...paneFlights.fields.values()].map((f) => ({
+        key: f.key,
+        epoch: f.epoch,
+        phase: f.flight.opening ? 'opening' : 'closing',
+        progress: f.flight.progress,
+        front: f.front,
+        rect: { ...f.flight.rect },
+        anchor: { ...f.flight.anchor },
+        paintVersion: f.paintVersion,
+        connected: f.node.isConnected,
+      }))
+    paneFlights.available = true
+    const hide = () => {
+      if (document.hidden) paneFlights.finish()
+    }
+    const pagehide = () => paneFlights.finish()
+    document.addEventListener('visibilitychange', hide)
+    window.addEventListener('pagehide', pagehide)
     return () => {
       observer.disconnect()
       for (const element of surface.current) delete element.dataset.glassMode
       mirror.dispose()
+      delete flightDiagnostic.__paneFlightState
+      paneFlights.available = false
+      paneFlights.finish()
+      state.flying.dispose()
+      document.removeEventListener('visibilitychange', hide)
+      window.removeEventListener('pagehide', pagehide)
+      delete (window as unknown as { __paneFlights?: unknown }).__paneFlights
       state.texture?.dispose()
       state.geometry.dispose()
       state.material.dispose()
@@ -181,12 +255,17 @@ export function GlassLayer({
       ),
     [],
   )
-  useFrame(() => {
+  useFrame((_, dt) => {
+    const opticsEnabled =
+      (window as unknown as { __glassOpticsEnabled?: boolean })
+        .__glassOpticsEnabled !== false
+    paneFlights.step(dt)
+    const flyingCount = state.flying.sync(displayedThemeMix())
     state.uniforms.uLight.value = displayedThemeMix()
     const width = gl.domElement.clientWidth,
       height = gl.domElement.clientHeight
     let count = 0
-    let windowSurface: HTMLElement | null = null
+    const windowSurfaces: HTMLElement[] = []
     const modal = document.querySelector<HTMLDialogElement>('dialog:modal')
     for (const element of surface.current) {
       if (
@@ -221,8 +300,22 @@ export function GlassLayer({
         continue
       }
       element.dataset.glassMode = 'gpu'
+      const flight = paneFlights.fieldFor(element)
+      const front =
+        flight && flight.flight.opening
+          ? Math.max(
+              0,
+              Math.min(
+                r.height,
+                flight.flight.rect.y +
+                  flight.front * flight.flight.rect.height -
+                  r.top,
+              ),
+            )
+          : r.height
+      if (front <= 0) continue
       const panel = element.dataset.glassLens === 'window'
-      if (panel) windowSurface = element
+      if (panel) windowSurfaces.push(element)
       const computed = getComputedStyle(element)
       const radius = Math.min(
         r.width / 2,
@@ -230,11 +323,51 @@ export function GlassLayer({
         parseFloat(computed.borderTopLeftRadius) || 0,
       )
       state.rect.setXYZW(count, r.left, height - r.bottom, r.width, r.height)
+      const parent = panel
+        ? null
+        : element.closest<HTMLElement>('.glass-window[data-glass-mode="gpu"]')
+      const profile = glassOptics(
+        r.width,
+        r.height,
+        radius,
+        panel,
+        Boolean(parent),
+      )
+      if (parent) {
+        const pr = parent.getBoundingClientRect(),
+          profile = glassOptics(
+            pr.width,
+            pr.height,
+            parseFloat(getComputedStyle(parent).borderTopLeftRadius) || 0,
+            true,
+          )
+        state.parentOptics.setXYZW(
+          count,
+          pr.left + pr.width / 2,
+          height - pr.top - pr.height / 2,
+          profile.magnification,
+          1,
+        )
+      } else state.parentOptics.setXYZW(count, 0, 0, 1, 0)
+      state.front.setX(count, front)
+      state.optics.setXYZW(
+        count,
+        profile.magnification,
+        profile.bend,
+        profile.fringe,
+        profile.roughness,
+      )
       state.shape.setXYZW(
         count,
         radius,
-        panel ? 25 : 8,
-        panel ? 0.68 : element.dataset.glassLens === 'runner' ? 0.45 : 0.2,
+        profile.bevel,
+        panel
+          ? 0.68
+          : parent
+            ? 0
+            : element.dataset.glassLens === 'runner'
+              ? 0.45
+              : 0.2,
         Number(computed.opacity),
       )
       count++
@@ -245,7 +378,7 @@ export function GlassLayer({
       : count
         ? 'gpu-final-output'
         : 'inactive'
-    if (!count) {
+    if (!count && !flyingCount) {
       mirror.clear()
       // Modal close can expose one frame before React removes reel inertness.
       // Retain the one bounded copy for this canvas lifetime to avoid allocating
@@ -281,7 +414,12 @@ export function GlassLayer({
     state.uniforms.uSize.value.set(width, height)
     state.uniforms.uPixelRatio.value = dpr
     state.geometry.instanceCount = count
-    state.rect.needsUpdate = state.shape.needsUpdate = true
+    state.rect.needsUpdate =
+      state.shape.needsUpdate =
+      state.optics.needsUpdate =
+      state.front.needsUpdate =
+      state.parentOptics.needsUpdate =
+        true
     const clear = gl.autoClear,
       target = gl.getRenderTarget()
     const viewport = gl.getViewport(state.viewport),
@@ -293,7 +431,11 @@ export function GlassLayer({
       gl.setScissorTest(false)
       gl.autoClear = false
       if (!fresh) gl.render(state.restoreScene, state.camera)
-      gl.render(state.scene, state.camera)
+      if (count && opticsEnabled) gl.render(state.scene, state.camera)
+      if (flyingCount) {
+        gl.render(state.flying.scene, state.camera)
+        paneFlights.metrics.draws++
+      }
       state.metrics.lensDraws++
     } finally {
       gl.setRenderTarget(target)
@@ -302,8 +444,17 @@ export function GlassLayer({
       gl.setScissorTest(scissorTest)
       gl.autoClear = clear
     }
-    mirror.update(modal ?? windowSurface)
+    const mirrorAt = performance.now()
+    mirror.update(opticsEnabled ? (modal ? [modal] : windowSurfaces) : [])
+    state.metrics.mirrorFrameMs = performance.now() - mirrorAt
+    state.metrics.mirrorTotalMs += state.metrics.mirrorFrameMs
+    state.metrics.mirrorMaxMs = Math.max(
+      state.metrics.mirrorMaxMs,
+      state.metrics.mirrorFrameMs,
+    )
     state.metrics.mirrorMaps = mirror.maps
+    state.metrics.mirrorMapCache = mirror.metrics.mapCache
+    state.metrics.mirrorContentBuilds = mirror.metrics.contentBuilds
   }, 2)
   return null
 }

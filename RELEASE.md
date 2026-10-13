@@ -1,39 +1,26 @@
-# v23 publication authority
+# v24 publication authority
 
-Mani authorized publication of all completed changes and a visual GitHub repository
-update on 2026-10-11. This supersedes v21–v23's local-only publication restrictions
-for this release. It authorizes deployment to the configured **manimarami.com**
-origin and a normal GitHub push; it does not authorize external Pelagic changes.
+Mani explicitly authorized GitHub publication and deployment to manimarami.com
+on2026-10-12. This supersedes the local-only v24 review boundary for this release.
 
-- Reviewed runtime: `60d83a3c76f62a747893a4e9f93443a4e49c923f`.
-- Evidence: `2723359cdd5db817b855489eca6584b1cf70a6a9`.
-- Final local delivery record: `6e0844f4f59cad768c254b7d0e13af18285ef7f5`.
-- Verified single-file review archive SHA256:
-  `fd7d292c4d63784408f8f3807ffa8fe3f191459a65cbe6f771012f01e3e9166b`.
+- Reviewed runtime:36e626398f76954f64999dbdafc83ffc62eb1209.
+- Local evidence:68f48b15a4da998fd44969847fd57c6ad79903a4.
+- Complete local delivery receipt:e622e07 (full identity retained locally).
+- Verified full review ZIP SHA256:
+  598fa56b6a7490f2f7f6af8fa94621ff57e66aa3ceb6786dd0561135c9809ee9.
 
-The source release preserves remote main's prior cleanup and publishes every
-current runtime input, licensed media, notices, operational documentation and
-the new repository showcase. The original local commits, internal handoffs,
-retired-world source, failed packaging attempts and full review evidence remain
-recoverable in the development checkout and verified review archive. They are
-not production or public repository inputs.
+Every current runtime source/public input is byte-identical to the reviewed v24
+checkout. The public release follows current GitHub main, preserving previous
+repository cleanup. Private handoffs, source references, failed attempts and full
+recordings remain in the original checkout and verified review ZIP.
 
-V23 includes the completed fast routes, glass/settings/ripple refinement, anchored
-About, functional Reset, signed slider endpoint flights, shared pane Close action
-and exact eight-project position rail. Protected rendering, original Pelagic,
-approved v2 and useful reliability work remain intact.
+V24 adds a fine-tick position wave, paired native left-up/right-down reel, quiet
+wave depth, shared stronger live glass/compact44px Reset and actual own-content
+4px flying panes with prompt native dismissal and current-state retargeting.
+Original intro,8 real projects/media, sliders/audio, protected descent/Pelagic,
+Back and approved v2 remain preserved. Publication does not establish physical
+input/AT/Safari/high-refresh/hearing or continuous human motion approval.
 
-The existing v20 image is retained for rollback. Only the portfolio service is
-replaced; the public HTTPS gateway and other services are preserved. See
-[DEPLOYMENT.md](DEPLOYMENT.md) for the verified rollout and recovery record.
-
-Unavailable physical-device, Safari/WebKit, assistive-technology, high-refresh
-and listening checks remain unavailable. Publication is not a claim that these
-checks or continuous human motion review occurred.
-
-## Verified publication
-
-Runtime publication: `0125ee7dca9dc12c6a8d12d92df643d62ebfb118`. Live image,
-exact output matches, public browser checks and preserved rollback are recorded in
-[the deployment receipt](showcase/releases/v23/deployment.json). The active live
-portfolio and public repository showcase were checked at desktop and portrait sizes.
+The runtime/asset hashes, live checks and final push identity are recorded in
+showcase/releases/v24/deployment.json after rollout. The previous v23 image is
+retained for service-only rollback. No gateway, driver or external Pelagic edits.

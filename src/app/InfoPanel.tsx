@@ -18,7 +18,7 @@ export function InfoPanel({
   onReplay?: () => void
 }) {
   const dialog = useRef<HTMLDialogElement>(null)
-  const close = useGlassDialogMotion(dialog, open, onClose)
+  const close = useGlassDialogMotion(dialog, open, onClose, trigger)
   useNonmodalDialog(dialog, open, close, trigger)
   useAnchoredProjects(dialog, anchor, open)
   return (

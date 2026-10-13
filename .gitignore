@@ -2,3 +2,7 @@ node_modules/
 .vite/
 *.log
 dist/
+
+# Local-only build and review output
+dist/
+showcase/v24-evidence/

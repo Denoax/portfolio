@@ -8,6 +8,7 @@ import './styles/theme.css'
 import './styles/v18.css'
 import './styles/v21.css'
 import './styles/v22.css'
+import './styles/v24.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,0 +1,168 @@
+/* Native text and media share the authored reel projection. Text has no card. */
+.menu-text-viewport {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(76px 0 78px 0);
+  pointer-events: none;
+}
+.selection-hub .menu-stage .menu-project {
+  left: 0;
+  top: 0;
+  width: var(--text-slot-width);
+  height: var(--text-slot-height);
+  transform-origin: 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none;
+}
+.selection-hub .menu-stage .menu-project h1 {
+  position: static;
+  flex: none;
+  height: calc(var(--text-slot-height) * 0.48);
+  max-height: none;
+  font-size: clamp(84px, calc(var(--text-slot-height) * 0.54), 198px);
+  line-height: 0.94;
+  margin: 0;
+}
+.selection-hub .menu-stage .menu-project h1.menu-title--two {
+  font-size: clamp(54px, calc(var(--text-slot-height) * 0.29), 126px);
+  line-height: 0.92;
+}
+.selection-hub .menu-stage .menu-project .menu-description {
+  position: static;
+  flex: none;
+  font-size: clamp(16px, 2.2vh, 22px);
+  line-height: 1.3;
+  margin: 14px 0 0;
+  max-width: 100%;
+}
+.selection-hub .menu-stage .menu-project .menu-actions {
+  position: static;
+  display: flex;
+  flex: none;
+  justify-content: flex-start;
+  gap: 16px;
+  margin: 22px 0 0;
+}
+.selection-hub .menu-stage .menu-project .ui-action {
+  height: clamp(44px, 7.3vh, 66px);
+}
+.selection-hub .menu-stage .menu-project .ui-primary {
+  min-width: min(186px, calc(100% - 70px));
+  padding: 10px 20px;
+}
+.selection-hub .menu-stage .menu-project .ui-circle {
+  width: clamp(44px, 7.3vh, 66px);
+  min-width: 44px;
+}
+.menu-project[data-current='false'] :is(a, button) {
+  pointer-events: none;
+}
+.selection-hub[data-static='true'] .menu-project {
+  left: var(--text-slot-left) !important;
+  top: var(--text-slot-top) !important;
+  transform: none !important;
+}
+.selection-hub[data-static='true'] .menu-project[data-current='true'] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.selection-hub[data-static='true'] .menu-project[data-current='false'] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+/* The confirmed viewport focus outline caused an edge strip. Keep focus on
+   the current real action, rather than outlining the entire scroll viewport. */
+.menu-scroll:focus-visible {
+  outline: none;
+}
+.menu-scroll:focus-visible .menu-project[data-current='true'] .ui-primary {
+  outline: 2px solid var(--site-ink);
+  outline-offset: 5px;
+}
+.glass-window[data-glass-mode='gpu']::before {
+  background: color-mix(in srgb, #101318 64%, transparent);
+}
+.glass-window.experience-settings[data-glass-mode='gpu']::before {
+  background: color-mix(in srgb, var(--site-base) 64%, transparent);
+}
+.glass-dom-backdrop {
+  opacity: 1;
+}
+[data-pane-flight] {
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+[data-pane-flight].glass-window::before {
+  clip-path: inset(0 0 var(--pane-hidden-px, 10000px) 0);
+}
+[data-pane-flight] .pane-close {
+  pointer-events: auto;
+}
+.glass-window .settings-reset.ui-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  min-height: 44px;
+  width: calc(100% - 8px);
+  margin: 10px 4px 0;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--site-ink) 5%, transparent);
+  font-size: 14px;
+}
+.glass-window .settings-reset.ui-action:is(:hover, :focus-visible) {
+  color: var(--hover-ink);
+  background: var(--hover-surface);
+}
+@media (max-width: 719px) {
+  .menu-text-viewport {
+    clip-path: inset(44% 0 86px 0);
+  }
+  .selection-hub .menu-stage .menu-project .menu-description {
+    font-size: 17px;
+  }
+  .selection-hub .menu-stage .menu-project .menu-actions {
+    margin-top: 14px;
+    gap: 12px;
+  }
+  .selection-hub .menu-stage .menu-project .ui-primary {
+    min-width: min(176px, calc(100% - 66px));
+    padding: 8px 15px;
+  }
+}
+@media (max-height: 599px) {
+  .selection-hub .menu-stage .menu-project .menu-description {
+    margin-top: 6px;
+    font-size: 16px;
+  }
+  .selection-hub .menu-stage .menu-project .menu-actions {
+    margin-top: 10px;
+  }
+}
+@media (max-width: 359px) {
+  .selection-hub .menu-stage .menu-project h1:not(.menu-title--two) {
+    font-size: clamp(84px, calc(var(--text-slot-height) * 0.45), 144px);
+  }
+}
+.global-proximity-rail[data-reduced='true'] button span {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .global-proximity-rail button span {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .global-proximity-rail .rail-minor {
+    background: CanvasText !important;
+  }
+}

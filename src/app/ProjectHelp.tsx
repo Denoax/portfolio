@@ -25,7 +25,7 @@ export function ProjectHelp({
 }) {
   const { project, overview, details } = projectHelp(request.project.id)
   const dialog = useRef<HTMLDialogElement>(null)
-  const close = useGlassDialogMotion(dialog, true, onClose)
+  const close = useGlassDialogMotion(dialog, true, onClose, request.trigger)
   useAnchoredHelp(dialog, request)
   const [selected, setSelected] = useState(0)
   const [focused, setFocused] = useState(0)

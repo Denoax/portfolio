@@ -1,0 +1,56 @@
+{
+  "reviewedRuntime": "36e626398f76954f64999dbdafc83ffc62eb1209",
+  "unchanged": "Existing original opening, banner composition and Pelagic assets retained; sources.json records their v23 provenance",
+  "reusedCaptures": "1440/390px final44px Reset capture source8b9224a; final max359px title rule is inactive at these viewports",
+  "files": [
+    {
+      "output": "projects-light.webp",
+      "source": "showcase/v24-evidence/delivered-final/1440-900-light-hub.png",
+      "sourceSHA256": "c3d3463fb9ea7e0420818782270964677b992fb1f3e05da654f1308bd16fb8c9",
+      "outputSHA256": "eb42262d27c2ca6c77bb70aa61f73e4e739627ae296738352fe7092873e38986",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "projects-dark.webp",
+      "source": "showcase/v24-evidence/delivered-final/1440-900-dark-hub.png",
+      "sourceSHA256": "8c23defe04f0e8cb78b725a92e184e8f99511c0de793fa5726bc8e2b741eeea2",
+      "outputSHA256": "465f5d92019018721c2632441d20fe4fca71dc5112acbd3798dd45b92f2d2ec7",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "settings-light.webp",
+      "source": "showcase/v24-evidence/delivered-final/1440-900-light-Settings.png",
+      "sourceSHA256": "73593138ae698bc4b22349f7b2e7bd98b565ed3b9ded6a44dffc7ec9a5f9d554",
+      "outputSHA256": "0f1ff2db4228d38aa3d2e8d26d836b059fe5ce68713690a011c70f8bff898c8a",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "settings-dark.webp",
+      "source": "showcase/v24-evidence/delivered-final/1440-900-dark-Settings.png",
+      "sourceSHA256": "18870201a691c2b3281bdb4a03d108ea894086596e2b1b834f0a18c5cff9bee2",
+      "outputSHA256": "1725a28632188e61f8f4198e298436c1aa1c456c06f0a0058a3d505c401c4d62",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "mobile-projects.webp",
+      "source": "showcase/v24-evidence/delivered-final/390-844-light-hub.png",
+      "sourceSHA256": "380c3026cfc2b65727173eb8e40daa208231115b6e3002c0a943ca8a709e9bda",
+      "outputSHA256": "ca28114be218035eea2e32c2ffd5f9058660a3b3b15e5258f4ab18b1a0bf9546",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "mobile-settings.webp",
+      "source": "showcase/v24-evidence/delivered-final/390-844-light-Settings.png",
+      "sourceSHA256": "a3331910d4a8617e8dfc0d15d6761ac337efdc81f664ce56bb8d56ca1a7b0669",
+      "outputSHA256": "dc11e524c8929e2630569b5fec337fe73440bfdb1713aca9109902fcebee87cc",
+      "method": "Whole-frame lossless WebP conversion; no crop/retouch"
+    },
+    {
+      "output": "interaction.gif",
+      "source": "showcase/v24-evidence/delivered-final/1440-900-light-production-review-unedited.webm",
+      "sourceSHA256": "83959434c8c4d366903c7bcd82a833b1100416e1f3586d9eacae331bf5480b3a",
+      "outputSHA256": "8a85bc652ef5f04d85df67086ae93b211f07193217b199ed5d41c766d2108c68",
+      "method": "Entire original browser recording, original pace,960px/15fps GIF; no diagnostic frames"
+    }
+  ]
+}

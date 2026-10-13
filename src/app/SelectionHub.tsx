@@ -1,3 +1,4 @@
+import { pairedReelLayout } from '../core/pairedReel'
 import PortfolioGravity from './rare/PortfolioGravity'
 import { ProfileActivity } from './rare/ProfileActivity'
 import { PaneCloseButton } from './PaneCloseButton'
@@ -105,7 +106,12 @@ export function SelectionHub({
           : '#projects-trigger',
       )
   }
-  const dismissIndex = useGlassDialogMotion(indexDialog, indexOpen, closeIndex)
+  const dismissIndex = useGlassDialogMotion(
+    indexDialog,
+    indexOpen,
+    closeIndex,
+    indexTrigger,
+  )
   useEffect(() => {
     if (!indexRequest) return
     pendingSelection.current = null
@@ -173,6 +179,37 @@ export function SelectionHub({
   }, [project.id, presentation])
   useLayoutEffect(() => {
     if (!staticView) return
+    const paint = () => {
+      const bounds = pairedReelLayout(innerWidth, innerHeight).text
+      for (const [id, node] of presentation.current.textTargets) {
+        const current = id === menuViews[view].id
+        Object.assign(node.style, {
+          left: `${bounds.x - bounds.width / 2}px`,
+          top: `${bounds.y - bounds.height / 2}px`,
+          width: `${bounds.width}px`,
+          height: `${bounds.height}px`,
+          transform: 'none',
+          opacity: current ? '1' : '0',
+          visibility: current ? 'visible' : 'hidden',
+        })
+        node.style.setProperty(
+          '--text-slot-left',
+          `${bounds.x - bounds.width / 2}px`,
+        )
+        node.style.setProperty(
+          '--text-slot-top',
+          `${bounds.y - bounds.height / 2}px`,
+        )
+        node.style.setProperty('--text-slot-width', `${bounds.width}px`)
+        node.style.setProperty('--text-slot-height', `${bounds.height}px`)
+      }
+    }
+    paint()
+    window.addEventListener('resize', paint)
+    return () => window.removeEventListener('resize', paint)
+  }, [staticView, view, presentation])
+  useLayoutEffect(() => {
+    if (!staticView) return
     for (const target of presentation.current.nativeTargets.values()) {
       target.dataset.ready = 'false'
       target.style.opacity = '0'
@@ -218,7 +255,7 @@ export function SelectionHub({
   useLayoutEffect(() => {
     const element = scroll.current!,
       state = presentation.current
-    state.stage = stage.current
+    state.scrollElement = element
     state.mediaTarget = mediaTarget.current
     state.target = restoredProgress(
       state.savedProjectId,
@@ -254,8 +291,8 @@ export function SelectionHub({
     return () => {
       observer.disconnect()
       restoreSnap?.()
-      state.stage = null
       state.mediaTarget = null
+      state.scrollElement = null
     }
   }, [presentation, previews])
   const readScroll = () => {
@@ -397,7 +434,11 @@ export function SelectionHub({
     project.action.kind === 'pelagic'
       ? 'https://denoax.github.io/pelagic-jellyfish-webgl/'
       : project.action.href
-  const openProject = (event: MouseEvent<HTMLAnchorElement>, media = false) => {
+  const openProject = (
+    event: MouseEvent<HTMLAnchorElement>,
+    media = false,
+    clicked = project,
+  ) => {
     if (
       event.button !== 0 ||
       event.ctrlKey ||
@@ -407,9 +448,16 @@ export function SelectionHub({
     )
       return
     event.preventDefault()
-    if (!active || (media && gesture.current.dragged)) return
+    if (
+      !active ||
+      clicked.id !== menuViews[view].id ||
+      (media && gesture.current.dragged)
+    )
+      return
     onResource(
-      event.detail > 0 ? (gesture.current.project ?? project) : project,
+      media && event.detail > 0
+        ? (gesture.current.project ?? clicked)
+        : clicked,
     )
   }
   // Eligibility is recomputed after a native scroll settles, including a
@@ -629,6 +677,7 @@ export function SelectionHub({
                         presentation.current.nativeTargets.set(native.id, node)
                       else presentation.current.nativeTargets.delete(native.id)
                     }}
+                    data-glass-substrate
                     data-project-id={native.id}
                     data-current={current}
                     data-smoke-target={current ? 'media' : undefined}
@@ -681,61 +730,91 @@ export function SelectionHub({
                 )
               })}
           </div>
-          <div className="menu-project">
-            <h1
-              data-glass-substrate
-              className={project.titleLines.length > 1 ? 'menu-title--two' : ''}
-            >
-              {project.titleLines.map((line, index) => (
-                <span key={line}>
-                  {index > 0 && <br />}
-                  {line}
-                </span>
-              ))}
-            </h1>
-            <p data-glass-substrate className="menu-description">
-              {project.description}
-            </p>
-            <div className="menu-actions">
-              <a
-                ref={(element) => {
-                  actionRef.current = element
-                }}
-                className="ui-action ui-primary"
-                data-smoke-target="resource"
-                data-project-id={project.id}
-                href={actionHref}
-                aria-disabled={aligning || undefined}
-                onPointerDown={(event) => {
-                  gesture.current = {
-                    x: event.clientX,
-                    y: event.clientY,
-                    dragged: false,
-                    project,
-                  }
-                }}
-                onClick={openProject}
-              >
-                {project.action.label}
-              </a>
-              <button
-                type="button"
-                className="ui-action ui-circle"
-                data-smoke-target="help"
-                data-project-id={project.id}
-                aria-label={`About ${project.title}`}
-                aria-haspopup="dialog"
-                aria-expanded={helpOpen}
-                onClick={(event) => onProjectHelp(project, event.currentTarget)}
-              >
-                <span aria-hidden="true">?</span>
-              </button>
-            </div>
-            {preview.projectId === project.id && preview.state === 'error' && (
-              <p className="preview-error" role="status">
-                Preview unavailable. Project link remains available.
-              </p>
-            )}
+          <div className="menu-text-viewport">
+            {menuViews.map((item) => {
+              const current = item.id === menuViews[view].id
+              const project = item
+              const actionHref =
+                project.action.kind === 'pelagic'
+                  ? 'https://denoax.github.io/pelagic-jellyfish-webgl/'
+                  : project.action.href
+              return (
+                <div
+                  className="menu-project"
+                  data-glass-substrate
+                  key={project.id}
+                  data-project-id={project.id}
+                  data-current={current}
+                  aria-hidden={!current}
+                  inert={!active || hidden || !current}
+                  ref={(node) => {
+                    if (node)
+                      presentation.current.textTargets.set(project.id, node)
+                    else presentation.current.textTargets.delete(project.id)
+                  }}
+                >
+                  <h1
+                    data-glass-substrate
+                    className={
+                      project.titleLines.length > 1 ? 'menu-title--two' : ''
+                    }
+                  >
+                    {project.titleLines.map((line, index) => (
+                      <span key={line}>
+                        {index > 0 && <br />}
+                        {line}
+                      </span>
+                    ))}
+                  </h1>
+                  <p data-glass-substrate className="menu-description">
+                    {project.description}
+                  </p>
+                  <div className="menu-actions">
+                    <a
+                      ref={(element) => {
+                        if (current) actionRef.current = element
+                      }}
+                      className="ui-action ui-primary"
+                      data-smoke-target="resource"
+                      data-project-id={project.id}
+                      href={actionHref}
+                      aria-disabled={aligning || undefined}
+                      onPointerDown={(event) => {
+                        gesture.current = {
+                          x: event.clientX,
+                          y: event.clientY,
+                          dragged: false,
+                          project,
+                        }
+                      }}
+                      onClick={(event) => openProject(event, false, project)}
+                    >
+                      {project.action.label}
+                    </a>
+                    <button
+                      type="button"
+                      className="ui-action ui-circle"
+                      data-smoke-target="help"
+                      data-project-id={project.id}
+                      aria-label={`About ${project.title}`}
+                      aria-haspopup="dialog"
+                      aria-expanded={helpOpen}
+                      onClick={(event) =>
+                        onProjectHelp(project, event.currentTarget)
+                      }
+                    >
+                      <span aria-hidden="true">?</span>
+                    </button>
+                  </div>
+                  {preview.projectId === project.id &&
+                    preview.state === 'error' && (
+                      <p className="preview-error" role="status">
+                        Preview unavailable. Project link remains available.
+                      </p>
+                    )}
+                </div>
+              )
+            })}
           </div>
         </div>
         {menuViews.map((item) => (

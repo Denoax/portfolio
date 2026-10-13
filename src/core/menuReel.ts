@@ -51,9 +51,10 @@ export interface MenuPresentation {
   paused: boolean
   decorativeRunning: boolean
   reduced: boolean
-  stage: HTMLElement | null
   mediaTarget: HTMLElement | null
   nativeTargets: Map<string, HTMLElement>
+  scrollElement: HTMLElement | null
+  textTargets: Map<string, HTMLElement>
   selectProject: ((id: string, silent?: boolean) => void) | null
   scrollReelBy: ((delta: number) => void) | null
   intro: {
@@ -127,9 +128,10 @@ export function createMenuPresentation(): MenuPresentation {
     paused: false,
     decorativeRunning: true,
     reduced: false,
-    stage: null,
     mediaTarget: null,
     nativeTargets: new Map(),
+    scrollElement: null,
+    textTargets: new Map(),
     selectProject: null,
     scrollReelBy: null,
     intro: {
