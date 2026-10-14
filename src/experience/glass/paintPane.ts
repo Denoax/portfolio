@@ -1,3 +1,5 @@
+import { panePaintColor } from './panePaintTheme'
+
 // Paint only our measured native labels, controls, vectors and owned images.
 // This transient texture is renderer data, never an external/generated asset.
 export function paintPane(
@@ -5,18 +7,20 @@ export function paintPane(
   width: number,
   height: number,
   reusable?: HTMLCanvasElement,
+  mode?: 'dark' | 'light',
 ) {
   const canvas = reusable ?? document.createElement('canvas')
   canvas.width = Math.ceil(width)
   canvas.height = Math.ceil(height)
   const ctx = canvas.getContext('2d')!,
     origin = node.getBoundingClientRect()
+  const color = mode ? panePaintColor(node, mode) : (value: string) => value
   const visible = (e: Element) => {
     const s = getComputedStyle(e)
     return (
       s.display !== 'none' &&
       s.visibility !== 'hidden' &&
-      !e.closest('[hidden],[data-glass-copy]')
+      !e.closest('[hidden],[data-glass-copy],.pane-close')
     )
   }
   for (const element of node.querySelectorAll<HTMLElement>(
@@ -44,7 +48,7 @@ export function paintPane(
     }
     if (element instanceof HTMLInputElement && element.type === 'range')
       continue
-    ctx.fillStyle = s.backgroundColor
+    ctx.fillStyle = color(s.backgroundColor)
     ctx.beginPath()
     ctx.roundRect(
       x,
@@ -56,12 +60,12 @@ export function paintPane(
     ctx.fill()
     const border = parseFloat(s.borderTopWidth)
     if (border > 0 && s.borderTopStyle !== 'none') {
-      ctx.strokeStyle = s.borderTopColor
+      ctx.strokeStyle = color(s.borderTopColor)
       ctx.lineWidth = border
       ctx.stroke()
     }
     if (element instanceof HTMLInputElement && element.type === 'checkbox') {
-      ctx.fillStyle = s.color
+      ctx.fillStyle = color(s.color)
       ctx.beginPath()
       ctx.arc(
         x + (element.checked ? r.width - 10 : 10),
@@ -127,11 +131,11 @@ export function paintPane(
       }
       if (path) {
         if (s.fill !== 'none') {
-          ctx.fillStyle = s.fill
+          ctx.fillStyle = color(s.fill)
           ctx.fill(path)
         }
         if (s.stroke !== 'none') {
-          ctx.strokeStyle = s.stroke
+          ctx.strokeStyle = color(s.stroke)
           ctx.lineWidth = parseFloat(s.strokeWidth) || 1
           ctx.lineCap = s.strokeLinecap as CanvasLineCap
           ctx.lineJoin = s.strokeLinejoin as CanvasLineJoin
@@ -152,14 +156,14 @@ export function paintPane(
       parent = text.parentElement
     if (
       !parent ||
-      parent.closest('svg,[data-glass-copy]') ||
+      parent.closest('svg,[data-glass-copy],.pane-close') ||
       !visible(parent) ||
       !text.data.trim()
     )
       continue
     const style = getComputedStyle(parent)
     ctx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
-    ctx.fillStyle = style.color
+    ctx.fillStyle = color(style.color)
     ctx.textBaseline = 'alphabetic'
     ctx.letterSpacing =
       style.letterSpacing === 'normal' ? '0px' : style.letterSpacing

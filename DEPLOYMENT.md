@@ -1,5 +1,9 @@
 # manimarami.com deployment
 
+## v26 release —2026-10-14
+
+Current user authorization permits GitHub and manimarami.com publication. The reviewed runtime is `2ef397d425110a22c0319d605af07d0d2674a203`; the exact254-file static output is staged through the existing linked Vercel project and promoted after verification. The prior production deployment is retained for rollback. Source/rollout evidence is recorded in `showcase/releases/v26/deployment.json` after publication. No DNS, preview protection, gateway, other service or external Pelagic changes.
+
 ## Current public host — 2026-10-13
 
 The public domain now uses the existing Vercel Hobby project

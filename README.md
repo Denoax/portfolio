@@ -1,6 +1,6 @@
 <div align="center">
 
-> V24 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
+> V26 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
 
 <a href="https://manimarami.com/">
   <img src="showcase/github/portfolio-intro-zoom-loop.gif" alt="Portfolio intro — closer dark-mode infinite zoom loop from the original site renderer" width="100%">
@@ -126,15 +126,16 @@ WebGL support depends on the browser and GPU. With graphics unavailable, the des
 | Content | [`src/content`](src/content), [`public/assets`](public/assets) | Actual project records, captured media and source notices |
 | Delivery | [`Dockerfile`](Dockerfile), [`Caddyfile`](Caddyfile) | Locked Vite build, SPA routing and static asset caching |
 
-React 19 · TypeScript 5.9 · Three.js 0.180 · React Three Fiber 9 · Motion 14 · Vite 7. The existing Docker/Caddy origin serves the live site; GitHub pushes do not automatically deploy it. See [deployment and rollback](DEPLOYMENT.md).
+React 19 · TypeScript 5.9 · Three.js 0.180 · React Three Fiber 9 · Motion 14 · Vite 7. Vercel serves the verified static build at manimarami.com; GitHub pushes do not automatically deploy it. Docker/Caddy remains a historical local recovery path. See [deployment and rollback](DEPLOYMENT.md).
 
 ## Validation
 
-This release publishes the completed v24 source. Build/type checks and focused model/input/rail checks accompany actual desktop and portrait renders. Chromium, installed Brave and Firefox were checked; keyboard, reduced motion, forced colors, storage denial, native browser zoom and emulated touch received targeted checks. Unavailable checks include Safari/WebKit, physical touch/assistive technology/high-refresh displays and listening approval.
+This release publishes the reviewed v26 runtime, including the v25 vivid project trail and softer clicked-menu emission/inward fades. The original intro, Pelagic descent, media, eight projects and native controls are preserved. Build/type checks, CPU/GPU kernel and overlap diagnostics, ten-cycle interruption tests, settings/fallback/lifecycle checks and desktop/portrait light/dark captures accompany the release. Current verification uses Chromium; independent Brave, Safari, physical touch/assistive technology/high-refresh displays, calibrated colour and continuous human motion/listening approval remain unverified.
 
+Matched local runs retained roughly16.7ms RAF p50/p95. The candidate had a50ms cold interval and higher paired-paint CPU/GPU costs; complete adverse samples remain in the local review. RAF is not GPU timing or physical presentation latency.
 ```sh
 npm run typecheck
-node scripts/v24-model-checks.mjs
+node scripts/v26-model-checks.mjs
 ```
 
 Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.
@@ -144,6 +145,7 @@ Review history and original recordings are retained locally. [Release provenance
 - Portfolio, procedural galaxy and choreography: **Mani Marami Milani**.
 - Original [Pelagic](https://github.com/Denoax/pelagic-jellyfish-webgl), with the Aurelia foundation by Holtsetio; [MIT notice](public/licenses/Aurelia-MIT.txt).
 - Menu composition studied from [Anderson Mancini](https://andersonmancini.dev/); independently implemented with Mani's real project content.
+- Flying-menu interaction study: George / @vanjek via [Inspora](https://www.inspora.design/posts/flying-dropdown-menu); independently authored tile animation, softened for this portfolio.
 - Current ripple swishes: artisticdude's [Swishes Sound Pack](https://opengameart.org/content/swishes-sound-pack), CC0; [source, edits and hashes](public/assets/audio/v22/ASSET_CREDITS.json).
 - Interaction studies, navigation, fonts, NASA/ESA imagery and other media: [complete site credits](https://manimarami.com/credits), [licenses](public/licenses) and [asset notices](public/assets/notices).
 - Repository presentation follows the banner/gallery/documentation structure of Mani's [Kona Desktop repository](https://github.com/Denoax/konata-hyprland-dotfiles). Its artwork is not copied. [Showcase source record](showcase/github/README.md).

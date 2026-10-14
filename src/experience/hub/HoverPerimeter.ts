@@ -22,6 +22,7 @@ export class HoverPerimeter {
   private target: HTMLElement | null = null
   private leaveAge = 0
   private transform = ''
+  private emittedProjectId = ''
   connect() {
     const move = (e: PointerEvent) => {
       if (e.pointerType === 'mouse') {
@@ -78,6 +79,7 @@ export class HoverPerimeter {
         this.target = target
       }
       this.leaveAge = 0
+      this.emittedProjectId = target.dataset.projectId ?? menu.selectedId
       const style = getComputedStyle(target),
         r = target.getBoundingClientRect(),
         size = new THREE.Vector2(target.offsetWidth, target.offsetHeight)
@@ -108,7 +110,7 @@ export class HoverPerimeter {
     }
     if (document.hidden || menu.paused) u.uBoxAlpha.value = 0
     this.evidence.targetId = target?.dataset.smokeTarget ?? ''
-    this.evidence.projectId = target?.dataset.projectId ?? menu.selectedId
+    this.evidence.projectId = this.emittedProjectId
     this.evidence.emitting = Boolean(target)
     this.evidence.alpha = u.uBoxAlpha.value
     this.evidence.retiredMs = this.leaveAge * 1000

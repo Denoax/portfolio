@@ -5,6 +5,8 @@ import { smoothstep } from '../../core/math'
 import { trailBudget } from '../../core/experienceSettings'
 import type { QualityTier } from '../../core/quality'
 import { screenVertex } from '../atmosphereShaders'
+import { WorldsTrailField } from './WorldsTrailField'
+import type { Pigment } from '../../core/projectPigment'
 
 const colors = [
   [0.63, 0.65, 0.63],
@@ -27,6 +29,7 @@ export interface TrailEvidence {
   bytes: number
   headRadius: number
   emitting: boolean
+  presentation?: 'legacy' | 'worlds'
 }
 declare global {
   interface Window {
@@ -87,8 +90,11 @@ export class CursorTrail {
   private lastInput = -100
   private previousState = 0
   private previousTarget = 0
+  private worlds: WorldsTrailField | null
+  private worldsActive = false
   private fine = window.matchMedia('(pointer: fine) and (hover: hover)')
-  constructor(private gl: THREE.WebGLRenderer) {
+  constructor(private gl: THREE.WebGLRenderer, worlds = false) {
+    this.worlds = worlds ? new WorldsTrailField(this.geometry) : null
     const supported = Boolean(gl.extensions.get('EXT_color_buffer_float'))
     this.evidence = {
       supported,
@@ -147,8 +153,12 @@ export class CursorTrail {
   }
   connect() {
     window.__cursorTrail = this.evidence
+    const diagnostic = window as unknown as { __worldsTrail?: unknown }
+    const worldDiagnostic = this.worlds ? { field: this.worlds.evidence, path: this.worlds.path.evidence } : null
+    if (worldDiagnostic) diagnostic.__worldsTrail = worldDiagnostic
     const move = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || !this.fine.matches) return
+      if (this.worldsActive) this.worlds?.admit(e)
       const x = e.clientX / innerWidth,
         y = 1 - e.clientY / innerHeight
       if (!this.inside) {
@@ -168,12 +178,14 @@ export class CursorTrail {
     const leave = () => {
       this.inside = false
       this.needsClear = true
+      this.worlds?.clear()
     }
     const out = (e: PointerEvent) => {
       if (!e.relatedTarget) leave()
     }
     const preference = () => {
       this.needsClear = true
+      this.worlds?.clear()
     }
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerout', out)
@@ -191,6 +203,8 @@ export class CursorTrail {
       document.removeEventListener('visibilitychange', leave)
       this.fine.removeEventListener('change', preference)
       if (window.__cursorTrail === this.evidence) delete window.__cursorTrail
+      if (diagnostic.__worldsTrail === worldDiagnostic) delete diagnostic.__worldsTrail
+      if (this.worlds) delete diagnostic.__worldsTrail
     }
   }
   get texture() {
@@ -203,8 +217,18 @@ export class CursorTrail {
     tier: QualityTier,
     cursorSize: number,
     panelOpen: boolean,
-    menu?: { clock: number; color: THREE.Color; reduced: boolean },
+    menu?: { clock: number; color: THREE.Color; reduced: boolean; style?: 'intro' | 'worlds'; pigment?: Pigment; projectId?: string },
   ) {
+    // v25 exception is explicit. The legacy shader and all code below this
+    // branch retain the approved intro/descent behavior.
+    if (menu?.style === 'worlds' && this.worlds && menu.pigment) {
+      if (!this.worldsActive) { this.worldsActive = true; this.needsClear = true }
+      return this.stepWorlds(dt, width, height, tier, cursorSize, menu)
+    }
+    if (this.worldsActive) {
+      this.worldsActive = false; this.worlds?.clear(); this.needsClear = true
+    }
+    this.evidence.presentation = 'legacy'
     const s = menu ? 0 : narrative.state,
       now = menu?.clock ?? narrative.elapsed,
       inputAge = menu
@@ -332,12 +356,59 @@ export class CursorTrail {
       this.gl.setClearColor(this.savedColor, alpha)
     }
   }
+  private stepWorlds(
+    dt: number, width: number, height: number, tier: QualityTier, cursorSize: number,
+    menu: { clock: number; reduced: boolean; pigment?: Pigment; projectId?: string },
+  ) {
+    const field = this.worlds!, e = this.evidence
+    e.presentation = 'worlds'
+    field.setPigment(menu.projectId ?? '', menu.pigment!, menu.clock)
+    e.enabled = e.supported && this.fine.matches && !menu.reduced && !document.hidden
+    e.active = e.enabled && this.inside && performance.now() / 1000 - this.lastRealInput < 1.65
+    e.emitting = false; this.outputUniforms.uHeadEmit.value = 0
+    if (!e.supported) return false
+    const budget = trailBudget(tier, width, height)
+    const tw = Math.min(Math.round(width * this.gl.getPixelRatio()), 1200, budget.width)
+    const th = Math.max(1, Math.round(tw * height / width))
+    if (e.width !== tw || e.height !== th) {
+      this.read.setSize(tw, th); this.write.setSize(tw, th)
+      e.width = tw; e.height = th; this.needsClear = true
+    }
+    e.bytes = tw * th * 16; e.headRadius = 16 * cursorSize / 100
+    const target = this.gl.getRenderTarget(), scissorTest = this.gl.getScissorTest(), alpha = this.gl.getClearAlpha()
+    this.gl.getViewport(this.savedViewport); this.gl.getScissor(this.savedScissor); this.gl.getClearColor(this.savedColor)
+    try {
+      this.gl.setScissorTest(false)
+      if (this.needsClear || !e.enabled) {
+        this.gl.setClearColor(0, 0)
+        for (const t of [this.read, this.write]) { this.gl.setRenderTarget(t); this.gl.clear() }
+        this.gl.setClearColor(this.savedColor, alpha)
+        field.clear(); this.needsClear = false; e.resets++
+      }
+      if (!e.active) return false
+      const delta = Math.max(0, Math.min(.15, dt))
+      const steps = Math.max(1, Math.min(3, Math.floor((delta + .001) * 60)))
+      for (let i = 0; i < steps; i++) {
+        field.update(this.read.texture, width, height, tw, th, delta / steps, menu.clock, cursorSize)
+        this.gl.setRenderTarget(this.write); this.gl.render(field.scene, this.camera)
+        const old = this.read; this.read = this.write; this.write = old
+      }
+      const age = performance.now() / 1000 - this.lastRealInput
+      field.head(this.outputUniforms, width, height, cursorSize, age)
+      e.emitting = this.outputUniforms.uHeadEmit.value > 0
+      return true
+    } finally {
+      this.gl.setRenderTarget(target); this.gl.setViewport(this.savedViewport); this.gl.setScissor(this.savedScissor)
+      this.gl.setScissorTest(scissorTest); this.gl.setClearColor(this.savedColor, alpha)
+    }
+  }
   prepare() {
     return this.evidence.supported
-      ? this.gl.compileAsync(this.scene, this.camera)
+      ? Promise.all([this.gl.compileAsync(this.scene, this.camera), this.worlds?.prepare(this.gl, this.camera)]).then(() => {})
       : Promise.resolve()
   }
   dispose() {
+    this.worlds?.dispose()
     this.read.dispose()
     this.write.dispose()
     this.material.dispose()

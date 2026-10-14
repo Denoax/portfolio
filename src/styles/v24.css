@@ -101,6 +101,7 @@
 }
 [data-pane-flight].glass-window::before {
   clip-path: inset(0 0 var(--pane-hidden-px, 10000px) 0);
+  mask-image: linear-gradient(to bottom, black var(--pane-solid-px, 0px), transparent var(--pane-front-px, 0px));
 }
 [data-pane-flight] .pane-close {
   pointer-events: auto;

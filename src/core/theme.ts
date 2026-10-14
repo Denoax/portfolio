@@ -23,6 +23,9 @@ const palette = {
   'field-base': ['101318', 'eceff2'],
   'activity-zero': ['21272b', 'd7dce0'],
 } as const
+// Read-only palette access for transient paint; display remains the sole owner.
+export { palette as themePalette }
+export const themeInkMix = (q: number) => Math.min(1, Math.max(0, (q - 0.08) / 0.3))
 export function themeColor(dark: string, light: string, q: number) {
   const values = [0, 2, 4].map((i) =>
     Math.round(
@@ -42,7 +45,7 @@ function display(q: number) {
   root.dataset.themeMix = q.toFixed(5)
   // Ink crosses sooner than the linear-light substrate. A bounded opposite
   // contour keeps semantic text legible during the unavoidable polarity change.
-  const inkMix = Math.min(1, Math.max(0, (q - 0.08) / 0.3))
+  const inkMix = themeInkMix(q)
   for (const [name, [dark, light]] of Object.entries(palette))
     root.style.setProperty(
       `--${name}`,

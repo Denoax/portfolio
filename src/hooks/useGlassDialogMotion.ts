@@ -35,9 +35,11 @@ export function useGlassDialogMotion(
     queueMicrotask(() => {
       if (generation.current !== token || !node.isConnected || closing.current)
         return
-      const visibleOrigin = origin?.getClientRects().length
+      // Portrait navigation closes in the same event as the pane opens. Keep
+      // that real button's measured origin; native anchoring/focus stay separate.
+      const visibleOrigin = paneFlights.recentOrigin() ?? (origin?.getClientRects().length
         ? origin
-        : document.querySelector<HTMLElement>('.utility-toggle')
+        : document.querySelector<HTMLElement>('.utility-toggle'))
       paneFlights.request(node, true, visibleOrigin)
     })
     return () => {

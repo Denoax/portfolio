@@ -1,4 +1,4 @@
-import { paneNativeFront, paneFlightOpacity } from '../../core/paneFlight'
+import { paneNativeFront, paneFlightOpacity, MENU_OPEN_SECONDS, MENU_CLOSE_SECONDS } from '../../core/paneFlight'
 import type { FlightRect, Point2, TileFlight } from '../../core/paneFlight'
 import { paintPane } from './paintPane'
 
@@ -7,6 +7,7 @@ type Group = {
   top: number
   height: number
   clip: string
+  mask: string
   pointer: string
 }
 export interface PaneFlightField {
@@ -20,13 +21,19 @@ export interface PaneFlightField {
   fromAlpha: number
   front: number
   paint: HTMLCanvasElement
+  lightPaint?: HTMLCanvasElement
   pane: boolean
   themed: boolean
   groups: Group[]
-  controls: Map<HTMLElement, boolean>
+  controls: Map<HTMLElement, { inert: boolean; bottom: number }>
+  radius: number
+  layoutDirty: boolean
+  paintDirty: boolean
+  cleanup: () => void
   theme: string
   paintVersion: number
   content: string
+  fontState: string
 }
 const contentOf = (node: HTMLElement) =>
   [...node.children]
@@ -71,8 +78,30 @@ class PaneFlightRegistry {
     frameMs: 0,
     maxFrameMs: 0,
     degradedTileSize: 4,
+    reusedPaints: 0,
+    geometryBuilds: 0,
+    geometryUploads: 0,
+    layoutRebuilds: 0,
   }
   private sequence = 0
+  private paintSequence = 0
+  private clickedOrigin: HTMLElement | null = null
+  private origins = new WeakMap<HTMLElement, { rect: FlightRect; at: number }>()
+  private paints = new WeakMap<HTMLElement, { paint: HTMLCanvasElement; lightPaint?: HTMLCanvasElement; paintVersion: number; content: string; theme: string; width: number; height: number; fontState: string }>()
+  captureOrigin(event: MouseEvent) {
+    if (!this.available || !(event.target instanceof Element)) return
+    const origin = event.target.closest<HTMLElement>('button')
+    if (!origin) return
+    const r = origin.getBoundingClientRect()
+    if (r.width && r.height) {
+      this.clickedOrigin = origin
+      this.origins.set(origin, { rect: rectOf(r), at: performance.now() })
+    }
+  }
+  recentOrigin() {
+    const origin = this.clickedOrigin
+    return origin && performance.now() - (this.origins.get(origin)?.at ?? -Infinity) < 200 ? origin : null
+  }
   enabled(node: HTMLElement) {
     return (
       this.available &&
@@ -108,19 +137,21 @@ class PaneFlightRegistry {
         this.restore(existing)
         existing.flight = { ...existing.flight, opening: false, progress: 0 }
         existing.elapsed = 0
-        existing.flight.duration = 0.36
+        existing.flight.duration = MENU_CLOSE_SECONDS
         existing.epoch = ++this.sequence
       }
       return
     }
-    const anchorRect = origin?.getBoundingClientRect()
+    const visibleRect = origin?.getBoundingClientRect()
+    const captured = origin ? this.origins.get(origin) : null
+    const anchorRect = visibleRect?.width ? rectOf(visibleRect) : captured && performance.now() - captured.at < 200 ? captured.rect : null
     const anchor: Point2 = anchorRect
-      ? { x: anchorRect.left + anchorRect.width / 2, y: anchorRect.bottom }
+      ? { x: anchorRect.x + anchorRect.width / 2, y: anchorRect.y + anchorRect.height }
       : (existing?.flight.anchor ?? {
           x: rect.left + rect.width / 2,
           y: rect.top,
         })
-    const fromFront = existing?.front ?? 0
+    const fromFront = existing?.flight.opening ? existing.front : 0
     const fromAlpha = existing
       ? paneFlightOpacity(
           existing.flight.progress,
@@ -131,12 +162,27 @@ class PaneFlightRegistry {
         ? 0
         : 1
     if (existing) this.restore(existing)
-    const start = performance.now(),
-      paint = paintPane(node, rect.width, rect.height)
-    const paintMs = performance.now() - start
-    this.metrics.paints++
-    this.metrics.paintMs += paintMs
-    this.metrics.maxPaintMs = Math.max(this.metrics.maxPaintMs, paintMs)
+    const themed = node.matches('.experience-settings,.portfolio-nav-shell')
+    const theme = themed ? 'paired' : (document.documentElement.dataset.colorTheme ?? '')
+    const content = contentOf(node)
+    const fontState = `${document.fonts.status}:${document.fonts.size}`
+    const cached = this.paints.get(node)
+    const reusable = cached && cached.fontState === fontState && !node.querySelector('.angry-slider-gesture:not([data-slider-phase="idle"])') && cached.content === content && cached.theme === theme &&
+      Math.abs(cached.width - rect.width) < 1 && Math.abs(cached.height - rect.height) < 1
+    const start = performance.now()
+    const paint = reusable ? cached.paint : paintPane(node, rect.width, rect.height, cached?.paint, themed ? 'dark' : undefined)
+    const lightPaint = themed
+      ? reusable ? cached.lightPaint : paintPane(node, rect.width, rect.height, cached?.lightPaint, 'light')
+      : undefined
+    const paintVersion = reusable ? cached.paintVersion : ++this.paintSequence
+    if (reusable) this.metrics.reusedPaints++
+    else {
+      const paintMs = performance.now() - start
+      this.metrics.paints++
+      this.metrics.paintMs += paintMs
+      this.metrics.maxPaintMs = Math.max(this.metrics.maxPaintMs, paintMs)
+      this.paints.set(node, { paint, lightPaint, paintVersion, content, theme, width: rect.width, height: rect.height, fontState })
+    }
     const field: PaneFlightField = {
       key,
       node,
@@ -148,20 +194,28 @@ class PaneFlightRegistry {
         anchor,
         opening,
         progress: 0,
-        duration: opening ? 0.72 : 0.36,
+        duration: opening ? MENU_OPEN_SECONDS : MENU_CLOSE_SECONDS,
+        apertureWidth: Math.min(48, (anchorRect?.width ?? 80) * 0.6) * 0.65,
+        fresh: opening && !existing,
         viewportWidth: innerWidth,
       },
       fromFront: opening ? fromFront : 0,
       fromAlpha,
       front: opening ? fromFront : 0,
       paint,
+      lightPaint,
       pane: node.matches('dialog'),
-      themed: node.matches('.experience-settings,.portfolio-nav-shell'),
+      themed,
       groups: [],
       controls: new Map(),
-      theme: document.documentElement.dataset.colorTheme ?? '',
-      paintVersion: 0,
-      content: contentOf(node),
+      radius: parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0,
+      layoutDirty: true,
+      paintDirty: false,
+      cleanup: () => {},
+      theme,
+      paintVersion,
+      content,
+      fontState,
     }
     if (!existing && this.fields.size >= 4) {
       const oldest =
@@ -191,6 +245,7 @@ class PaneFlightRegistry {
           top: r.top - field.flight.rect.y,
           height: r.height,
           clip: element.style.clipPath,
+          mask: element.style.maskImage,
           pointer: element.style.pointerEvents,
         }
       },
@@ -202,13 +257,31 @@ class PaneFlightRegistry {
         !control.matches('.pane-close') &&
         !control.closest('[data-glass-copy]')
       )
-        field.controls.set(control, control.inert)
+        field.controls.set(control, { inert: control.inert, bottom: control.getBoundingClientRect().bottom - field.flight.rect.y })
+    this.metrics.layoutRebuilds++
+    field.layoutDirty = false
+    const dirty = () => { field.paintDirty = true; field.layoutDirty = true }
+    const resize = new ResizeObserver(() => { field.layoutDirty = true })
+    resize.observe(node)
+    const mutation = new MutationObserver(dirty)
+    mutation.observe(node, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['src', 'aria-selected', 'value', 'checked'] })
+    node.addEventListener('input', dirty)
+    node.addEventListener('change', dirty)
+    node.addEventListener('load', dirty, true)
+    document.fonts.addEventListener('loadingdone', dirty)
+    field.cleanup = () => {
+      resize.disconnect(); mutation.disconnect()
+      node.removeEventListener('input', dirty); node.removeEventListener('change', dirty); node.removeEventListener('load', dirty, true)
+      document.fonts.removeEventListener('loadingdone', dirty)
+    }
     this.paintFront(field)
   }
   private paintFront(field: PaneFlightField) {
     const visible = field.front * field.flight.rect.height
+    const seam = Math.min(10, field.flight.rect.height - visible)
     field.node.dataset.paneFront = String(field.front)
     field.node.style.setProperty('--pane-front-px', `${visible}px`)
+    field.node.style.setProperty('--pane-solid-px', `${Math.max(0, visible - seam)}px`)
     field.node.style.setProperty(
       '--pane-hidden-px',
       `${Math.max(0, field.flight.rect.height - visible)}px`,
@@ -219,24 +292,25 @@ class PaneFlightRegistry {
         group.height - Math.max(0, visible - group.top),
       )
       group.element.style.clipPath = `inset(0 0 ${hidden}px 0)`
+      group.element.style.maskImage = `linear-gradient(to bottom, black ${Math.max(0, visible - seam - group.top)}px, transparent ${Math.max(0, visible - group.top)}px)`
       group.element.style.pointerEvents = visible > group.top ? 'auto' : 'none'
     }
-    for (const [element, inert] of field.controls) {
-      const bottom =
-        element.getBoundingClientRect().bottom - field.flight.rect.y
-      element.inert = inert || bottom > visible + 0.5
-    }
+    for (const [element, control] of field.controls)
+      element.inert = control.inert || control.bottom > visible + 0.5
   }
   private restore(field: PaneFlightField) {
     for (const group of field.groups) {
       group.element.style.clipPath = group.clip
+      group.element.style.maskImage = group.mask
       group.element.style.pointerEvents = group.pointer
     }
-    for (const [element, inert] of field.controls) element.inert = inert
+    field.cleanup()
+    for (const [element, control] of field.controls) element.inert = control.inert
     delete field.node.dataset.paneFlight
     delete field.node.dataset.paneFlightState
     delete field.node.dataset.paneFront
     field.node.style.removeProperty('--pane-front-px')
+    field.node.style.removeProperty('--pane-solid-px')
     field.node.style.removeProperty('--pane-hidden-px')
     field.groups = []
     field.controls.clear()
@@ -260,10 +334,8 @@ class PaneFlightRegistry {
         const resized =
           Math.abs(r.width - old.width) > 1 ||
           Math.abs(r.height - old.height) > 1
-        const theme = document.documentElement.dataset.colorTheme ?? '',
-          mix = Number(document.documentElement.dataset.themeMix)
-        const themeSettled =
-          mix === Number(theme === 'light') && theme !== field.theme
+        const theme = field.themed ? 'paired' : (document.documentElement.dataset.colorTheme ?? '')
+        const themeChanged = theme !== field.theme
         field.flight.viewportWidth = innerWidth
         if (
           field.trigger?.isConnected &&
@@ -290,7 +362,8 @@ class PaneFlightRegistry {
               ...field.flight,
               rect: rectOf(r),
               progress: 0,
-              duration: Math.max(0.16, 0.72 * (1 - front)),
+              duration: Math.max(0.2, MENU_OPEN_SECONDS * (1 - front)),
+              fresh: false,
               viewportWidth: innerWidth,
             }
             field.epoch = ++this.sequence
@@ -300,18 +373,41 @@ class PaneFlightRegistry {
             field.flight.rect.x = r.left
             field.flight.rect.y = r.top
           }
-          const content = contentOf(field.node)
-          if (resized || themeSettled || content !== field.content) {
+          const content = field.paintDirty ? contentOf(field.node) : field.content
+          const fontState = `${document.fonts.status}:${document.fonts.size}`
+          // React/mirror bookkeeping may mutate nodes without changing paint.
+          // Theme uniforms already own colour interpolation; refresh the atlas
+          // only for genuine content, font, layout or active-control changes.
+          const changedPaint = field.paintDirty && (content !== field.content || fontState !== field.fontState ||
+            Boolean(field.node.querySelector('.angry-slider-gesture:not([data-slider-phase="idle"])')))
+          if (resized || themeChanged || changedPaint) {
             const at = performance.now()
-            field.paint = paintPane(field.node, r.width, r.height, field.paint)
-            field.paintVersion++
+            field.paint = paintPane(field.node, r.width, r.height, field.paint, field.themed ? 'dark' : undefined)
+            if (field.themed) field.lightPaint = paintPane(field.node, r.width, r.height, field.lightPaint, 'light')
+            field.paintVersion = ++this.paintSequence
             field.theme = theme
             field.content = content
+            field.paintDirty = false
+            field.fontState = fontState
+            this.paints.set(field.node, { paint: field.paint, lightPaint: field.lightPaint, paintVersion: field.paintVersion, content, theme, width: r.width, height: r.height, fontState: field.fontState })
             this.metrics.paints++
             const ms = performance.now() - at
             this.metrics.paintMs += ms
             this.metrics.maxPaintMs = Math.max(this.metrics.maxPaintMs, ms)
           }
+          // Geometry reads precede the reveal writes below. Resize has already
+          // rebuilt groups; value/image/font changes refresh only local bounds.
+          if (field.layoutDirty) {
+            for (const group of field.groups) {
+              const box = group.element.getBoundingClientRect()
+              group.top = box.top - r.top; group.height = box.height
+            }
+            for (const [element, control] of field.controls)
+              control.bottom = element.getBoundingClientRect().bottom - r.top
+            field.layoutDirty = false
+            this.metrics.layoutRebuilds++
+          }
+          field.paintDirty = false
         }
       }
       if (document.hidden || !this.enabled(field.node)) {
@@ -323,6 +419,7 @@ class PaneFlightRegistry {
           field.flight.progress,
           true,
           field.fromFront,
+          field.flight.fresh !== false,
         )
         this.paintFront(field)
       }
@@ -341,6 +438,8 @@ class PaneFlightRegistry {
   finish() {
     for (const field of this.fields.values()) this.restore(field)
     this.fields.clear()
+    this.clickedOrigin = null
+    this.origins = new WeakMap()
     this.metrics.active = 0
   }
 }

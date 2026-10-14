@@ -15,6 +15,8 @@ import { CriticalDamper } from '../../core/criticalDamper'
 import { GlassField } from './GlassField'
 import type { PreviewPlayback } from '../../core/previewPlayback'
 import { CursorTrail, trailOutputGLSL } from '../cursor/CursorTrail'
+import { worldsTrailOutputGLSL } from '../cursor/WorldsTrailField'
+import { deriveProjectPigment } from '../../core/projectPigment'
 
 function mediaGeometry() {
   const geometry = new THREE.PlaneGeometry(1, 1, 40, 20)
@@ -150,7 +152,9 @@ export function HubScene({
           toneMapped: false,
         }),
     )
-    const trail = new CursorTrail(gl)
+    const trail = new CursorTrail(gl, true)
+    const pigments = menuViews.map(view => deriveProjectPigment(view.accent, view.presentation === 'activity'))
+    const perimeterColor = new THREE.Color()
     const perimeter = new HoverPerimeter()
     const overlay = new THREE.Scene(),
       ortho = new THREE.Camera(),
@@ -169,24 +173,17 @@ export function HubScene({
       },
       vertexShader:
         'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-      fragmentShader: `varying vec2 vUv;uniform float uIntroTrail,uSelectionLight;uniform vec3 uSmokeColor;${trailOutputGLSL}${perimeterGLSL}
-      // Linear-light pigment cap preserves hue; q=0 keeps the existing dark output.
-      vec3 selectionInk(vec3 color){
-        float luminance=dot(color,vec3(.2126,.7152,.0722));
-        vec3 ink=max(vec3(0.),mix(vec3(luminance),color,1.28));
-        ink*=min(1.,.22/max(.001,dot(ink,vec3(.2126,.7152,.0722))));
-        return mix(color,ink,uSelectionLight);
-      }
+      fragmentShader: `varying vec2 vUv;uniform float uIntroTrail,uSelectionLight;uniform vec3 uSmokeColor;${trailOutputGLSL}${perimeterGLSL}${worldsTrailOutputGLSL}
       void main(){
-      if(uIntroTrail>.5){gl_FragColor=vec4(trailOutput(vUv),1.);
-      #include <tonemapping_fragment>
-      }else{
-      vec3 smoke=trailOutput(vUv);float energy=max(smoke.r,max(smoke.g,smoke.b));
-      float coverage=1.-exp(-energy*1.1*mix(1.,1.4,uSelectionLight)),edge=boxSmoke(vUv);
-      edge=1.-pow(max(0.,1.-edge),mix(1.,1.4,uSelectionLight));
-      vec3 pigment=energy>.0001?smoke/energy*max(uHeadColor.r,max(uHeadColor.g,uHeadColor.b)):uHeadColor;
-      gl_FragColor=vec4(mix(selectionInk(pigment),selectionInk(uSmokeColor),edge/max(.001,coverage+edge)),max(coverage,edge));}
-      #include <colorspace_fragment>
+       if(uIntroTrail>.5){gl_FragColor=vec4(trailOutput(vUv),1.);
+        #include <tonemapping_fragment>
+       }else{
+        vec4 smoke=worldsTrailOutput(vUv);float edge=boxSmoke(vUv);
+        float alpha=1.-(1.-smoke.a)*(1.-edge);
+        vec3 mass=smoke.rgb*smoke.a*(1.-edge)+uSmokeColor*edge;
+        gl_FragColor=vec4(alpha>.0001?mass/alpha:vec3(0.),alpha);
+       }
+       #include <colorspace_fragment>
       }`,
     })
     overlay.add(new THREE.Mesh(plane, trailMaterial))
@@ -196,6 +193,8 @@ export function HubScene({
       geometry,
       materials,
       trail,
+      pigments,
+      perimeterColor,
       perimeter,
       overlay,
       ortho,
@@ -627,8 +626,13 @@ export function HubScene({
     gl.toneMappingExposure =
       (0.9 * preferences.current.settings.displayBrightness) / 100
     const perimeterActive = resources.perimeter.step(dt, menu)
+    const selected = Math.round(menu.rendered * (menuViews.length - 1))
     resources.trailMaterial.uniforms.uSelectionLight.value = q
-    resources.trailMaterial.uniforms.uSmokeColor.value.copy(theme.current)
+    const perimeterIndex = menuViews.findIndex(view => view.id === resources.perimeter.evidence.projectId)
+    const pigment = resources.pigments[selected]
+    const perimeterPigment = resources.pigments[perimeterIndex < 0 ? selected : perimeterIndex]
+    resources.perimeterColor.setRGB(...perimeterPigment.rgb)
+    resources.trailMaterial.uniforms.uSmokeColor.value.copy(resources.perimeterColor)
     const active = resources.trail.step(
       dt,
       size.width,
@@ -636,7 +640,8 @@ export function HubScene({
       quality.tier,
       preferences.current.settings.cursorSize,
       preferences.current.panelOpen || document.hidden,
-      { clock: menu.clock, color: theme.current, reduced: menu.reduced },
+      { clock: menu.clock, color: theme.current, reduced: menu.reduced,
+        style: menu.intro.active ? 'intro' : 'worlds', pigment, projectId: menuViews[selected].id },
     )
     gl.render(scene, camera)
     if (loaded.current && !reported.current) {
