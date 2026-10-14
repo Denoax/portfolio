@@ -12,6 +12,10 @@ V26 refines only clicked-menu opacity, source spread, continuous theme paint and
 
 Publish the exact254-file reviewed static output through the linked Vercel project, stage production without moving domains, verify the staged build, then promote it. Preserve the current production deployment for rollback. No DNS/gateway/driver/external Pelagic changes.
 
+## Verified publication
+
+Runtime release `689e7398b397b9e57cfe3d6ca36dcf7bbf7cc3d9` was published to GitHub main by normal fast-forward. Production `dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD` serves the exact reviewed254 outputs. Desktop/portrait public checks passed; SSO and previews are preserved. Full source/hash/protection/rollback evidence: [v26 deployment receipt](showcase/releases/v26/deployment.json).
+
 ## Historical v24 publication
 
 ### v24 publication authority

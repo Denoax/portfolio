@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-14",
+  "site": "https://manimarami.com/",
+  "provider": "Vercel Hobby",
+  "project": "manimarami-portfolio",
+  "runtimeRevision": "2ef397d425110a22c0319d605af07d0d2674a203",
+  "localEvidenceRevision": "c8474d6dacb3940038f5a38d73dc19350fb2541e",
+  "releaseRevision": "689e7398b397b9e57cfe3d6ca36dcf7bbf7cc3d9",
+  "previousRemoteMain": "bab9d618131842d73dc859ea9946b5210f3dcd83",
+  "deploymentId": "dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD",
+  "deploymentUrl": "manimarami-portfolio-dvtfniwks-denoaxlp-4452.vercel.app",
+  "previousLiveDeploymentId": "dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq",
+  "previousLiveDeploymentUrl": "manimarami-portfolio-isj08ek1p-denoaxlp-4452.vercel.app",
+  "verified": {
+    "reviewedRuntimeInputsByteIdentical": 381,
+    "releaseBuildAndTypecheck": true,
+    "targetedMenuModel": true,
+    "stagedUploadContentDigests": 254,
+    "stagedHtmlSha256": true,
+    "exactBuildOutputConfig": true,
+    "publicHttpsOutputHashesAndSizes": 254,
+    "publicDesktopPortraitFlowCases": 2,
+    "pageErrors": 0,
+    "failedAssets": 0,
+    "mediaPlayback": true,
+    "keyboardSettingsResetFocus": true,
+    "reelForwardReverse": true,
+    "launchReturnThemePersistence": true,
+    "creditsSpa": true,
+    "missingAsset404": true,
+    "byteCorrectVideoRange": {
+      "path": "assets/previews/codex-hermes-loop-20261013-portrait.mp4",
+      "status": 206,
+      "bytes": 1024,
+      "contentRange": "bytes 0-1023/575803"
+    },
+    "wwwCanonical": "https://manimarami.com/",
+    "ssoProtectionRetained": {
+      "deploymentType": "all_except_custom_domains"
+    },
+    "temporaryAutomationBypassRevoked": true,
+    "finalBypassCount": 0
+  },
+  "securityAndCacheHeaders": {
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Cache-Control": "no-cache, no-store, must-revalidate"
+  },
+  "preserved": [
+    "approved intro GIF/banner and GitHub repository cleanup",
+    "approved v2/local4173, development4174 and evidence4180",
+    "v25 vivid smoke and all eight real project IDs/media/actions",
+    "original Pelagic, camera/descent/Back and native controls",
+    "private handoffs/full local evidence/checkpoints/review archives",
+    "DNS/gateway/other services and preview SSO"
+  ],
+  "limits": [
+    "Chromium desktop/portrait emulation; existing v24 publication-flow assertions reused against exact v26 deployment.",
+    "Independent Brave/Safari/physical touch/AT/high-refresh/calibrated-colour/listening and continuous human motion approval unverified.",
+    "All local adverse timing data retained; candidate paired paint increases CPU/GPU tail. RAF is not GPU timing or physical presentation latency."
+  ],
+  "rollback": "vercel rollback dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq --scope denoaxlp-4452",
+  "checkpoint": "/home/mani/.local/share/portfolio-checkpoints/v26-live-20261014",
+  "reviewArchiveSha256": "d726dac3729ce0142771e5e0e2432d51a9be1e1ac26b3a2884776198556b4754"
+}

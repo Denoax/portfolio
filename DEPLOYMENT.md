@@ -1,8 +1,16 @@
 # manimarami.com deployment
 
-## v26 release —2026-10-14
+## Verified v26 release —2026-10-14
 
-Current user authorization permits GitHub and manimarami.com publication. The reviewed runtime is `2ef397d425110a22c0319d605af07d0d2674a203`; the exact254-file static output is staged through the existing linked Vercel project and promoted after verification. The prior production deployment is retained for rollback. Source/rollout evidence is recorded in `showcase/releases/v26/deployment.json` after publication. No DNS, preview protection, gateway, other service or external Pelagic changes.
+Published release `689e7398b397b9e57cfe3d6ca36dcf7bbf7cc3d9` matches all381 reviewed source/public/config inputs and254 frozen build outputs. Every254 public HTTPS output has the reviewed SHA256 and size. Actual desktop/portrait entry, reel reversal/media playback, settings/Reset/focus, protected launch/return and theme persistence passed with zero page errors or failed assets. Credits SPA, missing-asset404, byte-correct video Range, security/cache headers and www canonical redirect passed.
+
+Production: `dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD`. Previous production `dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq` remains retained for rollback. Native protected staged access created one temporary automation token; it was revoked after verification. SSO is unchanged and final bypass count is0. No DNS, gateway, other service, dependency or external Pelagic edits. [Sanitized rollout receipt](showcase/releases/v26/deployment.json).
+
+Rollback only this project using the existing authenticated Vercel CLI:
+
+```sh
+vercel rollback dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq --scope denoaxlp-4452
+```
 
 ## Current public host — 2026-10-13
 
