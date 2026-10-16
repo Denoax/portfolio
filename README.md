@@ -1,6 +1,6 @@
 <div align="center">
 
-> V26 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
+> V28.1 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
 
 <a href="https://manimarami.com/">
   <img src="showcase/github/portfolio-intro-zoom-loop.gif" alt="Portfolio intro — closer dark-mode infinite zoom loop from the original site renderer" width="100%">
@@ -8,7 +8,7 @@
 
 # Mani Marami Milani · Portfolio
 
-**Eight real projects. One continuous journey.**<br>
+**Ten real projects. One continuous journey.**<br>
 An interactive portfolio with a living typographic opening, a scrolling project reel and a galaxy-to-ocean descent.
 
 [![React](https://img.shields.io/badge/React-19-20232a?logo=react&logoColor=61dafb)](https://react.dev/)
@@ -28,7 +28,7 @@ An interactive portfolio with a living typographic opening, a scrolling project 
 
 ## The experience
 
-The opening is an infinite field of type. Scroll to move through its rings, click or hold to send independent ripples through the field, then enter a reel of eight actual repositories. Pelagic launches the protected galaxy, Earth, cloud and ocean journey; the other projects open their real destinations.
+The opening is an infinite field of type. Rings fill the field around a small calm centre. Scroll to move through them; hold to stop the spin and build a sustained pressure tremble, release to shuffle and reverse, then enter a reel of ten actual repositories, now including Visual Music and Hermes Workspace. Pelagic launches the protected galaxy, Earth, cloud and ocean journey; the other projects open their real destinations.
 
 | Opening | Project reel |
 |:---:|:---:|
@@ -74,9 +74,9 @@ Mobile has its own composition, safe edge spacing, scrollable pane bodies and pe
 
 | Area | Behavior |
 |:---|:---|
-| Opening | Continuous Ringwriter, independent pointer ripples and held zoom |
-| Projects | Eight real entries, manual scrolling, hover media and direct selection |
-| Position rail | Displayed-position bulge on21 fine ticks, stronger pointer hover and8 settled markers |
+| Opening | Continuous sharp Ringwriter, slowly arriving outer rings, pressure hold and reversible zoom |
+| Projects | Ten real entries, manual scrolling, hover media and direct selection |
+| Position rail | Displayed-position bulge on 21 fine ticks, stronger pointer hover and 10 settled markers |
 | Panes | Real-content4px flying panes, native controls, immediate dismissal and shared Close |
 | Preferences | Light/dark, bounded brightness, sound volume, Less motion and a scoped Reset |
 | Pelagic | Original procedural jellyfish, reversible descent, tour speed and canonical handoff |
@@ -86,8 +86,10 @@ Mobile has its own composition, safe edge spacing, scrollable pane bodies and pe
 
 | Where | Input | Result |
 |:---|:---|:---|
-| Opening | Scroll; click or hold the field | Move through the rings; emit independent ripples |
-| Opening | Enter while the opening is focused; Projects in navigation | Enter the project reel |
+| Opening | Scroll; plus/minus; zero | Zoom through the rings; reset the zoom |
+| Opening | Deliberate hold; release | Brake spin/zoom, sustain a small letter tremble, then shuffle and reverse |
+| Opening | Short click/tap; Enter or Space | Enter the project reel without a mandatory loader |
+| Navigation | Projects | Enter the project reel |
 | Project reel | Scroll or select a rail marker | Browse or select a real project |
 | Project preview | Hover with a pointer | Play its actual media |
 | Project | Explore | Launch Pelagic's journey or open the selected project's destination |
@@ -130,12 +132,14 @@ React 19 · TypeScript 5.9 · Three.js 0.180 · React Three Fiber 9 · Motion 14
 
 ## Validation
 
-This release publishes the reviewed v26 runtime, including the v25 vivid project trail and softer clicked-menu emission/inward fades. The original intro, Pelagic descent, media, eight projects and native controls are preserved. Build/type checks, CPU/GPU kernel and overlap diagnostics, ten-cycle interruption tests, settings/fallback/lifecycle checks and desktop/portrait light/dark captures accompany the release. Current verification uses Chromium; independent Brave, Safari, physical touch/assistive technology/high-refresh displays, calibrated colour and continuous human motion/listening approval remain unverified.
+This release publishes the reviewed v28.1 runtime and its manual refinements: continuous ring spacing, sharper letter formation, slower rotation, gradual outer arrivals, pressure trembling during hold, and all ten real projects. The original Pelagic, protected journey, preferences and existing graphics fallback are preserved.
 
-Matched local runs retained roughly16.7ms RAF p50/p95. The candidate had a50ms cold interval and higher paired-paint CPU/GPU costs; complete adverse samples remain in the local review. RAF is not GPU timing or physical presentation latency.
+Typecheck/build, seven production geometry cases, twelve transport contracts and actual native Chromium desktop/portrait hold/release/re-press/cancellation checks passed locally. Reduced motion was checked through its existing static renderer. The complete review ZIP was clean-extracted and rebuilt; all 259 output files matched the reviewed build. Selected frames were inspected; continuous playback, independent Brave/Safari, physical touch/assistive technology, high-refresh displays, calibrated colour and listening checks remain unverified. No new performance claim is made.
+
 ```sh
 npm run typecheck
-node scripts/v26-model-checks.mjs
+node scripts/intro-section-checks.mjs
+node scripts/v28-transport-checks.mjs
 ```
 
 Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.

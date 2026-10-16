@@ -14,6 +14,7 @@ import type { ExperiencePreferences } from '../core/experienceSettings'
 import { WorldFrameObserver } from './WorldFrameObserver'
 import { configureDisplayOutput } from './displayOutput'
 import { retainCompilingMaterials } from './retainCompilingMaterials'
+import { bindDefaultFramebuffer } from './defaultFramebuffer'
 import * as THREE from 'three'
 import type { QualityProfile } from '../core/quality'
 import { AmbientClock } from './AmbientClock'
@@ -69,18 +70,21 @@ function RendererHandover({ world }: { world: boolean }) {
   const { gl } = useThree()
   const previous = useRef<boolean | null>(null)
   useFrame(() => {
-    if (previous.current === world) return
-    previous.current = world
-    if (!world) gl.resetState()
-    // HubScene owns its theme clear color. Retiring it must restore the
-    // protected world's original dark clear, including its first visible frame.
-    if (world) gl.setClearColor('#020205', 1)
-    gl.setRenderTarget(null)
+    if (previous.current !== world) {
+      previous.current = world
+      if (!world) gl.resetState()
+      // HubScene owns its theme clear color. Retiring it must restore the
+      // protected world's original dark clear, including its first visible frame.
+      if (world) gl.setClearColor('#020205', 1)
+      gl.autoClear = true
+      gl.autoClearColor = true
+      gl.autoClearDepth = true
+      gl.autoClearStencil = true
+    }
+    // Establish the default target before any simulation/render pass, including
+    // resizes, DPR changes and recovery from a browser allocation clamp.
+    bindDefaultFramebuffer(gl)
     gl.setScissorTest(false)
-    gl.autoClear = true
-    gl.autoClearColor = true
-    gl.autoClearDepth = true
-    gl.autoClearStencil = true
   }, -3)
   return null
 }

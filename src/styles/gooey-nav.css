@@ -52,6 +52,12 @@
 .gooey-neck stop {
   transition: stop-color 180ms ease;
 }
+/* Theme paint uses one RAF-driven displayed mix; retain the short selection
+   dissolve only when that shared theme owner is settled. */
+:root[data-theme-transitioning] :is(.gooey-color-in, .gooey-color-out),
+:root[data-theme-transitioning] .gooey-neck stop {
+  transition: none;
+}
 .gooey-label {
   position: relative;
   display: flex;

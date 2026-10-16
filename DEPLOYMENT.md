@@ -12,7 +12,7 @@ Rollback only this project using the existing authenticated Vercel CLI:
 vercel rollback dpl_ASr4tGpVSQRXUQCXzCA3hCaz1qaq --scope denoaxlp-4452
 ```
 
-## Current public host — 2026-10-13
+## Current public host — 2026-10-15
 
 The public domain now uses the existing Vercel Hobby project
 `manimarami-portfolio` (`prj_JuCj3zJeUXPwe7UjZxGZmOHIod9m`) in
@@ -26,7 +26,9 @@ promoting the tested build. Preserve the existing Build Output API routes and
 security/cache headers. Retain the prior production deployment ID for rollback.
 No automatic Git deployment is configured. Do not print or copy token files.
 
-Current scoped preview refresh: [source and decisions](docs/design/PREVIEW_MEDIA_REFRESH_20261013.md).
+Latest authorized release: v28.1 held-pressure refinement. See [release authority](RELEASE.md) and `showcase/releases/v28-1-pressure/deployment.json` after rollout.
+
+Historical scoped preview refresh: [source and decisions](docs/design/PREVIEW_MEDIA_REFRESH_20261013.md).
 Recoverable checks, static manifest and current rollout evidence are at
 `/home/mani/.local/share/portfolio-checkpoints/worlds-media-20261013`; the coding-panel
 restoration is at `/home/mani/.local/share/portfolio-checkpoints/worlds-code-preview-revert-20261013`.

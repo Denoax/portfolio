@@ -184,7 +184,6 @@ export function DescentComposite({
       finalScene,
       core: new THREE.Vector3(),
       cloudOrigin: new THREE.Vector3(),
-      drawingSize: new THREE.Vector2(),
     }
   }, [quality.cloudSteps, trail])
   useEffect(() => {
@@ -336,9 +335,9 @@ export function DescentComposite({
       }
       return
     }
-    gl.getDrawingBufferSize(resources.drawingSize)
-    const width = resources.drawingSize.x,
-      height = resources.drawingSize.y
+    const context = gl.getContext()
+    const width = context.drawingBufferWidth,
+      height = context.drawingBufferHeight
     if (
       resources.sceneTarget.width !== width ||
       resources.sceneTarget.height !== height

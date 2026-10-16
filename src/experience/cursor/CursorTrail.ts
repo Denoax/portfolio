@@ -92,6 +92,9 @@ export class CursorTrail {
   private previousTarget = 0
   private worlds: WorldsTrailField | null
   private worldsActive = false
+  // CSS coordinates belong to a real observed mouse, independently of the
+  // legacy normalized pointer and the worlds path's freshness window.
+  private worldsPointer = new THREE.Vector2(NaN, NaN)
   private fine = window.matchMedia('(pointer: fine) and (hover: hover)')
   constructor(private gl: THREE.WebGLRenderer, worlds = false) {
     this.worlds = worlds ? new WorldsTrailField(this.geometry) : null
@@ -158,6 +161,7 @@ export class CursorTrail {
     if (worldDiagnostic) diagnostic.__worldsTrail = worldDiagnostic
     const move = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || !this.fine.matches) return
+      if (this.worlds) this.worldsPointer.set(e.clientX, e.clientY)
       if (this.worldsActive) this.worlds?.admit(e)
       const x = e.clientX / innerWidth,
         y = 1 - e.clientY / innerHeight
@@ -179,6 +183,7 @@ export class CursorTrail {
       this.inside = false
       this.needsClear = true
       this.worlds?.clear()
+      this.worldsPointer.set(NaN, NaN)
     }
     const out = (e: PointerEvent) => {
       if (!e.relatedTarget) leave()
@@ -186,6 +191,7 @@ export class CursorTrail {
     const preference = () => {
       this.needsClear = true
       this.worlds?.clear()
+      if (this.worlds) { this.inside = false; this.worldsPointer.set(NaN, NaN) }
     }
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerout', out)
@@ -210,6 +216,13 @@ export class CursorTrail {
   get texture() {
     return this.read.texture
   }
+  get hasWorldsPointer() {
+    return this.inside && this.fine.matches && Number.isFinite(this.worldsPointer.x + this.worldsPointer.y) &&
+      this.worldsPointer.x >= 0 && this.worldsPointer.x < innerWidth && this.worldsPointer.y >= 0 && this.worldsPointer.y < innerHeight
+  }
+  get worldsPointerPosition() {
+    return this.hasWorldsPointer ? this.worldsPointer : null
+  }
   step(
     dt: number,
     width: number,
@@ -217,7 +230,7 @@ export class CursorTrail {
     tier: QualityTier,
     cursorSize: number,
     panelOpen: boolean,
-    menu?: { clock: number; color: THREE.Color; reduced: boolean; style?: 'intro' | 'worlds'; pigment?: Pigment; projectId?: string },
+    menu?: { clock: number; color: THREE.Color; reduced: boolean; style?: 'intro' | 'worlds'; pigment?: Pigment; projectId?: string; quiet?: boolean },
   ) {
     // v25 exception is explicit. The legacy shader and all code below this
     // branch retain the approved intro/descent behavior.
@@ -358,13 +371,17 @@ export class CursorTrail {
   }
   private stepWorlds(
     dt: number, width: number, height: number, tier: QualityTier, cursorSize: number,
-    menu: { clock: number; reduced: boolean; pigment?: Pigment; projectId?: string },
+    menu: { clock: number; reduced: boolean; pigment?: Pigment; projectId?: string; quiet?: boolean },
   ) {
     const field = this.worlds!, e = this.evidence
     e.presentation = 'worlds'
-    field.setPigment(menu.projectId ?? '', menu.pigment!, menu.clock)
+    const wasEnabled = e.enabled
     e.enabled = e.supported && this.fine.matches && !menu.reduced && !document.hidden
-    e.active = e.enabled && this.inside && performance.now() / 1000 - this.lastRealInput < 1.65
+    e.active = e.enabled && this.hasWorldsPointer
+    if (!e.enabled && wasEnabled) {
+      this.needsClear = true
+      this.inside = false; this.worldsPointer.set(NaN, NaN)
+    }
     e.emitting = false; this.outputUniforms.uHeadEmit.value = 0
     if (!e.supported) return false
     const budget = trailBudget(tier, width, height)
@@ -379,15 +396,19 @@ export class CursorTrail {
     this.gl.getViewport(this.savedViewport); this.gl.getScissor(this.savedScissor); this.gl.getClearColor(this.savedColor)
     try {
       this.gl.setScissorTest(false)
-      if (this.needsClear || !e.enabled) {
+      const reset = this.needsClear
+      if (reset) {
         this.gl.setClearColor(0, 0)
         for (const t of [this.read, this.write]) { this.gl.setRenderTarget(t); this.gl.clear() }
         this.gl.setClearColor(this.savedColor, alpha)
         field.clear(); this.needsClear = false; e.resets++
       }
       if (!e.active) return false
-      const delta = Math.max(0, Math.min(.15, dt))
-      const steps = Math.max(1, Math.min(3, Math.floor((delta + .001) * 60)))
+      const delta = reset ? 0 : Math.max(0, Math.min(.05, dt))
+      field.setPigment(menu.projectId ?? '', menu.pigment!, delta)
+      field.seedPointer(this.worldsPointer.x, this.worldsPointer.y, this.lastRealInput * 1000)
+      field.setQuiet(menu.quiet ?? this.quietControl)
+      const steps = delta > 0 ? Math.max(1, Math.min(3, Math.floor((delta + .001) * 60))) : 0
       for (let i = 0; i < steps; i++) {
         field.update(this.read.texture, width, height, tw, th, delta / steps, menu.clock, cursorSize)
         this.gl.setRenderTarget(this.write); this.gl.render(field.scene, this.camera)

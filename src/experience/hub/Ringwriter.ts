@@ -1,85 +1,82 @@
 import { pruneIntroRipples, clearIntroRipples } from '../../core/introRipples'
 import { stepIntroZoom, hintOpacity } from '../../core/introMotion'
 import { boundedZoom } from '../../core/introZoom'
+import {
+  INTRO_PHRASE, INTRO_GLYPHS, INTRO_GLYPHS_PER_BAND, INTRO_LOG_GAP, INTRO_ATLAS,
+  introBandLayout, INTRO_FORMATION, introGlyphFormationSeed, INTRO_SECTION, introSectionProjection,
+} from '../../core/introBands'
 import * as THREE from 'three'
 import type { MenuPresentation } from '../../core/menuReel'
 
-const text = 'MANI MARAMI MILANI · SELECT A PROJECT · '
-const columns = 16,
-  cell = 64
+const { columns, rows, cell, fontPx } = INTRO_ATLAS
+const formation = INTRO_FORMATION
 
-// Independent glyph instancing, adapted from the observed Ringwriter envelope.
-// The creator's renderer/source is not available. This atlas rasterizes our
-// licensed IBM Plex Mono text; it is typography rendering, not an image asset.
+// Original instanced typography using the licensed IBM Plex Mono font. Reference
+// footage informs its envelope; neither creator artwork nor renderer is shipped.
 export class Ringwriter {
   private canvas = document.createElement('canvas')
   texture: THREE.CanvasTexture
   material: THREE.ShaderMaterial
   mesh: THREE.Mesh
   private viewport = ''
-  private holding = false
   private charge = 0
+  private pressure = 0
   private pulseAges = new Float32Array(4).fill(-1)
   private pointer = new THREE.Vector2(4, 4)
   private ready = false
   private running = false
-  private ringCount = 24
-  private primaryRadii = new Float32Array(24)
+  private font = { advance: fontPx * 0.6, inkHeight: fontPx * 0.73,
+    ascent: fontPx * 0.72, descent: fontPx * 0.01, strokeWidth: fontPx * 0.07 }
+  private layout = introBandLayout(1440, 900, this.font.advance, this.font.inkHeight, cell)
 
   constructor() {
+    if (INTRO_GLYPHS.length > columns * rows) throw new Error('Intro glyph table exceeds atlas capacity')
     this.canvas.width = columns * cell
-    this.canvas.height = 8 * cell
+    this.canvas.height = rows * cell
     this.texture = new THREE.CanvasTexture(this.canvas)
     this.texture.name = 'licensed-IBM-Plex-Mono-glyph-atlas'
     this.texture.colorSpace = THREE.NoColorSpace
+    this.texture.generateMipmaps = true
+    this.texture.minFilter = THREE.LinearMipmapLinearFilter
+    this.texture.magFilter = THREE.LinearFilter
     this.material = new THREE.ShaderMaterial({
-      transparent: true,
-      depthWrite: false,
-      depthTest: false,
-      // Clockwise placement and its orthonormal basis keep glyphs readable.
-      side: THREE.FrontSide,
-      toneMapped: false,
+      transparent: true, depthWrite: false, depthTest: false,
+      side: THREE.FrontSide, toneMapped: false,
       uniforms: {
-        uInk: { value: new THREE.Color('#f4f4f2') },
-        uAtlas: { value: this.texture },
-        uPrimaryRadii: { value: this.primaryRadii },
-        uDetachedBase: { value: 2 ** (-5 + 23 * 0.25) },
-        uRingCount: { value: 24 },
-        uTime: { value: 0 },
-        uZoom: { value: 0 },
-        uScale: { value: 1 },
-        uGlyph: { value: 0.03 },
-        uCenter: { value: new THREE.Vector2() },
-        uPointer: { value: this.pointer },
-        uCharge: { value: 0 },
-        uPulseAges: { value: this.pulseAges },
-        uOpacity: { value: 0 },
+        uInk: { value: new THREE.Color('#f4f4f2') }, uAtlas: { value: this.texture },
+        uPressure: { value: 0 }, uPressureTime: { value: 0 },
+        uTime: { value: 0 }, uZoom: { value: 0 }, uPeriod: { value: this.layout.depthPeriod },
+        uLower: { value: this.layout.lower }, uOuterSupportLog: { value: this.layout.outerSupportLog }, uScale: { value: 1 },
+        uQuadFactor: { value: this.layout.quadFactor },
+        uInkHeight: { value: this.font.inkHeight }, uCssPixelScale: { value: 900 },
+        uRenderPixelRatio: { value: 1 }, uStrokeRatio: { value: this.font.strokeWidth / this.font.inkHeight },
+        uAtlasGrid: { value: new THREE.Vector2(columns, rows) }, uAtlasCell: { value: cell },
+        uAtlasSize: { value: new THREE.Vector2(this.canvas.width, this.canvas.height) },
+        uAtlasMaxLod: { value: 0 },
+        uShuffle: { value: 0 }, uShuffleSeed: { value: 0 },
+        uCenter: { value: new THREE.Vector2() }, uPointer: { value: this.pointer },
+        uCharge: { value: 0 }, uPulseAges: { value: this.pulseAges }, uOpacity: { value: 0 },
       },
-      vertexShader: `attribute float aRadius,aTheta,aChar,aOpacity,aSpeed,aKind,aFamily;
-      uniform float uDetachedBase;uniform float uPrimaryRadii[24];uniform int uRingCount;
-      uniform float uTime,uScale,uGlyph,uCharge,uZoom;uniform float uPulseAges[4];uniform vec2 uCenter,uPointer;
-      varying vec2 vUv;varying float vChar,vOpacity,vDissolve,vKind;
+      vertexShader: `attribute float aLog,aTheta,aChar,aOpacity,aSpeed,aIndex,aFormationRank,aFormationOffset;
+      uniform float uTime,uScale,uQuadFactor,uInkHeight,uCharge,uZoom,uPeriod,uLower,uOuterSupportLog,uCssPixelScale,uRenderPixelRatio,uStrokeRatio,uAtlasCell,uShuffle,uShuffleSeed;
+      uniform float uPressure,uPressureTime;
+      uniform float uPulseAges[4];uniform vec2 uCenter,uPointer;
+      varying vec2 vUv;varying float vChar,vOpacity;
+      float hash(float n){return fract(sin(n*127.1+uShuffleSeed*311.7)*43758.5453);}
       void main(){
-        float radius=exp2(mod(log2(aRadius)+uZoom+5.,6.)-5.);
-        // Recycle only in faded inner/outer bands; GPU coordinates stay bounded.
-        float edge=smoothstep(.03125,.05,radius)*(1.-smoothstep(1.25,2.,radius));
-        float glyph=min(uGlyph*radius/aRadius,.055);
-        if(aFamily>.5){
-          float nearest=2.;
-          for(int i=0;i<24;i++){
-            if(i<uRingCount)nearest=min(nearest,abs(radius-uPrimaryRadii[i]));
-          }
-          // Full circles enter only empty bands. Main typography owns its bands.
-          edge*=smoothstep(.05,.085,nearest);
-          // v16 live diagnostic: filler 23 becomes a detached complete band at
-          // zoom -2. Keep its normal outer role and all other recycled rings.
-          // Continuous radius/gap envelopes avoid a hard wrap or wheel rebuild.
-          if(abs(aRadius-uDetachedBase)<.001){
-            float detached=smoothstep(.18,.25,nearest/max(.001,radius));
-            edge*=1.-detached*(1.-smoothstep(.65,.85,radius));
-          }
-          glyph=min(glyph,uGlyph*1.15);
-        }
+        float depth=uLower+mod(aLog+uZoom,uPeriod);
+        float radius=exp2(depth);
+        float arrival=1.-smoothstep(uOuterSupportLog-${INTRO_SECTION.outerFadeOctaves},uOuterSupportLog,depth);
+        // Resolution uses allocated physical pixels; composition uses CSS ink size.
+        // Persistent formation reverses with depth, independently of release shuffle.
+        float inkCss=radius*uQuadFactor*uInkHeight/uAtlasCell*uCssPixelScale;
+        float edge=smoothstep(${formation.strokeStart},${formation.strokeEnd},inkCss*uRenderPixelRatio*uStrokeRatio)
+          *smoothstep(${INTRO_SECTION.minInkCss}.,${INTRO_SECTION.fullInkCss}.,inkCss);
+        float assembly=smoothstep(${formation.assemblyStart}.,${formation.assemblyEnd}.,inkCss);
+        float density=mix(${formation.sparseDensity},1.,assembly);
+        float reveal=smoothstep(aFormationRank-${formation.revealWidth},aFormationRank+${formation.revealWidth},density);
+        float coverage=mix(reveal,1.,assembly);
+        float settle=aFormationOffset*(1.-assembly)*${2 * Math.PI / INTRO_GLYPHS_PER_BAND};
         float pulse=0.;
         for(int i=0;i<4;i++){
           if(uPulseAges[i]>=0.){
@@ -87,36 +84,51 @@ export class Ringwriter {
             pulse+=(1.-exp(-age*4.))*exp(-age*1.2);
           }
         }
-        // A single wave retains the original envelope. Additional waves combine
-        // continuously; their ages are never overwritten by later admissions.
         if(pulse>.65)pulse=.65+.30*(1.-exp(-(pulse-.65)/.30));
-        float theta=aTheta+aSpeed*uTime+pulse*(.16+radius*.15);
+        float scatter=(hash(aIndex)-.5)*uShuffle;
+        float theta=aTheta+settle+aSpeed*uTime+pulse*(.16+radius*.15)+scatter*.075;
         vec2 radial=vec2(cos(theta),sin(theta)),tangent=vec2(radial.y,-radial.x);
-        vec2 center=radial*(radius+pulse*.018*(.5+radius))+uCenter;
-        vec2 local=tangent*position.x*glyph*.94+radial*position.y*glyph;
-        if(aKind>.5)local=position.xy*min(uGlyph,glyph)*.055;
+        vec2 center=radial*(radius*(1.+scatter*.07)+pulse*.018*(.5+radius))+uCenter;
+        vec2 local=(tangent*position.x+radial*position.y)*radius*uQuadFactor;
         float reach=.10+uCharge*.12;
-        vDissolve=1.-smoothstep(reach*.25,reach,length(center-uPointer));
-        vChar=aChar;vOpacity=aOpacity*edge;vKind=aKind;vUv=uv;
+        vec2 fromPointer=center-uPointer;
+        float influence=1.-smoothstep(reach*.25,reach,length(fromPointer));
+        // Move existing ink smoothly. Transparent atlas space never acquires ink.
+        center+=normalize(fromPointer+vec2(.0001))*influence*.018*(.5+radius);
+        float bend=influence*(.04+uCharge*.12);
+        local=mat2(cos(bend),sin(bend),-sin(bend),cos(bend))*local;
+        // Held transport is stationary. Existing active time drives only this
+        // bounded glyph-local tremble, in CSS pixels, without changing ink.
+        float pressure=uPressure*uPressure;
+        float phase=aFormationRank*${2 * Math.PI};
+        vec2 tremble=vec2(
+          sin(uPressureTime*43.+phase)+.35*sin(uPressureTime*61.+phase*2.),
+          sin(uPressureTime*47.-phase)+.35*sin(uPressureTime*67.+phase*3.))/1.35;
+        center+=tremble*pressure*clamp(inkCss*.045,.35,1.8)/uCssPixelScale;
+        float tilt=sin(uPressureTime*37.+phase)*pressure*.012;
+        local=mat2(cos(tilt),sin(tilt),-sin(tilt),cos(tilt))*local;
+        vChar=aChar;vOpacity=aOpacity*edge*coverage*arrival;vUv=uv;
         gl_Position=projectionMatrix*modelViewMatrix*vec4((center+local)*uScale,0.,1.);
       }`,
-      fragmentShader: `uniform vec3 uInk;uniform sampler2D uAtlas;uniform float uOpacity;varying vec2 vUv;varying float vChar,vOpacity,vDissolve,vKind;
+      fragmentShader: `uniform vec3 uInk;uniform sampler2D uAtlas;uniform float uOpacity;
+      uniform vec2 uAtlasGrid,uAtlasSize;uniform float uAtlasCell,uAtlasMaxLod;
+      varying vec2 vUv;varying float vChar,vOpacity;
       void main(){
-        vec2 tile=vec2(mod(vChar,16.),floor(vChar/16.));
-        vec2 atlas=(vec2(tile.x,7.-tile.y)+vUv)/vec2(16.,8.);
-        float letter=texture2D(uAtlas,atlas).a;
-        vec2 dot=fract(vUv*vec2(3.,4.))-.5;
-        float stipple=1.-smoothstep(.10,.23,length(dot));
-        float coverage=mix(letter,stipple*.42,vDissolve);
-        if(vKind>.5)coverage=1.-smoothstep(.2,.5,length(vUv-.5));
-        gl_FragColor=vec4(uInk,coverage*vOpacity*uOpacity);
+        // Interpolation may move a discrete index below an exact row boundary.
+        float glyphIndex=floor(vChar+.5);
+        vec2 tile=vec2(mod(glyphIndex,uAtlasGrid.x),floor(glyphIndex/uAtlasGrid.x));
+        // Half-texel inset and transparent padding isolate every atlas cell.
+        vec2 atlas=(vec2(tile.x,uAtlasGrid.y-1.-tile.y)*uAtlasCell+.5+vUv*(uAtlasCell-1.))/uAtlasSize;
+        vec2 footprintX=dFdx(atlas*uAtlasSize),footprintY=dFdy(atlas*uAtlasSize);
+        float lod=.5*log2(max(max(dot(footprintX,footprintX),dot(footprintY,footprintY)),.000001));
+        // Coarser whole-atlas levels lose cell isolation. Limit actual sampling
+        // to the last level supported by measured transparent glyph padding.
+        float letter=texture2DLodEXT(uAtlas,atlas,clamp(lod,0.,uAtlasMaxLod)).a;
+        gl_FragColor=vec4(uInk,letter*vOpacity*uOpacity);
         #include <colorspace_fragment>
       }`,
     })
-    this.mesh = new THREE.Mesh(
-      new THREE.InstancedBufferGeometry(),
-      this.material,
-    )
+    this.mesh = new THREE.Mesh(new THREE.InstancedBufferGeometry(), this.material)
     this.mesh.name = 'Ringwriter-independent-instanced-typography'
     this.mesh.frustumCulled = false
     this.mesh.renderOrder = 1000
@@ -124,20 +136,46 @@ export class Ringwriter {
   }
 
   async prepare() {
-    await document.fonts.load('48px "IBM Plex Mono"')
+    await document.fonts.load(`${fontPx}px "IBM Plex Mono"`)
     const context = this.canvas.getContext('2d')!
     context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    context.font = '48px "IBM Plex Mono"'
+    context.font = `${fontPx}px "IBM Plex Mono"`
     context.fillStyle = '#fff'
     context.textAlign = 'center'
-    context.textBaseline = 'middle'
-    for (let code = 0; code < 128; code++)
-      context.fillText(
-        String.fromCharCode(code),
-        ((code % columns) + 0.5) * cell,
-        (Math.floor(code / columns) + 0.5) * cell,
-      )
+    context.textBaseline = 'alphabetic'
+    const metrics = INTRO_GLYPHS.map(char => context.measureText(char))
+    const ascent = Math.max(...metrics.map(metric => metric.actualBoundingBoxAscent))
+    const descent = Math.max(...metrics.map(metric => metric.actualBoundingBoxDescent))
+    this.font = { advance: metrics[0].width, inkHeight: ascent + descent, ascent, descent, strokeWidth: fontPx * 0.07 }
+    INTRO_GLYPHS.forEach((char, index) => context.fillText(char,
+      ((index % columns) + 0.5) * cell,
+      Math.floor(index / columns) * cell + (cell + ascent - descent) / 2))
+    let padding: number = cell
+    const glyphBounds = INTRO_GLYPHS.map((glyph, index) => {
+      const pixels = context.getImageData(index % columns * cell, Math.floor(index / columns) * cell, cell, cell).data
+      let left: number = cell, top: number = cell, right = -1, bottom = -1
+      for (let y = 0; y < cell; y++) for (let x = 0; x < cell; x++) {
+        if (pixels[(y * cell + x) * 4 + 3] === 0) continue
+        left = Math.min(left, x); right = Math.max(right, x)
+        top = Math.min(top, y); bottom = Math.max(bottom, y)
+      }
+      if (right >= 0) padding = Math.min(padding, left, top, cell - 1 - right, cell - 1 - bottom)
+      if (glyph === 'I') {
+        let stem: number = cell
+        for (let y = Math.ceil(top + (bottom - top) * 0.35); y <= top + (bottom - top) * 0.65; y++) {
+          let width = 0
+          for (let x = left; x <= right; x++) if (pixels[(y * cell + x) * 4 + 3] >= 128) width++
+          if (width) stem = Math.min(stem, width)
+        }
+        if (stem < cell) this.font.strokeWidth = stem
+      }
+      return { glyph, left, top, right, bottom }
+    })
+    const maxSafeLod = Math.max(0, Math.floor(Math.log2(Math.max(1, padding))))
+    this.material.uniforms.uAtlasMaxLod.value = maxSafeLod
+    this.texture.userData.atlas = { ...INTRO_ATLAS, padding, maxSafeLod, glyphBounds }
     this.texture.needsUpdate = true
+    this.viewport = '' // Font readiness is an explicit geometry transition.
     this.ready = true
   }
 
@@ -145,13 +183,13 @@ export class Ringwriter {
     const move = (event: PointerEvent) => {
       if (!state().active || state().paused) return
       const minimum = Math.min(innerWidth, innerHeight)
-      this.pointer.set(
-        (event.clientX - innerWidth * 0.5) / minimum,
-        (innerHeight * 0.5 - event.clientY) / minimum,
-      )
+      this.pointer.set((event.clientX - innerWidth * 0.5) / minimum,
+        (innerHeight * 0.5 - event.clientY) / minimum)
     }
     const resetClock = () => {
       this.running = false
+      this.pressure = 0
+      this.material.uniforms.uPressure.value = 0
     }
     document.addEventListener('visibilitychange', resetClock)
     window.addEventListener('pointermove', move, { passive: true })
@@ -161,155 +199,98 @@ export class Ringwriter {
     }
   }
 
-  update(
-    dt: number,
-    width: number,
-    height: number,
-    worldScale: number,
-    intro: MenuPresentation['intro'],
-    menuReady: boolean,
-  ) {
+  update(dt: number, width: number, height: number, worldScale: number,
+    intro: MenuPresentation['intro'], menuReady: boolean, renderPixelRatio = 1) {
     const key = `${width}:${height}`
-    if (key !== this.viewport) {
-      this.viewport = key
-      this.resize(width, height)
-    }
+    if (key !== this.viewport) { this.viewport = key; this.resize(width, height) }
+    intro.loopPeriod = this.layout.period
     this.mesh.visible = intro.active
     if (!intro.active) {
-      this.running = false
-      this.holding = false
-      this.charge = 0
-      clearIntroRipples(intro.ripples)
-      this.pulseAges.fill(-1)
+      this.running = false; this.charge = 0; this.pressure = 0
+      this.material.uniforms.uPressure.value = 0
+      clearIntroRipples(intro.ripples); this.pulseAges.fill(-1)
       return
     }
     if (this.ready && menuReady && !intro.paused && !document.hidden) {
-      // Active time is independent of the finite DOM-owned exit.
-      const delta = this.running ? dt : 0
+      const delta = this.running ? Math.min(dt, 0.05) : 0
       this.running = true
-      intro.elapsed += Math.min(delta, 0.05)
-      stepIntroZoom(intro, Math.min(delta, 0.05))
-      if (intro.cueEpoch === null && intro.cueFontsReady)
-        intro.cueEpoch = intro.elapsed
-      if (intro.hint)
-        intro.hint.style.opacity = String(
-          intro.cueEpoch === null
-            ? 0
-            : hintOpacity(intro.elapsed - intro.cueEpoch),
-        )
-      this.material.uniforms.uZoom.value = boundedZoom(intro.zoom)
-      this.holding = intro.holding
-      this.charge = THREE.MathUtils.clamp(
-        this.charge +
-          (this.holding
-            ? Math.min(delta, 0.1) * 1.8
-            : -Math.min(delta, 0.1) * 2.8),
-        0,
-        1,
-      )
-    } else this.running = false
-    const zoom = boundedZoom(intro.zoom)
-    for (let i = 0; i < this.ringCount; i++) {
-      this.primaryRadii[i] =
-        2 ** (((((Math.log2(0.065 + i * 0.05) + zoom + 5) % 6) + 6) % 6) - 5)
+      intro.elapsed += delta
+      stepIntroZoom(intro, delta)
+      if (intro.cueEpoch === null && intro.cueFontsReady) intro.cueEpoch = intro.elapsed
+      if (intro.hint) intro.hint.style.opacity = String(intro.cueEpoch === null
+        ? 0 : hintOpacity(intro.elapsed - intro.cueEpoch))
+      this.charge = THREE.MathUtils.clamp(this.charge + delta * (intro.holding ? 1.8 : -2.8), 0, 1)
+      const held = intro.holding && intro.transport.state === 'HELD'
+      this.pressure = intro.inputBlocked || intro.exiting ? 0
+        : THREE.MathUtils.damp(this.pressure, held ? 1 : 0, held ? 5 : 16, delta)
+    } else {
+      this.running = false
+      this.pressure = 0
     }
-    this.material.uniforms.uRingCount.value = this.ringCount
     const uniforms = this.material.uniforms
-    uniforms.uTime.value = intro.elapsed % (Math.PI * 2000)
+    uniforms.uZoom.value = introSectionProjection(boundedZoom(intro.zoom, this.layout.period), this.layout)
+    uniforms.uTime.value = intro.transport.angularTime
+    uniforms.uPressure.value = this.pressure
+    // Integer harmonic frequencies make this bounded active-time wrap seamless.
+    uniforms.uPressureTime.value = intro.elapsed % (2 * Math.PI)
+    uniforms.uShuffle.value = intro.transport.shuffleAmount
+    uniforms.uShuffleSeed.value = intro.transport.shuffleSeed
     uniforms.uScale.value = worldScale * (1 + intro.exitProgress * 0.08)
-    uniforms.uGlyph.value =
-      Math.max(13.5, Math.min(20, width * 0.016)) /
-      Math.min(width, height) /
-      0.75
-    uniforms.uCenter.value.set(0, (height * 0.025) / Math.min(width, height))
+    uniforms.uCssPixelScale.value = Math.min(width, height)
+    uniforms.uRenderPixelRatio.value = renderPixelRatio
+    uniforms.uCenter.value.set(0, height * 0.025 / Math.min(width, height))
     uniforms.uCharge.value = this.charge
     pruneIntroRipples(intro.ripples, intro.elapsed)
     for (let i = 0; i < 4; i++) {
       const slot = intro.ripples.slots[i]
       this.pulseAges[i] = slot.active ? intro.elapsed - slot.startedAt : -1
     }
-    uniforms.uOpacity.value =
-      Math.min(1, intro.elapsed / 0.28) * (1 - intro.exitProgress)
+    uniforms.uOpacity.value = Math.min(1, intro.elapsed / 0.28) * (1 - intro.exitProgress)
   }
 
   private resize(width: number, height: number) {
-    const values: number[][] = [[], [], [], [], [], [], []]
-    const advance =
-      (Math.max(13.5, Math.min(20, width * 0.016)) * 0.62) /
-      Math.min(width, height)
-    const rings = width < 720 ? 19 : 24
-    this.ringCount = rings
-    for (let ring = 0; ring < rings; ring++) {
-      const radius = 0.065 + ring * 0.05,
-        count = Math.max(12, Math.round((2 * Math.PI * radius) / advance))
-      for (let index = 0; index < count; index++) {
-        const char = text[(index + ring * 7) % text.length]
-        values[0].push(radius)
-        values[1].push(-(index / count) * Math.PI * 2 + ring * 0.18)
-        values[2].push(char.charCodeAt(0) < 128 ? char.charCodeAt(0) : 46)
-        values[3].push(
-          (0.08 + 0.84 * Math.pow(1 - ring / rings, 1.6)) *
-            (0.78 + 0.22 * Math.cos(ring * 0.9)),
-        )
-        values[4].push((ring % 2 ? -1 : 1) * (0.045 + ring * 0.004))
-        values[5].push(0)
-        values[6].push(0)
-      }
-      const dotCount = Math.round((2 * Math.PI * (radius + 0.025)) / 0.009)
-      for (let index = 0; index < dotCount; index++) {
-        values[0].push(radius + 0.025)
-        values[1].push((index / dotCount) * Math.PI * 2)
-        values[2].push(46)
-        values[3].push(0.19)
-        values[4].push(0)
-        values[5].push(1)
-        values[6].push(0)
+    this.layout = introBandLayout(width, height, this.font.advance, this.font.inkHeight, cell)
+    const values: number[][] = Array.from({ length: 8 }, () => [])
+    const phrase = Array.from(INTRO_PHRASE)
+    for (let ring = 0; ring < this.layout.count; ring++) {
+      const speed = (ring % 2 ? -1 : 1) * (INTRO_SECTION.spinBase + ring * INTRO_SECTION.spinStep)
+      for (let index = 0; index < INTRO_GLYPHS_PER_BAND; index++) {
+        const char = phrase[index % phrase.length]
+        if (char === ' ') continue
+        values[0].push(ring * INTRO_LOG_GAP)
+        values[1].push(-index * this.layout.pitch + ring * 0.18)
+        values[2].push(INTRO_GLYPHS.indexOf(char))
+        values[3].push(0.82); values[4].push(speed)
+        const logicalId = ring * INTRO_GLYPHS_PER_BAND + index
+        const seed = introGlyphFormationSeed(logicalId)
+        values[5].push(logicalId)
+        values[6].push(seed.rank); values[7].push(seed.offsetSlots)
       }
     }
-    // Complete fixed rings replace the partial prefix reservoir. Their visibility
-    // is computed against the primary bands, without wheel-driven allocations.
-    for (let ring = 0; ring < 24; ring++) {
-      const radius = 2 ** (-5 + ring * 0.25)
-      const count = Math.max(24, Math.round((2 * Math.PI * radius) / advance))
-      for (let index = 0; index < count; index++) {
-        const char = text[(index + ring * 7) % text.length]
-        values[0].push(radius)
-        values[1].push((-index / count) * Math.PI * 2 + ring * 0.18)
-        values[2].push(char.charCodeAt(0) < 128 ? char.charCodeAt(0) : 46)
-        values[3].push(0.32)
-        values[4].push((ring % 2 ? -1 : 1) * (0.045 + ring * 0.004))
-        values[5].push(0)
-        values[6].push(1)
-      }
-    }
-    const plane = new THREE.PlaneGeometry(1, 1),
-      geometry = new THREE.InstancedBufferGeometry()
+    const plane = new THREE.PlaneGeometry(1, 1)
+    const geometry = new THREE.InstancedBufferGeometry()
     geometry.index = plane.index
     geometry.attributes.position = plane.attributes.position
     geometry.attributes.uv = plane.attributes.uv
-    const names = [
-      'aRadius',
-      'aTheta',
-      'aChar',
-      'aOpacity',
-      'aSpeed',
-      'aKind',
-      'aFamily',
-    ]
-    names.forEach((name, index) =>
-      geometry.setAttribute(
-        name,
-        new THREE.InstancedBufferAttribute(new Float32Array(values[index]), 1),
-      ),
-    )
+    const names = ['aLog', 'aTheta', 'aChar', 'aOpacity', 'aSpeed', 'aIndex', 'aFormationRank', 'aFormationOffset']
+    names.forEach((name, index) => geometry.setAttribute(name,
+      new THREE.InstancedBufferAttribute(new Float32Array(values[index]), 1)))
     geometry.instanceCount = values[0].length
     const previous = this.mesh.geometry
     this.mesh.geometry = geometry
     previous.dispose()
+    this.material.uniforms.uPeriod.value = this.layout.depthPeriod
+    this.material.uniforms.uLower.value = this.layout.lower
+    this.material.uniforms.uOuterSupportLog.value = this.layout.outerSupportLog
+    this.material.uniforms.uQuadFactor.value = this.layout.quadFactor
+    this.material.uniforms.uInkHeight.value = this.font.inkHeight
+    this.material.uniforms.uStrokeRatio.value = this.font.strokeWidth / this.font.inkHeight
+    this.mesh.userData.introBands = { ...this.layout, fontBounds: this.font,
+      glyphs: INTRO_GLYPHS, phrase: INTRO_PHRASE, motifs: 2, columns, rows, cell,
+      atlas: { ...INTRO_ATLAS, ...this.texture.userData.atlas }, formation, section: INTRO_SECTION }
   }
+
   dispose() {
-    this.mesh.geometry.dispose()
-    this.material.dispose()
-    this.texture.dispose()
+    this.mesh.geometry.dispose(); this.material.dispose(); this.texture.dispose()
   }
 }

@@ -1,4 +1,5 @@
 import { clearIntroRipples } from '../core/introRipples'
+import { resetIntroTransport } from '../core/introMotion'
 import { GlobalProximityRail, type RailLocation } from './GlobalProximityRail'
 import { useSiteTheme } from '../core/theme'
 import { ThemeToggle } from './ThemeToggle'
@@ -1261,10 +1262,7 @@ function Home({ route }: { route: string }) {
                 cue('toggle')
                 setInfoOpen(false)
                 previews.stop()
-                presentation.current.intro.zoomReset = false
-                presentation.current.intro.resetActive = false
-                presentation.current.intro.zoomVelocity = 0
-                presentation.current.intro.zoomDelta = 0
+                resetIntroTransport(presentation.current.intro)
                 presentation.current.intro.elapsed = 0
                 presentation.current.intro.cueEpoch = null
                 setIntroEntryRequest(0)

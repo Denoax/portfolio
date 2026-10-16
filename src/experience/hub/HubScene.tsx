@@ -16,7 +16,7 @@ import { GlassField } from './GlassField'
 import type { PreviewPlayback } from '../../core/previewPlayback'
 import { CursorTrail, trailOutputGLSL } from '../cursor/CursorTrail'
 import { worldsTrailOutputGLSL } from '../cursor/WorldsTrailField'
-import { deriveProjectPigment } from '../../core/projectPigment'
+import { deriveProjectPigment, mixProjectPigment, PigmentResponse } from '../../core/projectPigment'
 
 function mediaGeometry() {
   const geometry = new THREE.PlaneGeometry(1, 1, 40, 20)
@@ -153,8 +153,10 @@ export function HubScene({
         }),
     )
     const trail = new CursorTrail(gl, true)
-    const pigments = menuViews.map(view => deriveProjectPigment(view.accent, view.presentation === 'activity'))
+    const pigments = menuViews.map(view => deriveProjectPigment(view.accent))
     const perimeterColor = new THREE.Color()
+    const perimeterPigment = new PigmentResponse()
+    const smokeTarget = mixProjectPigment(pigments[0], pigments[0], 0)
     const perimeter = new HoverPerimeter()
     const overlay = new THREE.Scene(),
       ortho = new THREE.Camera(),
@@ -195,6 +197,8 @@ export function HubScene({
       trail,
       pigments,
       perimeterColor,
+      perimeterPigment,
+      smokeTarget,
       perimeter,
       overlay,
       ortho,
@@ -367,6 +371,8 @@ export function HubScene({
         camera.position.z,
       menu.intro,
       loaded.current,
+      Math.min(gl.getContext().drawingBufferWidth / size.width,
+        gl.getContext().drawingBufferHeight / size.height),
     )
     const reveal = menu.intro.active ? menu.intro.exitProgress : 1
     const selected = Math.round(menu.rendered * (menuViews.length - 1))
@@ -442,11 +448,10 @@ export function HubScene({
           : 0
       material.uniforms.uCss.value.set(cssWidth, cssHeight)
       material.uniforms.uViewport.value.set(
-        size.width * gl.getPixelRatio(),
-        size.height * gl.getPixelRatio(),
+        size.width,
+        gl.getContext().drawingBufferHeight,
       )
-      // Viewport breakpoint must remain CSS-based on high-DPR displays.
-      material.uniforms.uViewport.value.x = size.width
+      // X is the CSS breakpoint; Y normalizes actual framebuffer fragments.
       material.uniforms.uHeader.value.set(70 / size.height, 110 / size.height)
       material.uniforms.uTime.value = menu.reduced ? 0 : menu.clock
       material.uniforms.uBrightness.value =
@@ -579,7 +584,8 @@ export function HubScene({
       lastThemeMix.current = q
       needsRepaint.current = true
     }
-    const bufferSize = `${gl.domElement.width}:${gl.domElement.height}`
+    const context = gl.getContext()
+    const bufferSize = `${size.width}:${size.height}:${context.drawingBufferWidth}:${context.drawingBufferHeight}`
     // A resized drawing buffer is empty. Repaint its frozen scene once, and
     // again only if an asynchronously loaded fitted poster becomes available.
     if (
@@ -625,13 +631,24 @@ export function HubScene({
       : 1
     gl.toneMappingExposure =
       (0.9 * preferences.current.settings.displayBrightness) / 100
-    const perimeterActive = resources.perimeter.step(dt, menu)
+    const smokeDelta = menu.decorativeRunning && !document.hidden ? Math.min(dt, 0.05) : 0
+    if (!resources.trail.hasWorldsPointer || menu.reduced || menu.intro.active || menu.paused) resources.perimeterPigment.reset()
+    const perimeterActive = resources.perimeter.step(smokeDelta, menu, resources.trail.worldsPointerPosition)
     const selected = Math.round(menu.rendered * (menuViews.length - 1))
     resources.trailMaterial.uniforms.uSelectionLight.value = q
     const perimeterIndex = menuViews.findIndex(view => view.id === resources.perimeter.evidence.projectId)
-    const pigment = resources.pigments[selected]
+    // Decorative pigment follows the displayed pose continuously. Semantic
+    // selection/actions and the genuine hovered project keep their exact IDs.
+    const position = Math.max(0, Math.min(menuViews.length - 1, menu.rendered * (menuViews.length - 1)))
+    const lower = Math.floor(position), fraction = position - lower
+    const pigment = mixProjectPigment(resources.pigments[lower], resources.pigments[Math.min(lower + 1, menuViews.length - 1)],
+      fraction * fraction * (3 - 2 * fraction), resources.smokeTarget)
     const perimeterPigment = resources.pigments[perimeterIndex < 0 ? selected : perimeterIndex]
-    resources.perimeterColor.setRGB(...perimeterPigment.rgb)
+    if (resources.perimeter.evidence.emitting) {
+      const tint = resources.perimeterPigment.step(perimeterPigment, smokeDelta)
+      resources.perimeterColor.setRGB(tint.rgb[0], tint.rgb[1], tint.rgb[2])
+      for (let i = 0; i < 3; i++) resources.perimeter.evidence.pigment[i] = tint.rgb[i]
+    }
     resources.trailMaterial.uniforms.uSmokeColor.value.copy(resources.perimeterColor)
     const active = resources.trail.step(
       dt,
@@ -641,7 +658,8 @@ export function HubScene({
       preferences.current.settings.cursorSize,
       preferences.current.panelOpen || document.hidden,
       { clock: menu.clock, color: theme.current, reduced: menu.reduced,
-        style: menu.intro.active ? 'intro' : 'worlds', pigment, projectId: menuViews[selected].id },
+        style: menu.intro.active ? 'intro' : 'worlds', pigment, projectId: menuViews[selected].id,
+        quiet: resources.perimeter.quiet },
     )
     gl.render(scene, camera)
     if (loaded.current && !reported.current) {

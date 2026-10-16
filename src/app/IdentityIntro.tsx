@@ -4,6 +4,14 @@ import { useRouteFade } from '../hooks/useRouteFade'
 import type { RefObject } from 'react'
 import { advanceZoom, boundedZoom } from '../core/introZoom'
 import type { MenuPresentation } from '../core/menuReel'
+import {
+  beginIntroGesture,
+  cancelIntroTransport,
+  exitIntroTransport,
+  releaseIntroGesture,
+  requestIntroReset,
+  requestIntroZoom,
+} from '../core/introMotion'
 
 export function IdentityIntro({
   presentation,
@@ -39,20 +47,22 @@ export function IdentityIntro({
     y: number
     at: number
     moved: boolean
+    token: number
   } | null>(null)
   const touchPointers = useRef(new Set<number>())
   const pinched = useRef(false)
   const [staticZoom, setStaticZoom] = useState(0)
+  const cancelGesture = () => {
+    const id = gesture.current?.id
+    gesture.current = null
+    touchPointers.current.clear()
+    pinched.current = false
+    cancelIntroTransport(presentation.current.intro)
+    if (id !== undefined && root.current?.hasPointerCapture(id))
+      root.current.releasePointerCapture(id)
+  }
   useEffect(() => {
-    const cancel = () => {
-      const id = gesture.current?.id
-      gesture.current = null
-      touchPointers.current.clear()
-      pinched.current = false
-      presentation.current.intro.holding = false
-      if (id !== undefined && root.current?.hasPointerCapture(id))
-        root.current.releasePointerCapture(id)
-    }
+    const cancel = () => cancelGesture()
     const hidden = () => {
       if (document.hidden) cancel()
     }
@@ -67,17 +77,22 @@ export function IdentityIntro({
     }
   }, [presentation])
   const zoom = (delta: number) => {
-    if (paused || exiting) return
+    if (paused || exiting || presentation.current.intro.holding) return
     if (staticView) {
       presentation.current.intro.zoom = advanceZoom(
         presentation.current.intro.zoom,
         delta,
       )
-      setStaticZoom(boundedZoom(presentation.current.intro.zoom))
-    } else presentation.current.intro.zoomDelta += delta
+      setStaticZoom(
+        boundedZoom(
+          presentation.current.intro.zoom,
+          presentation.current.intro.loopPeriod,
+        ),
+      )
+    } else requestIntroZoom(presentation.current.intro, delta)
   }
   const reset = () => {
-    if (paused || exiting) return
+    if (paused || exiting || presentation.current.intro.holding) return
     onInteract()
     const intro = presentation.current.intro
     if (staticView) {
@@ -85,7 +100,7 @@ export function IdentityIntro({
       intro.zoomDelta = intro.zoomVelocity = 0
       intro.zoomReset = intro.resetActive = false
       setStaticZoom(0)
-    } else intro.zoomReset = true
+    } else requestIntroReset(intro)
   }
   // The static path has no renderer clock. WAAPI supplies the same active-time
   // hint and is paused by modal/visibility state; it never drives live artwork.
@@ -167,12 +182,14 @@ export function IdentityIntro({
     if (paused || exiting) return
     if (presentation.current.intro.exiting) return
     onActivate()
+    exitIntroTransport(presentation.current.intro)
     presentation.current.intro.exiting = true
     onExitStateChange(true)
   }
   const cancelEntry = () => {
     presentation.current.intro.exiting = false
     presentation.current.intro.exitProgress = 0
+    cancelIntroTransport(presentation.current.intro)
     root.current?.style.removeProperty('--intro-exit-opacity')
     onEntryCancel()
     onExitStateChange(false)
@@ -191,16 +208,11 @@ export function IdentityIntro({
     onCancel: cancelEntry,
   })
   useEffect(() => {
-    if (paused) {
-      const pointer = gesture.current?.id
-      if (pointer !== undefined && root.current?.hasPointerCapture(pointer))
-        root.current.releasePointerCapture(pointer)
-      gesture.current = null
-      touchPointers.current.clear()
-      pinched.current = false
-      presentation.current.intro.holding = false
+    if (paused || staticView) {
+      cancelGesture()
+      if (staticView) presentation.current.intro.zoomVelocity = 0
     }
-  }, [paused, presentation])
+  }, [paused, staticView, presentation])
   const consumedRequest = useRef(0)
   useEffect(() => {
     if (entryRequest > consumedRequest.current && !paused && !exiting) {
@@ -224,7 +236,7 @@ export function IdentityIntro({
         e.preventDefault()
         if (e.isTrusted) onInteract()
         if (e.key === '0') reset()
-        else zoom(e.key === '-' ? -0.25 : 0.25)
+        else zoom(e.key === '-' ? -0.15 : 0.15)
         return
       }
       if (['Enter', ' '].includes(e.key)) {
@@ -234,13 +246,13 @@ export function IdentityIntro({
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
-  }, [paused, exiting])
+  }, [paused, exiting, staticView, presentation])
   useEffect(() => {
     const wheel = (e: WheelEvent) => {
       if (paused || exiting || e.ctrlKey || e.metaKey || e.altKey) return
       e.preventDefault()
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1
-      zoom(Math.max(-0.5, Math.min(0.5, (-e.deltaY * unit) / 650)))
+      zoom(Math.max(-0.25, Math.min(0.25, (-e.deltaY * unit) / 1400)))
     }
     const node = root.current
     node?.addEventListener('wheel', wheel, { passive: false })
@@ -269,25 +281,38 @@ export function IdentityIntro({
         onPointerDown={(e) => {
           if (e.pointerType === 'touch') {
             touchPointers.current.add(e.pointerId)
-            if (touchPointers.current.size > 1) pinched.current = true
+            if (touchPointers.current.size > 1) {
+              pinched.current = true
+              const id = gesture.current?.id
+              gesture.current = null
+              cancelIntroTransport(presentation.current.intro)
+              if (id !== undefined && e.currentTarget.hasPointerCapture(id))
+                e.currentTarget.releasePointerCapture(id)
+            }
           }
           if (
             paused ||
             exiting ||
+            pinched.current ||
             !e.isPrimary ||
             e.button !== 0 ||
-            (e.target instanceof Element && e.target.closest('button,a'))
+            (e.target instanceof Element &&
+              e.target.closest(
+                'button,a,input,textarea,select,dialog,[contenteditable="true"]',
+              ))
           )
             return
           onInteract()
+          const token = beginIntroGesture(presentation.current.intro)
+          if (token === null) return
           gesture.current = {
             id: e.pointerId,
             x: e.clientX,
             y: e.clientY,
             at: performance.now(),
             moved: false,
+            token,
           }
-          presentation.current.intro.holding = true
           e.currentTarget.setPointerCapture(e.pointerId)
         }}
         onPointerMove={(e) => {
@@ -295,33 +320,35 @@ export function IdentityIntro({
           if (g && Math.hypot(e.clientX - g.x, e.clientY - g.y) > 10)
             g.moved = true
         }}
-        onPointerCancel={() => {
-          gesture.current = null
-          touchPointers.current.clear()
-          pinched.current = false
-          presentation.current.intro.holding = false
-        }}
-        onLostPointerCapture={() => {
-          gesture.current = null
-          presentation.current.intro.holding = false
+        onPointerCancel={cancelGesture}
+        onLostPointerCapture={(e) => {
+          // Normal pointerup implicitly loses capture after its accepted release.
+          // Only an unfinished gesture is a cancellation.
+          if (gesture.current?.id === e.pointerId) cancelGesture()
         }}
         onPointerUp={(e) => {
           touchPointers.current.delete(e.pointerId)
           if (pinched.current) {
             if (!touchPointers.current.size) pinched.current = false
             gesture.current = null
-            presentation.current.intro.holding = false
+            cancelIntroTransport(presentation.current.intro)
             return
           }
           const g = gesture.current
           gesture.current = null
           const intro = presentation.current.intro
-          intro.holding = false
           if (!g || g.id !== e.pointerId) return
-          if (g.moved || performance.now() - g.at > 260) {
+          const action = releaseIntroGesture(
+            intro,
+            g.token,
+            (performance.now() - g.at) / 1000,
+            g.moved,
+            !staticView,
+          )
+          if (action === 'reverse' || action === 'ripple') {
             const id = admitIntroRipple(intro.ripples, intro.elapsed)
             if (id !== null) onRipple(id)
-          } else activate()
+          } else if (action === 'enter') activate()
         }}
       >
         {staticView && (
@@ -340,11 +367,21 @@ export function IdentityIntro({
           </div>
         )}
         <p id="intro-instructions" className="sr-only">
-          Hold the artwork to ripple. Click, tap, Enter or Space to enter.
+          {staticView
+            ? 'Automatic motion is off. '
+            : 'Hold the artwork to pause; release to reverse. '}
+          Click, tap, Enter or Space to enter.
           Scroll to zoom. Plus and minus zoom the artwork; zero resets it.
         </p>
-        <div ref={hint} className="intro-hint" aria-hidden="true">
-          <span>Hold to ripple</span>
+        <div
+          ref={hint}
+          className="intro-hint"
+          aria-hidden="true"
+          style={{ textShadow: '0 0 1px var(--site-base), 0 0 1px var(--site-base), 0 0 1px var(--site-base), 0 0 6px var(--site-base)' }}
+        >
+          <span>
+            {staticView ? 'Scroll to zoom' : 'Hold to pause · release to reverse'}
+          </span>
           <span className="intro-hint-pointer">Click to enter</span>
           <span className="intro-hint-touch">Tap to enter</span>
         </div>

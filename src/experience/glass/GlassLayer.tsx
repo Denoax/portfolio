@@ -7,6 +7,8 @@ import { GlassDomMirror } from './GlassDomMirror'
 import { glassOptics } from '../../core/glassOptics'
 import { FlyingPanes } from './FlyingPanes'
 import { paneFlights } from './PaneFlights'
+import { bindDefaultFramebuffer } from '../defaultFramebuffer'
+import { projectedActionBox } from '../../core/projectedElementBox'
 
 const CAPACITY = 16
 const selectors =
@@ -50,6 +52,14 @@ export function GlassLayer({
       new Float32Array(CAPACITY * 4),
       4,
     ).setUsage(THREE.DynamicDrawUsage)
+    const localSize = new THREE.InstancedBufferAttribute(
+      new Float32Array(CAPACITY * 2), 2,
+    ).setUsage(THREE.DynamicDrawUsage)
+    const boxInverse = [0, 1, 2].map(() => new THREE.InstancedBufferAttribute(
+      new Float32Array(CAPACITY * 3), 3,
+    ).setUsage(THREE.DynamicDrawUsage))
+    geometry.setAttribute('aLocalSize', localSize)
+    boxInverse.forEach((attribute, index) => geometry.setAttribute(`aBoxInverse${index}`, attribute))
     geometry.setAttribute('aParent', parentOptics)
     geometry.setAttribute('aFront', front)
     geometry.setAttribute('aOptics', optics)
@@ -60,7 +70,7 @@ export function GlassLayer({
       uLight: { value: 0 },
       uBase: { value: null as THREE.Texture | null },
       uSize: { value: new THREE.Vector2() },
-      uPixelRatio: { value: 1 },
+      uPixelRatio: { value: new THREE.Vector2(1, 1) },
     }
     const material = new THREE.RawShaderMaterial({
       uniforms,
@@ -68,8 +78,8 @@ export function GlassLayer({
       depthWrite: false,
       toneMapped: false,
       transparent: true,
-      vertexShader: `precision highp float;attribute vec3 position;attribute vec4 aRect,aShape,aOptics,aParent;attribute vec2 aFront;uniform vec2 uSize;varying vec4 vRect,vShape,vOptics,vParent;varying vec2 vFront;void main(){vRect=aRect;vShape=aShape;vOptics=aOptics;vParent=aParent;vFront=aFront;vec2 p=aRect.xy-vec2(2.)+(position.xy+.5)*(aRect.zw+vec2(4.));gl_Position=vec4(p/uSize*2.-1.,0.,1.);}`,
-      fragmentShader: `precision highp float;uniform sampler2D uBase;uniform vec2 uSize;uniform float uPixelRatio,uLight;varying vec4 vRect,vShape,vOptics,vParent;varying vec2 vFront;
+      vertexShader: `precision highp float;attribute vec3 position,aBoxInverse0,aBoxInverse1,aBoxInverse2;attribute vec4 aRect,aShape,aOptics,aParent;attribute vec2 aFront,aLocalSize;uniform vec2 uSize;varying vec4 vRect,vShape,vOptics,vParent;varying vec2 vFront,vLocalSize;varying mat3 vBoxInverse;void main(){vRect=aRect;vShape=aShape;vOptics=aOptics;vParent=aParent;vFront=aFront;vLocalSize=aLocalSize;vBoxInverse=mat3(aBoxInverse0,aBoxInverse1,aBoxInverse2);vec2 p=aRect.xy-vec2(2.)+(position.xy+.5)*(aRect.zw+vec2(4.));gl_Position=vec4(p/uSize*2.-1.,0.,1.);}`,
+      fragmentShader: `precision highp float;uniform sampler2D uBase;uniform vec2 uSize,uPixelRatio;uniform float uLight;varying vec4 vRect,vShape,vOptics,vParent;varying vec2 vFront,vLocalSize;varying mat3 vBoxInverse;
       void main(){
         vec2 p=gl_FragCoord.xy/uPixelRatio;
         float arrival=p.y-(vRect.y+vRect.w-vFront.x);
@@ -77,10 +87,16 @@ export function GlassLayer({
         float ownership=vFront.y>.001?smoothstep(0.,vFront.y,arrival):1.;
         vec2 halfSize=vRect.zw*.5;
         vec2 local=p-vRect.xy-halfSize;
+        vec2 backdropLocal=local;
+        if(vLocalSize.x>0.){
+          vec3 mapped=vBoxInverse*vec3(p.x,uSize.y-p.y,1.);
+          halfSize=vLocalSize*.5;
+          local=vec2(mapped.x/mapped.z,vLocalSize.y-mapped.y/mapped.z)-halfSize;
+        }
         float radius=vShape.x,bevel=vShape.y;
         vec2 q=abs(local)-halfSize+radius;
         float distance=length(max(q,0.))+min(max(q.x,q.y),0.)-radius;
-        float aa=1./uPixelRatio;
+        float aa=1./min(uPixelRatio.x,uPixelRatio.y);
         if(distance>aa)discard;
         vec2 normal;
         if(q.x>0.&&q.y>0.)normal=normalize(max(q,0.))*sign(local);
@@ -92,8 +108,8 @@ export function GlassLayer({
         // The center magnifies the actual clean backdrop about this pane;
         // rim displacement is continuous with that affine sample map.
         float magnification=vOptics.x;
-        vec2 center=vRect.xy+halfSize;
-        vec2 samplePoint=center+local/magnification;
+        vec2 center=vRect.xy+vRect.zw*.5;
+        vec2 samplePoint=center+backdropLocal/magnification;
         if(vParent.w>.5)samplePoint=vParent.xy+(samplePoint-vParent.xy)/vParent.z;
         vec2 uv=samplePoint/uSize;
         vec2 bend=normal*shift/uSize;
@@ -142,6 +158,9 @@ export function GlassLayer({
       optics,
       front,
       parentOptics,
+      localSize,
+      boxInverse,
+      projectionInverse: new THREE.Matrix3(),
       flying: new FlyingPanes(uniforms),
       material,
       scene,
@@ -347,9 +366,18 @@ export function GlassLayer({
       const panel = element.dataset.glassLens === 'window'
       if (panel) windowSurfaces.push(element)
       const computed = getComputedStyle(element)
+      const projected = projectedActionBox(element, computed, r)
+      state.localSize.setXY(count, projected?.width ?? 0, projected?.height ?? 0)
+      if (projected) state.projectionInverse.set(...projected.matrix).invert()
+      else state.projectionInverse.identity()
+      const inverse = state.projectionInverse.elements
+      for (let column = 0; column < 3; column++)
+        state.boxInverse[column].setXYZ(
+          count, inverse[column * 3], inverse[column * 3 + 1], inverse[column * 3 + 2],
+        )
       const radius = Math.min(
-        r.width / 2,
-        r.height / 2,
+        (projected?.width ?? r.width) / 2,
+        (projected?.height ?? r.height) / 2,
         parseFloat(computed.borderTopLeftRadius) || 0,
       )
       state.rect.setXYZW(count, r.left, height - r.bottom, r.width, r.height)
@@ -415,9 +443,10 @@ export function GlassLayer({
       // again on every close. Resize and unmount still dispose it explicitly.
       return
     }
-    const dpr = gl.getPixelRatio(),
-      bw = gl.domElement.width,
-      bh = gl.domElement.height
+    const context = gl.getContext(),
+      bw = context.drawingBufferWidth,
+      bh = context.drawingBufferHeight
+    if (!bw || !bh || !width || !height) return
     if (
       !state.texture ||
       state.texture.image.width !== bw ||
@@ -442,8 +471,10 @@ export function GlassLayer({
       state.lastFrame = baseFrame.current
     }
     state.uniforms.uSize.value.set(width, height)
-    state.uniforms.uPixelRatio.value = dpr
+    state.uniforms.uPixelRatio.value.set(bw / width, bh / height)
     state.geometry.instanceCount = count
+    state.localSize.needsUpdate = true
+    for (const attribute of state.boxInverse) attribute.needsUpdate = true
     state.rect.needsUpdate =
       state.shape.needsUpdate =
       state.optics.needsUpdate =
@@ -456,8 +487,7 @@ export function GlassLayer({
       scissor = gl.getScissor(state.scissor),
       scissorTest = gl.getScissorTest()
     try {
-      gl.setRenderTarget(null)
-      gl.setViewport(0, 0, width, height)
+      bindDefaultFramebuffer(gl)
       gl.setScissorTest(false)
       gl.autoClear = false
       if (!fresh) gl.render(state.restoreScene, state.camera)

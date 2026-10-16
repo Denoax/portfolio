@@ -10,6 +10,7 @@
   --nav-body: #262626;
   --nav-selected: #f4f4f2;
   --nav-selected-ink: #141414;
+  --nav-hover-surface: transparent;
   --pane: #121922f5;
   --pane-ink: #f4f6f8;
   --pane-muted: #d2dae2;
@@ -29,6 +30,7 @@
   --nav-body: #e2e6ea;
   --nav-selected: #161a20;
   --nav-selected-ink: #f3f5f7;
+  --nav-hover-surface: #dde1e5;
   --pane: #121922f5;
   --button: #161a2008;
   color-scheme: light;
@@ -55,8 +57,9 @@ html {
 .hub-brand:is(:hover, :focus-visible) {
   color: var(--hover-ink);
 }
-:root[data-color-theme='light']
-  .gooey-label:not([data-active='true']):is(:hover, :focus-visible),
+.gooey-label:not([data-active='true']):is(:hover, :focus-visible) {
+  background-color: var(--nav-hover-surface);
+}
 :root[data-color-theme='light'] .hub-brand:is(:hover, :focus-visible) {
   background-color: var(--hover-surface);
 }
@@ -398,6 +401,18 @@ html {
   .hub-header {
   background: #f3f5f7ed;
   border-bottom: 1px solid var(--line);
+  color: var(--site-ink);
+}
+/* The descent cue appears over the authored space scene in either site theme.
+   It must not inherit light mode's dark page ink from the outer shell. */
+.earth-cue {
+  color: #f4f4f2;
+}
+.world-return {
+  min-height: 44px;
+}
+.hub-header .world-return:focus-visible {
+  outline-color: var(--site-ink);
 }
 /* v17 custom content uses the scene's single projected card descriptor. */
 .menu-projected-target {

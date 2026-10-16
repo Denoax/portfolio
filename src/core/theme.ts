@@ -64,6 +64,10 @@ function display(q: number) {
     `color-mix(in srgb, ${themeColor('ffffff', '161a20', q)} 3%, transparent)`,
   )
   root.style.setProperty(
+    '--nav-hover-surface',
+    `color-mix(in srgb, ${themeColor(...palette['hover-surface'], q)} ${q * 100}%, transparent)`,
+  )
+  root.style.setProperty(
     '--ink-contour',
     `color-mix(in srgb, ${q < 0.23 ? '#080808' : '#f3f5f7'} ${Math.sin(Math.PI * q) * 75}%, transparent)`,
   )
@@ -108,6 +112,9 @@ export function useSiteTheme(
       display(target)
       return
     }
+    // The displayed mix already owns the dissolve. A second CSS interpolation
+    // would delay button bodies and SVG necks by different amounts.
+    root.dataset.themeTransitioning = 'true'
     let raf = 0,
       last = 0
     const duration =
@@ -127,6 +134,7 @@ export function useSiteTheme(
       display(Math.max(0, Math.min(1, next)))
       if (Math.abs(mix - target) < 0.0002 && Math.abs(velocity) < 0.003) {
         display(target)
+        delete root.dataset.themeTransitioning
         return
       }
       if (!document.hidden) raf = requestAnimationFrame(tick)
@@ -141,6 +149,7 @@ export function useSiteTheme(
     return () => {
       cancelAnimationFrame(raf)
       document.removeEventListener('visibilitychange', visibility)
+      delete root.dataset.themeTransitioning
     }
   }, [theme, motionLess, shortDissolve, preference])
   return theme

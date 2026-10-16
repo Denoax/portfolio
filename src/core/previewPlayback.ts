@@ -123,6 +123,11 @@ export class PreviewPlayback {
   start(project: Project, intent: 'hover' | 'explicit' = 'hover') {
     if (!this.canStart || !this.allowed || this.paused || document.hidden)
       return
+    // A real still is a complete preview, with no decoder or failed-video state.
+    if (project.previewMotion === false) {
+      if (this.snapshot.state !== 'poster') this.stop()
+      return
+    }
     if (
       this.snapshot.projectId === project.id &&
       ['preparing', 'playing', 'gif'].includes(this.snapshot.state)

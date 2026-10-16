@@ -1,6 +1,7 @@
 import { clamp } from './math'
 import { createIntroRipples, type IntroRipples } from './introRipples'
 import { projects } from '../content/projects'
+import { createIntroTransport, type IntroTransport } from './introMotion'
 
 export const menuViews = projects
 
@@ -59,6 +60,8 @@ export interface MenuPresentation {
   scrollReelBy: ((delta: number) => void) | null
   intro: {
     zoom: import('./introZoom').IntroZoom
+    loopPeriod: number
+    transport: IntroTransport
     zoomDelta: number
     zoomReset: boolean
     zoomVelocity: number
@@ -136,6 +139,8 @@ export function createMenuPresentation(): MenuPresentation {
     scrollReelBy: null,
     intro: {
       zoom: { octave: 0n, phase: 0 },
+      loopPeriod: 10,
+      transport: createIntroTransport(),
       zoomDelta: 0,
       zoomReset: false,
       zoomVelocity: 0,

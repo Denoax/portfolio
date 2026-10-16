@@ -1,0 +1,1302 @@
+{
+  "runtimeRevision": "3464e2c65fd77cbdb40d580d644a0789b09d2797",
+  "reviewedEvidenceRevision": "4d5e59b1d52aa00a161f64dd6abab56d756cf3d7",
+  "site": "https://manimarami.com",
+  "files": [
+    {
+      "path": "assets/WorldScene-BNEJEV7H.js",
+      "bytes": 87193,
+      "sha256": "64b2ce7f44db25cbf51522e7c060f53948054edea085a79480781a2f57f90c77"
+    },
+    {
+      "path": "assets/activity/calendar.json",
+      "bytes": 21936,
+      "sha256": "4b66030d57d0d9bdff460dd3c6ada1f96cd2de7e9d98dee2e205d066a961d6c7"
+    },
+    {
+      "path": "assets/activity/github-avatar.jpg",
+      "bytes": 33910,
+      "sha256": "77d6fb7f3729e4ad00414fb0373fa3bea875395281cebb38cadfdae7ebc34376"
+    },
+    {
+      "path": "assets/activity/profile.json",
+      "bytes": 600,
+      "sha256": "66c1bf4653e992d811ec7aa1cd4131abd7b073b6255bfb9838f66e25e7c988ba"
+    },
+    {
+      "path": "assets/audio/click_001.wav",
+      "bytes": 8644,
+      "sha256": "bb518366184cdc8a33bfcfaac732a4372484525011a8a1981dd1152d0d8eea4f"
+    },
+    {
+      "path": "assets/audio/click_004.wav",
+      "bytes": 1998,
+      "sha256": "2f066407e9b345fa6ab28b6ba68ebdc2a1f2b7ce18bbc84a51010863eb5634d4"
+    },
+    {
+      "path": "assets/audio/tick_001.wav",
+      "bytes": 4046,
+      "sha256": "8b3534af8eafe2245286b6ad5624942302e43156ec4055e013213f4bae3d967e"
+    },
+    {
+      "path": "assets/audio/v13/back-1.wav",
+      "bytes": 87524,
+      "sha256": "00312de57069d677ddf8c67acad524408166f964f7b995296cb58a06041c20b4"
+    },
+    {
+      "path": "assets/audio/v13/back-2.wav",
+      "bytes": 97180,
+      "sha256": "842fdbc442709489d477342d07d008207762630a9a8bc841b3e1140934a3f708"
+    },
+    {
+      "path": "assets/audio/v13/back-3.wav",
+      "bytes": 101648,
+      "sha256": "387b8069fd65621c63a8d2926ba1e449e4f63d1633b1b6875746187145c2a486"
+    },
+    {
+      "path": "assets/audio/v13/hover-3.wav",
+      "bytes": 105396,
+      "sha256": "c33e4e05ea13f00fd6eb9a50473f00fc8441d6f7f2e2c3676178402f8cd46a1a"
+    },
+    {
+      "path": "assets/audio/v13/hover-4.wav",
+      "bytes": 61852,
+      "sha256": "eb46001d022c6573cba14591568d2c950ae55146fd56f2f1d82fec3c781e7d4d"
+    },
+    {
+      "path": "assets/audio/v13/intro-bed.wav",
+      "bytes": 4147372,
+      "sha256": "77dcbd24a4264e072de3c3f66d3d5f5a7323ab69c544849e941ba9418907ed5e"
+    },
+    {
+      "path": "assets/audio/v13/press-01.wav",
+      "bytes": 111640,
+      "sha256": "f5f4ac22baae747796f9d0ec077e4d339b401e05b2022c28efaf9e53fcedeee3"
+    },
+    {
+      "path": "assets/audio/v13/press-02.wav",
+      "bytes": 115548,
+      "sha256": "2047e202ee33ebe5f5eb389027703f66bbcb1efb94ff7e2e89806743e119d6fb"
+    },
+    {
+      "path": "assets/audio/v13/press-03.wav",
+      "bytes": 120492,
+      "sha256": "ae005dd53015310f840f2c05bee91e30da02783a23bab9c94da3492c4d341723"
+    },
+    {
+      "path": "assets/audio/v13/press-04.wav",
+      "bytes": 124188,
+      "sha256": "5ca4bd5d75513f411d191d7237a98e6c5fcc52b4235b005ed9b626f178000a7d"
+    },
+    {
+      "path": "assets/audio/v13/press-05.wav",
+      "bytes": 129488,
+      "sha256": "547d6808d1c9e3a0c6a7b2a093980497eceefae812b1041c1d15695d90c177f7"
+    },
+    {
+      "path": "assets/audio/v13/press-06.wav",
+      "bytes": 138188,
+      "sha256": "825258237c2cca077c7dbc9b5d69e063e47ddc3b4ae37584b7058a35ff524d8a"
+    },
+    {
+      "path": "assets/audio/v13/press-07.wav",
+      "bytes": 127100,
+      "sha256": "82be0639243fce5f551f9a499337b3c9a9ed34ab5c2356605286f4e3b51d5a37"
+    },
+    {
+      "path": "assets/audio/v13/selection-bed.wav",
+      "bytes": 2764572,
+      "sha256": "2fb1346a04d5ac184c50efccc4bda885bcabf75b9a94b530ab38758d4c042f3a"
+    },
+    {
+      "path": "assets/audio/v13/transition-soft.wav",
+      "bytes": 104988,
+      "sha256": "4359b9408b2a0c20394f8aa404a2b6b5d6499e2f81905b06b2ecbbb689aeb2ff"
+    },
+    {
+      "path": "assets/audio/v16/back-01.wav",
+      "bytes": 224228,
+      "sha256": "883cf0776493335c05563469655d718e8421db8f6505f139745e307ab17a1c98"
+    },
+    {
+      "path": "assets/audio/v16/back-02.wav",
+      "bytes": 72132,
+      "sha256": "6849c1af1dd29b68a52ce9e6207ffcd59560e7fa915232fb74fe30bf6cf26e2a"
+    },
+    {
+      "path": "assets/audio/v16/back-03.wav",
+      "bytes": 133780,
+      "sha256": "ee9f70a878983f330ab6089851acd53b6c824d1bcac3132db40cbc2dab492d60"
+    },
+    {
+      "path": "assets/audio/v16/back-04.wav",
+      "bytes": 74264,
+      "sha256": "00da1516ead7a751e5ff56cd677948d0489961f4d8b64a3c538a0bbabaec7d7a"
+    },
+    {
+      "path": "assets/audio/v16/back-05.wav",
+      "bytes": 68948,
+      "sha256": "e3170b4e5b6497f9ec91bc73586699d1dfdb19434112af056824925f780710f7"
+    },
+    {
+      "path": "assets/audio/v16/hover-01.wav",
+      "bytes": 158888,
+      "sha256": "bd6f569d398ac2854a917b1f0deff837defa81f0484fdbf21bb872c8fc217d39"
+    },
+    {
+      "path": "assets/audio/v16/hover-02.wav",
+      "bytes": 43548,
+      "sha256": "4e7fccbd299aa5072970824408157019ae8cc361867691a5fc682254d1e161cf"
+    },
+    {
+      "path": "assets/audio/v16/hover-03.wav",
+      "bytes": 75620,
+      "sha256": "854da8818c0739f35cf8708109ac76d9d5779deb8f9c005861c3e036a097724a"
+    },
+    {
+      "path": "assets/audio/v16/hover-04.wav",
+      "bytes": 30312,
+      "sha256": "8c20d5670696bbc3da0d6ae1a671f60df0013d96b60532b6de209ac70495c83c"
+    },
+    {
+      "path": "assets/audio/v16/hover-05.wav",
+      "bytes": 31708,
+      "sha256": "2270c5e9d55838382d6f9f34510d330e6152107dd56eed5e7e37189bd973e41c"
+    },
+    {
+      "path": "assets/audio/v16/press-4-01.wav",
+      "bytes": 92004,
+      "sha256": "eed9f7bbcfa9233d22fdb203340bffbf3299ed27490a209e0c0d2599d70176bb"
+    },
+    {
+      "path": "assets/audio/v16/press-4-02.wav",
+      "bytes": 98244,
+      "sha256": "eaeb0c3c06211f5727bc4402a8d485d477c2fb7c331a5f2aeff89c1284022ae5"
+    },
+    {
+      "path": "assets/audio/v16/press-4-03.wav",
+      "bytes": 110676,
+      "sha256": "f2115c0580c1ec593dca5d4f19fd89dac82f83642f621dafdfdff7d03b524f53"
+    },
+    {
+      "path": "assets/audio/v16/press-4-04.wav",
+      "bytes": 104496,
+      "sha256": "1599bd7c95e214b8ee7106e7f9815dbbccb6a8d844355e28f7dd0a4069a4f00f"
+    },
+    {
+      "path": "assets/audio/v16/press-4-05.wav",
+      "bytes": 104680,
+      "sha256": "de469efda9c0c4b6bf1d27907d683e8e22d305a14e9984550819385a324db0cb"
+    },
+    {
+      "path": "assets/audio/v16/press-4-06.wav",
+      "bytes": 116164,
+      "sha256": "8aff7115dfa8a39040072b76c522adcf340a0b887f0d4063f1ab17adc9b4c3dd"
+    },
+    {
+      "path": "assets/audio/v16/press-4-07.wav",
+      "bytes": 100492,
+      "sha256": "b772cae8255da3c3c688dd47e0c328d2128bb629686b44d187e9284f199fb69c"
+    },
+    {
+      "path": "assets/audio/v16/press-5-01.wav",
+      "bytes": 91816,
+      "sha256": "74323064016789b7c4f7f7c5cbb074906d57f8fb8db27260ff2825fc09523b12"
+    },
+    {
+      "path": "assets/audio/v16/press-5-02.wav",
+      "bytes": 86096,
+      "sha256": "4bac7b69307d136461d5ac79c196d1510797b6f3dcb2b6ec66f46f1c423bdb61"
+    },
+    {
+      "path": "assets/audio/v16/press-5-03.wav",
+      "bytes": 94860,
+      "sha256": "f07b4269a743ec9bc0b4a765c7d3c64688d7387ea5f7d380e46b97d44423de4a"
+    },
+    {
+      "path": "assets/audio/v16/press-5-04.wav",
+      "bytes": 103620,
+      "sha256": "f6eabe149fc98d38c64549498484ee702299196b8b463e0bb748d057dd60f8f6"
+    },
+    {
+      "path": "assets/audio/v16/press-5-05.wav",
+      "bytes": 99288,
+      "sha256": "ca83ac6a99bda9e4e3f61d6f86c752871e41b053834bdb4eb9fd44f19d65a5e1"
+    },
+    {
+      "path": "assets/audio/v16/press-5-06.wav",
+      "bytes": 95136,
+      "sha256": "1784f461e9a6c5151aa4f5590c3136f8286de0e3c1123f4bf17a3ca5da2c5ec9"
+    },
+    {
+      "path": "assets/audio/v16/press-5-07.wav",
+      "bytes": 91836,
+      "sha256": "bb6e71d367acf688fc7b57237345a4ed48ad1fda902d950bcbc0af27574197ea"
+    },
+    {
+      "path": "assets/audio/v16/ripple-01.wav",
+      "bytes": 193724,
+      "sha256": "304ee4a20e62e32ea89cb795d38634351cae7429689bb3e8521eb2fd365cba04"
+    },
+    {
+      "path": "assets/audio/v16/ripple-02.wav",
+      "bytes": 73352,
+      "sha256": "a41c38eb65c68d2bfd9c9a498b2c9bfb400c82f4a55220b0ca656f1475f9f74d"
+    },
+    {
+      "path": "assets/audio/v16/ripple-03.wav",
+      "bytes": 122912,
+      "sha256": "a6d45db78dceefa36ec228b717e15183ca4baef9ef3f0cb711cb0f1f8aad6eee"
+    },
+    {
+      "path": "assets/audio/v16/ripple-04.wav",
+      "bytes": 226424,
+      "sha256": "68e85cfa624f2c891c0c15a1598a9daaeaecfc1188ff670c075a3603f7fbf81d"
+    },
+    {
+      "path": "assets/audio/v16/ripple-05.wav",
+      "bytes": 31172,
+      "sha256": "3d450e2fd2acef313e23f064234a1addaf47408bcf5848557ee7e63e0406bc5d"
+    },
+    {
+      "path": "assets/audio/v16/ripple-06.wav",
+      "bytes": 199204,
+      "sha256": "47706031cf22711f07e7fae8895b174cb82da5691c8dfb5ec074bc95f9dc0198"
+    },
+    {
+      "path": "assets/audio/v18/buddy-01.wav",
+      "bytes": 5820,
+      "sha256": "3f5bd38b637b58b071cd34a3ab06de7ec48f7eee8838663f4aa950ed63efa887"
+    },
+    {
+      "path": "assets/audio/v18/buddy-02.wav",
+      "bytes": 7284,
+      "sha256": "ad0c85bfc3570520d1291435e87cb144cb76bc9738d645d3bf391901ef042325"
+    },
+    {
+      "path": "assets/audio/v18/buddy-03.wav",
+      "bytes": 9480,
+      "sha256": "6a9ac09efae4c0787b1795ac3b937fee6c9308851111d637704627a956caec9c"
+    },
+    {
+      "path": "assets/audio/v18/buddy-04.wav",
+      "bytes": 8424,
+      "sha256": "e251c320f06feb56aacf5313614ea68d9c5775ac20b0dd5c9df9b64c5d31276e"
+    },
+    {
+      "path": "assets/audio/v18/buddy-05.wav",
+      "bytes": 38444,
+      "sha256": "eb84e9bcb254bea8b93f98e64da3f6e9f7ae4baadda49721310bab5392056cf3"
+    },
+    {
+      "path": "assets/audio/v18/buddy-06.wav",
+      "bytes": 18102,
+      "sha256": "ac27c24c00b4fb3c34ce03c62188f55907e697892fb0c78c4b2f1e70547d1eb5"
+    },
+    {
+      "path": "assets/audio/v18/buddy-07.wav",
+      "bytes": 4518,
+      "sha256": "7311aa277b3961019aca6686aa3a6fbf4cdd2b0841bdd152dc2748cd1fb87d6b"
+    },
+    {
+      "path": "assets/audio/v18/buddy-08.wav",
+      "bytes": 9130,
+      "sha256": "1d7c017dfd7aaee72acc41f2a0f5297bf8d7b54c81f85328e2c3b20d6b40856b"
+    },
+    {
+      "path": "assets/audio/v18/buddy-09.wav",
+      "bytes": 8584,
+      "sha256": "265076f9d9b1d21e86c9b424afe1a943d787e13bb79d74702236ea5b99b3863f"
+    },
+    {
+      "path": "assets/audio/v18/hover-01.wav",
+      "bytes": 14232,
+      "sha256": "42b9f8fc9c00f92a6a6d2be4c4faed4900097dfaebad054dd374df400479b127"
+    },
+    {
+      "path": "assets/audio/v18/hover-02.wav",
+      "bytes": 22124,
+      "sha256": "4c76fb93f8eea85e7f1c831f86ddf4dcfdaeed67ffc8eac189eba2ea49cc201d"
+    },
+    {
+      "path": "assets/audio/v18/hover-03.wav",
+      "bytes": 22124,
+      "sha256": "9f1b09bd7922e183db5be7ab08976ce0be20b0b42b3269d1e36e3a8144c5b6dd"
+    },
+    {
+      "path": "assets/audio/v18/hover-04.wav",
+      "bytes": 22124,
+      "sha256": "f309821640fea1401f41398467c0206bfa2ba175fe13c8b2af1ab79f047e9c12"
+    },
+    {
+      "path": "assets/audio/v18/hover-05.wav",
+      "bytes": 13384,
+      "sha256": "16c19cf6f5b8ce8a272f96caaf9db497002417876a6b3d85bd658a72e1c75d90"
+    },
+    {
+      "path": "assets/audio/v18/hover-06.wav",
+      "bytes": 13788,
+      "sha256": "42c01cda6dc5d36df67312653350e366f994341b836361a7cba43280016236ea"
+    },
+    {
+      "path": "assets/audio/v18/hover-07.wav",
+      "bytes": 21064,
+      "sha256": "83cb365441e7b219664a414a4d9a64c4ac9561113d4ed0bda4f935f927d3b431"
+    },
+    {
+      "path": "assets/audio/v18/hover-08.wav",
+      "bytes": 14344,
+      "sha256": "2c463f6d14d05f9c4063c991fd61f7905da6fc64d21527a38e754063a04d151a"
+    },
+    {
+      "path": "assets/audio/v18/hover-09.wav",
+      "bytes": 14208,
+      "sha256": "966e43d7743b4926caa325b8d7f01085b7a6596d95d6aaa03a011acd407d1e7c"
+    },
+    {
+      "path": "assets/audio/v18/hover-10.wav",
+      "bytes": 13518,
+      "sha256": "c7030a917f9c10cb06ed3e6589d89fa56bab059619b3c39f6776c9ff9cd7ab95"
+    },
+    {
+      "path": "assets/audio/v18/hover-11.wav",
+      "bytes": 13892,
+      "sha256": "65e45ca723a1388273495bb537919c3e17c635fecafcedc14fbde40c8ba9fb9b"
+    },
+    {
+      "path": "assets/audio/v18/hover-12.wav",
+      "bytes": 22124,
+      "sha256": "8c90083b790e659c560bd2e2bb20eb4c99f725693b817598d5d44f13d9d0cbc0"
+    },
+    {
+      "path": "assets/audio/v18/press-01.wav",
+      "bytes": 60858,
+      "sha256": "a1bc9c626806d46e71ecf57d5638853545cfaa4b1bb9db52c9453b28b0c29220"
+    },
+    {
+      "path": "assets/audio/v18/press-02.wav",
+      "bytes": 62444,
+      "sha256": "44d1467d38fb0ae497da850ef09b5d7f28c9a7f53d07c376790ee53833090168"
+    },
+    {
+      "path": "assets/audio/v18/press-03.wav",
+      "bytes": 62444,
+      "sha256": "d484733892c812db365d3649d3075d4461388ac03612b11bb4f4f5f663f320b2"
+    },
+    {
+      "path": "assets/audio/v18/press-04.wav",
+      "bytes": 62444,
+      "sha256": "546242304cb54234a76ce53019e783471d0f0424b2dc514272181c111efb0df0"
+    },
+    {
+      "path": "assets/audio/v18/press-05.wav",
+      "bytes": 60524,
+      "sha256": "aa2715675a4f29af898454d8c179712a1108162094ff0c8d87aa4f53a08d9d94"
+    },
+    {
+      "path": "assets/audio/v18/press-06.wav",
+      "bytes": 62444,
+      "sha256": "67dffbb89647822e6a78cb7eea6b334751d77f37a505a7fbfa7a891a1a07be57"
+    },
+    {
+      "path": "assets/audio/v18/press-07.wav",
+      "bytes": 62444,
+      "sha256": "e2a3279c634dbbefd0a06cb38b0d9e0cacb2ad6afb093a8765a5333fbff57d7c"
+    },
+    {
+      "path": "assets/audio/v18/press-08.wav",
+      "bytes": 62444,
+      "sha256": "5a8491ca2d74f279fcfe4daf74205cca5a8baf97f9d5448f6b5447faee6f3c67"
+    },
+    {
+      "path": "assets/audio/v18/press-09.wav",
+      "bytes": 62444,
+      "sha256": "6e17d4fc53e8a7b245d47e5e837899db1334c27deace8faa7e35a61a7635d6b3"
+    },
+    {
+      "path": "assets/audio/v18/press-10.wav",
+      "bytes": 62444,
+      "sha256": "1a870f9bd11e1bf8749ffc25d6fbdce432680597bc01dccc08eb053c9622b414"
+    },
+    {
+      "path": "assets/audio/v18/press-11.wav",
+      "bytes": 62444,
+      "sha256": "28dc6b5b3b3b8da33602bfda3be824dc0cdb279a20e8d603a1a569365f99151f"
+    },
+    {
+      "path": "assets/audio/v18/press-12.wav",
+      "bytes": 62444,
+      "sha256": "f0dff626a9e3ff117d3d35a2ee54d1167dffb6927da618b86b8f7f2a1a644467"
+    },
+    {
+      "path": "assets/audio/v18/press-13.wav",
+      "bytes": 62444,
+      "sha256": "12902c2e3fab6f550edabb817102803ffc9e66b691f5d7a64aaa84d7820226e9"
+    },
+    {
+      "path": "assets/audio/v18/press-14.wav",
+      "bytes": 62444,
+      "sha256": "2c811d48a076139931bfc2d41ad1cfb7e0b9953e6d7c915b15b17abef61c7fd2"
+    },
+    {
+      "path": "assets/audio/v18/press-15.wav",
+      "bytes": 18772,
+      "sha256": "eb6a21eccbdc99b779a773986c722d61a211d8c70a53077c666e6ce6f975c229"
+    },
+    {
+      "path": "assets/audio/v18/press-16.wav",
+      "bytes": 18506,
+      "sha256": "e6e4ff1105802810365fc95f42506af55ed201611acb02a69125ad57631cca00"
+    },
+    {
+      "path": "assets/audio/v18/press-17.wav",
+      "bytes": 19176,
+      "sha256": "6561050259a0a5d67905d8f94b124afc75923582f97cbe16b7be0c35e2f60c2f"
+    },
+    {
+      "path": "assets/audio/v18/press-18.wav",
+      "bytes": 27870,
+      "sha256": "b277acbbb414688c9a828543cf15cdc3ae4b50a0b7b03c3f39bcc4c23290246a"
+    },
+    {
+      "path": "assets/audio/v18/press-19.wav",
+      "bytes": 46664,
+      "sha256": "feee436aeedc87f6e098e05749e7415c47f92100f9ce0d23970f4cefe1078451"
+    },
+    {
+      "path": "assets/audio/v18/press-20.wav",
+      "bytes": 11558,
+      "sha256": "25fe7c6fc90fa915b9537ebd98aa835e7663fee58ec7f27053cbbba9f5e9189a"
+    },
+    {
+      "path": "assets/audio/v22/ASSET_CREDITS.json",
+      "bytes": 6442,
+      "sha256": "2ca50aa427e146aa335b96cf629b0f444cf3171c3c40b3068a502085f0495c71"
+    },
+    {
+      "path": "assets/audio/v22/CREDITS.txt",
+      "bytes": 750,
+      "sha256": "c0759c33b019105da834a4a70b701e6798de0f22ff86ece1ba279ea722a645fc"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-01.wav",
+      "bytes": 22352,
+      "sha256": "34d0dec59e1dcdb305f9d990dddd2f36658e921ffe28d3982480f89c1b55a2af"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-02.wav",
+      "bytes": 17024,
+      "sha256": "71500122bae964dd8bed122c8b1d68e74f626048c4f4617edf76636ddae0f07b"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-03.wav",
+      "bytes": 25848,
+      "sha256": "e215cbd3d97988962913cd0c1c0340fb5922e5148b496843dfc30e40124feaad"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-04.wav",
+      "bytes": 25844,
+      "sha256": "bfbff0d543295f146d8aec42fc0c234c247f206b4d4f0d263230506135688185"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-07.wav",
+      "bytes": 33192,
+      "sha256": "851b94b7484a38c357f3ae890209ba43f886505d84538f6547c860d5d85ea2a2"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-09.wav",
+      "bytes": 34848,
+      "sha256": "62185519993c6e050d0e97ca4d58ddb484476a5f31772b7fb81d28b99b5b3f2f"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-10.wav",
+      "bytes": 22168,
+      "sha256": "fdc9a8c6a325b102b7a1c404f5738033708052e040cfaa90b836e637f957f54d"
+    },
+    {
+      "path": "assets/audio/v22/whoosh-11.wav",
+      "bytes": 18496,
+      "sha256": "ea26f84d76e388ebdc25ff95c69eb59e226954defcde76496b41c16fd8296fd5"
+    },
+    {
+      "path": "assets/fonts/InstrumentSerif-Italic.woff2",
+      "bytes": 28096,
+      "sha256": "4f7aacc18d491dea8778bbc591db87b9455625899ed5f913957e7fd82604c294"
+    },
+    {
+      "path": "assets/fonts/Inter-Medium.woff2",
+      "bytes": 114348,
+      "sha256": "0ff3e94614e1493eb556314fd247ae6c4a85a7783b4cc86be539940cf83f2a48"
+    },
+    {
+      "path": "assets/galaxy-opening-portrait.webp",
+      "bytes": 32714,
+      "sha256": "bfcbf757a7ad012cfccfee09b135fe277ba01fa4d27c0162e7984255426640a8"
+    },
+    {
+      "path": "assets/galaxy-opening.webp",
+      "bytes": 107460,
+      "sha256": "adc3292a2150320331691d83713ec94cbda23db6cd813cb7fc25dfaddf4ec01a"
+    },
+    {
+      "path": "assets/ibm-plex-mono-latin-400-normal-CvHOgSBP.woff",
+      "bytes": 13144,
+      "sha256": "328d50b6ece9ca25c46eea3e885ba497f6237f2fb84ef7b92f88e14a1a25e381"
+    },
+    {
+      "path": "assets/ibm-plex-mono-latin-400-normal-DMJ8VG8y.woff2",
+      "bytes": 14708,
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7"
+    },
+    {
+      "path": "assets/index-BBhqDsUi.js",
+      "bytes": 1602015,
+      "sha256": "a21326554c7ed3f5e5cd65041cf6a1fc484551d87cdc0c2e4150c30d63eff91f"
+    },
+    {
+      "path": "assets/index-CGdzRNrH.css",
+      "bytes": 91991,
+      "sha256": "64a7b2805747b51b49d5cfd0b4b80fdddc7379f86a026965ec204541e6097344"
+    },
+    {
+      "path": "assets/instrument-sans-latin-ext-wght-normal-B5bTHO_g.woff2",
+      "bytes": 11144,
+      "sha256": "c4fcfea41f2c1cfeea9211fa43679845454a1d0e0d7e95e069c7e73c4ae302d2"
+    },
+    {
+      "path": "assets/instrument-sans-latin-wght-normal-BbzFLZTg.woff2",
+      "bytes": 30092,
+      "sha256": "2ee17598a98d8a59e4df8152d015bec9ab8e4d5672cc0ab42bef806b568e3971"
+    },
+    {
+      "path": "assets/notices/Kenney-Interface-Sounds-CC0.txt",
+      "bytes": 574,
+      "sha256": "f7966c773bbed0eca6a9c75081c44a178b38eae112724dbb5fdfbd4192d118a9"
+    },
+    {
+      "path": "assets/notices/Lottie-Simple-License.txt",
+      "bytes": 1976,
+      "sha256": "89964b402425b8d56385deba1bb1de99416a687a03260545437d361f627aa0a0"
+    },
+    {
+      "path": "assets/notices/Lottie-Web-MIT.md",
+      "bytes": 1075,
+      "sha256": "9d8d4d8b4bb99572ee8b51025a30b8493d949798cac465c6c15b1b29420bcb06"
+    },
+    {
+      "path": "assets/notices/audio-v18.txt",
+      "bytes": 741,
+      "sha256": "3400c6fc2b2c5b0cab35f717e6e8a28566ba61ff9601b42c16a1f211aba0e777"
+    },
+    {
+      "path": "assets/notices/rareui-license.txt",
+      "bytes": 1646,
+      "sha256": "75640a5a9e996db1abc438f3485f7b297b34e2f0a5652873a3b5dacbf489f0b8"
+    },
+    {
+      "path": "assets/notices/v13-audio-credits.txt",
+      "bytes": 3026,
+      "sha256": "4a702ec529ab6817fd87f2bab6642ec5ab48c8a60c7883613ca89ef307a967d9"
+    },
+    {
+      "path": "assets/notices/v16-audio-credits.txt",
+      "bytes": 1167,
+      "sha256": "3ce75516521eabc4ea8ea3b96afac9e879b58d4dd1c82956a10e4a621c7708c8"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013-portrait.gif",
+      "bytes": 10680050,
+      "sha256": "6382996aaeb295349ec3bc77818b768efc5fc498dc1874d665bdc72e6268d392"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013-portrait.mp4",
+      "bytes": 575803,
+      "sha256": "9957c1d1987d6d2c1a60b47b55652cf6f530429fb9754e679a7d340ef788f843"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013-portrait.webm",
+      "bytes": 614660,
+      "sha256": "a44c69b9c9e9a29e0d8f1086f256d64dcacfd91cb4e81ce5bf73eea365a8c9a0"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013-portrait.webp",
+      "bytes": 26998,
+      "sha256": "69191ba3a8118b56485ab33ea7df1fc19999bcbcd4342f26841392634bf2ad1b"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013-poster.webp",
+      "bytes": 55094,
+      "sha256": "3955c0305fea644dbdede9178d29606a5177066c5adf7a88a6841437344cccea"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013.gif",
+      "bytes": 15675214,
+      "sha256": "c5c6b6ac641a5a2f01ceb21325cb8a8cb8d97e6d1efca9e15726e4c355ed3e35"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013.mp4",
+      "bytes": 253500,
+      "sha256": "b18ea46859f8c1a94705412c97c6a9bcef4823509fd43201f7247b1a4ae8efe1"
+    },
+    {
+      "path": "assets/previews/codex-hermes-loop-20261013.webm",
+      "bytes": 353253,
+      "sha256": "04e5c4d218bf5c0be745d5c60a48fe5055ad3435c3a8c4c7f75f144fbd699ba3"
+    },
+    {
+      "path": "assets/previews/codex-hermes-portrait.gif",
+      "bytes": 1316805,
+      "sha256": "46c36bef9472437c7a987472bcff0eb2142e80573321b05e731fdf1a59514731"
+    },
+    {
+      "path": "assets/previews/codex-hermes-portrait.mp4",
+      "bytes": 268536,
+      "sha256": "6260be01589408edfa496207f199224a4022ff1382247e492e2000abd02d33b5"
+    },
+    {
+      "path": "assets/previews/codex-hermes-portrait.webm",
+      "bytes": 154960,
+      "sha256": "239afe37f2782b859d0b57a2574cd72d885d77c86f350ee964d7449e437f414c"
+    },
+    {
+      "path": "assets/previews/codex-hermes-portrait.webp",
+      "bytes": 25766,
+      "sha256": "9bb60e8f4f90d5fbd905345976f1583e7ba9e97c63864aecb828507c8a9c0e2c"
+    },
+    {
+      "path": "assets/previews/codex-hermes-poster.webp",
+      "bytes": 91786,
+      "sha256": "4d68332548c220fc2969a21fe482f5da73b9e2bcd0a591f8cc72f6290de62664"
+    },
+    {
+      "path": "assets/previews/codex-hermes.capture.json",
+      "bytes": 16658,
+      "sha256": "9320877631d40f1884d6bf30e188499731960de31a48122796cef7a73981f88e"
+    },
+    {
+      "path": "assets/previews/codex-hermes.gif",
+      "bytes": 680339,
+      "sha256": "7d9f7ed914795fca3edf9516299116f2cd6bc0dd902f4cd953e9cc368049ac2b"
+    },
+    {
+      "path": "assets/previews/codex-hermes.mp4",
+      "bytes": 135866,
+      "sha256": "42955a414bb3af9db17c364098508fcd2ac819419eb5b7a78adae68470b6ab03"
+    },
+    {
+      "path": "assets/previews/codex-hermes.webm",
+      "bytes": 190266,
+      "sha256": "343b159d172f688b5c1c3067fb67da6a4965d32d6de04e0d06bc30b32671baec"
+    },
+    {
+      "path": "assets/previews/farm-stand-portrait.webp",
+      "bytes": 484708,
+      "sha256": "1e3240a44f2283804a1e85c1e23dd52df9ac7e12d6fefb27ffed359203c3075a"
+    },
+    {
+      "path": "assets/previews/farm-stand-poster.webp",
+      "bytes": 224950,
+      "sha256": "1cde517a0366406b3ba41c775e8d5ac569d02ffa93cb410cd0804ce16633fb30"
+    },
+    {
+      "path": "assets/previews/farm-stand.capture.json",
+      "bytes": 3733,
+      "sha256": "4b0f31e05d7146e93399cc7f01b34566d6c5308ed773d655736a0d72221cf788"
+    },
+    {
+      "path": "assets/previews/farm-stand.gif",
+      "bytes": 11879972,
+      "sha256": "92da493e1734bf878fe9182b55e1c1967bcaf0ab287e026182763c98bf650cf7"
+    },
+    {
+      "path": "assets/previews/farm-stand.mp4",
+      "bytes": 1982375,
+      "sha256": "a3c3763bf66b37ddb4c58778a95f2629b03b6c3df7c64f818f704463aae11bba"
+    },
+    {
+      "path": "assets/previews/farm-stand.webm",
+      "bytes": 1036774,
+      "sha256": "2bf8e8ebb6873aed66735a10586212bdd3a19c163418f21d9c2be6c56ed72e47"
+    },
+    {
+      "path": "assets/previews/hermes-workspace-v2751-poster.webp",
+      "bytes": 27128,
+      "sha256": "d61a7481e4e52a26af44f90717c4e994714b4915bacbea9179d27d1b183a23a5"
+    },
+    {
+      "path": "assets/previews/janktrace-portrait.gif",
+      "bytes": 426716,
+      "sha256": "e39f8622caeaa362f0c27b0322863626e3e7f13cb92d8d2fff7a67cdbfdb0412"
+    },
+    {
+      "path": "assets/previews/janktrace-portrait.mp4",
+      "bytes": 74729,
+      "sha256": "d1ef96944b7781c20b3d6f2a05607c92b824e2f3f8cd8916253bf902fd50c25d"
+    },
+    {
+      "path": "assets/previews/janktrace-portrait.webm",
+      "bytes": 62478,
+      "sha256": "17327df37790f02b21e86cdc2b2a2d163e68c26d409cbb2175bd5a81ddf5ebec"
+    },
+    {
+      "path": "assets/previews/janktrace-portrait.webp",
+      "bytes": 16600,
+      "sha256": "9a4b201acd45e751d019c5fa2f95c383f78968ead6b9e97b99f4074cf7765c51"
+    },
+    {
+      "path": "assets/previews/janktrace-poster.webp",
+      "bytes": 47456,
+      "sha256": "c2ed2c180513851254fe58a4973a827bccf5d50a2908bde6282858e2fe19d753"
+    },
+    {
+      "path": "assets/previews/janktrace.capture.json",
+      "bytes": 12133,
+      "sha256": "eda9650c7c6038d7e88411f3b9b10fb62d6fb5016e5a344899cd042e767baaee"
+    },
+    {
+      "path": "assets/previews/janktrace.gif",
+      "bytes": 175426,
+      "sha256": "81e115d9147a6927a80b299ee38afbace2f155c91930743112266b7c40f22ca7"
+    },
+    {
+      "path": "assets/previews/janktrace.mp4",
+      "bytes": 62862,
+      "sha256": "b24f39f4fa02fd0b4bb69091444fd06d39136579daaf38b2b537bba6de961e00"
+    },
+    {
+      "path": "assets/previews/janktrace.webm",
+      "bytes": 44165,
+      "sha256": "943e0e7da53f9c0ec8644f0f06112bf7205fa22c9e0e20c082a4b98c83f7a1f5"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013-portrait.gif",
+      "bytes": 5330358,
+      "sha256": "76b6e5d51f67539d47a7fd5fc6fb0b8e96f559a4003a08e76fdcc871580f611c"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013-portrait.mp4",
+      "bytes": 300057,
+      "sha256": "b14bd3e9e4852daee5f4fa9c93948d628e520820be8b355714bff1d74ccc9f41"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013-portrait.webm",
+      "bytes": 318304,
+      "sha256": "a9a3d166164f3e7fc8520d82b3a3e51459fc5ea16f077c9e11349651f2344f0f"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013-portrait.webp",
+      "bytes": 20112,
+      "sha256": "780b1033a2a6507c588059820de572b91606dd993d662f90f64b6a79ef82c743"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013-poster.webp",
+      "bytes": 23406,
+      "sha256": "aa85d68b5c3bbe7fde9af2ead78a52ee4c3529649bfad6c84ce2b92b16257a10"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013.gif",
+      "bytes": 5332228,
+      "sha256": "85b638d8ae62f8ee8d3ab473d34cecff11e07a9bf333ccef8824b7bc0c3fdd20"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013.mp4",
+      "bytes": 129855,
+      "sha256": "e6e9b3d8dd2e51e94965e7c6e831aed7d28c2f9dbf1298a8d16abb689793c684"
+    },
+    {
+      "path": "assets/previews/kattis-loop-20261013.webm",
+      "bytes": 154379,
+      "sha256": "84478be5ff578a40e030f1664187cc926f4745b9cf54103d5fb39a60d13cecda"
+    },
+    {
+      "path": "assets/previews/kattis-portrait.gif",
+      "bytes": 164705,
+      "sha256": "a8ad6f8fdbf6359a4b2f720d42e83d85d455a5f445881b192dce7c3fcc479aaa"
+    },
+    {
+      "path": "assets/previews/kattis-portrait.mp4",
+      "bytes": 53759,
+      "sha256": "4b289750a3b96f9fd46d53c309499d279550207176258bbfcdd96b107214d0de"
+    },
+    {
+      "path": "assets/previews/kattis-portrait.webm",
+      "bytes": 50975,
+      "sha256": "f59f161c431f9e36a592e0ee6274e1c8ac4a8faa5a525ac2536a8318c09f29f7"
+    },
+    {
+      "path": "assets/previews/kattis-portrait.webp",
+      "bytes": 28348,
+      "sha256": "5f3e1c78c84beb31f023abec7a163a9426e6bd55e06ecc248c9e860615cb75c5"
+    },
+    {
+      "path": "assets/previews/kattis-poster.webp",
+      "bytes": 32210,
+      "sha256": "9aaccf9e1268f8b634e7ff140ec5228882c34d4eb9b843abac5eba740a2b1eec"
+    },
+    {
+      "path": "assets/previews/kattis.capture.json",
+      "bytes": 17237,
+      "sha256": "b700738873426010d8cebed774b84145fdc6e2ca348e12e40d13c38eefccb9fc"
+    },
+    {
+      "path": "assets/previews/kattis.gif",
+      "bytes": 140862,
+      "sha256": "fb9934b0f681d73c5e43aa3c3f529a51cf0be3a772cabe3c8945a74c67605fc8"
+    },
+    {
+      "path": "assets/previews/kattis.mp4",
+      "bytes": 57571,
+      "sha256": "e8b4f3d22d05df1817a9d0630bdc43d173b8fab5e89f90ea293c41566500e217"
+    },
+    {
+      "path": "assets/previews/kattis.webm",
+      "bytes": 57356,
+      "sha256": "976dfae0d2b811beb214506f163580302c43229b771613f17020b2180527d624"
+    },
+    {
+      "path": "assets/previews/kona-loop-20261013-poster.webp",
+      "bytes": 51456,
+      "sha256": "8b809f43874d0dd4378c3d18287836545f9fa8cb92433a7ce7b29d9c8f84beb6"
+    },
+    {
+      "path": "assets/previews/kona-loop-20261013.gif",
+      "bytes": 14277687,
+      "sha256": "58d19ab8cbf52a1b66b3338f5c2c5aa3cbb58205b502c83c81e06b58d336e7b6"
+    },
+    {
+      "path": "assets/previews/kona-loop-20261013.mp4",
+      "bytes": 1424201,
+      "sha256": "2cec84abd63ff042aa38496a6160c62652e3d1650e7f4d25609187e6007fcda9"
+    },
+    {
+      "path": "assets/previews/kona-loop-20261013.webm",
+      "bytes": 856038,
+      "sha256": "5a62da92cc9de81409d8257108e1987cb475cafa018bdf50caa562cc71b312df"
+    },
+    {
+      "path": "assets/previews/kona-portrait.gif",
+      "bytes": 3921729,
+      "sha256": "04a95bceaac053fff8b85913ccf9a9f5cf7de5e3e9416b336be5488ba88bf6bb"
+    },
+    {
+      "path": "assets/previews/kona-portrait.mp4",
+      "bytes": 1502858,
+      "sha256": "0eca944490edd4662ad183e5e8ec07132ff74378a316658ffc354b4daf085e9c"
+    },
+    {
+      "path": "assets/previews/kona-portrait.webm",
+      "bytes": 456625,
+      "sha256": "fdd1cbe5bc813f1548cd7b908f31f01e9fc32cc3f6c1e500e1b8d8991644dee6"
+    },
+    {
+      "path": "assets/previews/kona-portrait.webp",
+      "bytes": 82466,
+      "sha256": "a71dc20d866522805f4467b0c4b65a61478283c07ec0e13f2fc4e9466626e830"
+    },
+    {
+      "path": "assets/previews/kona-poster.webp",
+      "bytes": 82466,
+      "sha256": "a71dc20d866522805f4467b0c4b65a61478283c07ec0e13f2fc4e9466626e830"
+    },
+    {
+      "path": "assets/previews/kona.capture.json",
+      "bytes": 1741,
+      "sha256": "789bf620e308293162789f293ec617e700f213115401aa35632ecc5ff6abe3fd"
+    },
+    {
+      "path": "assets/previews/kona.gif",
+      "bytes": 3921729,
+      "sha256": "04a95bceaac053fff8b85913ccf9a9f5cf7de5e3e9416b336be5488ba88bf6bb"
+    },
+    {
+      "path": "assets/previews/kona.mp4",
+      "bytes": 1502858,
+      "sha256": "0eca944490edd4662ad183e5e8ec07132ff74378a316658ffc354b4daf085e9c"
+    },
+    {
+      "path": "assets/previews/kona.webm",
+      "bytes": 456625,
+      "sha256": "ed962664779b79a2eb551cc3a92fd7371818188e4ec194cd14a15f603953596f"
+    },
+    {
+      "path": "assets/previews/loop-refresh-20261013.json",
+      "bytes": 6203,
+      "sha256": "2d059c8c901c00b83006e79a5515190255cf0073325aa731e5009b9127f9f1d6"
+    },
+    {
+      "path": "assets/previews/pelagic-loop-20261013-poster.webp",
+      "bytes": 35314,
+      "sha256": "8e136ad960c98ef6ea359bce891ec3bfb92e1311a7484dc15c83872fd0b86363"
+    },
+    {
+      "path": "assets/previews/pelagic-loop-20261013.gif",
+      "bytes": 11100314,
+      "sha256": "a48fe9b8c6f43afd2c2bc215f30e046af2fa015b398243eae625c5b99e83efe2"
+    },
+    {
+      "path": "assets/previews/pelagic-loop-20261013.mp4",
+      "bytes": 1015174,
+      "sha256": "11da2c9724f87057a0309cdfc4c6c96379833815d604ba2d2f2e0af46614699a"
+    },
+    {
+      "path": "assets/previews/pelagic-loop-20261013.webm",
+      "bytes": 792573,
+      "sha256": "3259bf172ff684719ce1ea9decaf96bc7f71a84d76270a7ad76c05aa4e87faad"
+    },
+    {
+      "path": "assets/previews/pelagic-portrait.gif",
+      "bytes": 5111735,
+      "sha256": "3265f663a29bbbc52ca484e87cf5e3ff85a1bde344c6e90faa8e8b441a0798c7"
+    },
+    {
+      "path": "assets/previews/pelagic-portrait.mp4",
+      "bytes": 844058,
+      "sha256": "6d6174e9607cf722b984957557fabded48dc8467c735d60c407ef776a1300afe"
+    },
+    {
+      "path": "assets/previews/pelagic-portrait.webm",
+      "bytes": 483103,
+      "sha256": "0d110947400e4d7de557e5e3ac096366b7517147a8793ebcc01d0a135699c5e4"
+    },
+    {
+      "path": "assets/previews/pelagic-portrait.webp",
+      "bytes": 38782,
+      "sha256": "83aab05a76644c836fee0aedfe16145ab97d327862b06f4062d1ac1d39132a9e"
+    },
+    {
+      "path": "assets/previews/pelagic-poster.webp",
+      "bytes": 31566,
+      "sha256": "601f74e9c6771add65451b4ef86629826be8d8d982b3766261f32f1cb75fb27a"
+    },
+    {
+      "path": "assets/previews/pelagic.capture.json",
+      "bytes": 5883,
+      "sha256": "8e42158905349dc5c0c533faf82dc766364deb355a64df9552fb68134a8c5e6c"
+    },
+    {
+      "path": "assets/previews/pelagic.gif",
+      "bytes": 5124588,
+      "sha256": "8a5c3dfbc135456657aef16f005874d980cd727c6a15744b7e0a023600b46086"
+    },
+    {
+      "path": "assets/previews/pelagic.mp4",
+      "bytes": 1371225,
+      "sha256": "89e8c895e8c6026c15b5c769367aca0ab177d6464770534725b64c50fb5549a8"
+    },
+    {
+      "path": "assets/previews/pelagic.webm",
+      "bytes": 762682,
+      "sha256": "d119224dc3165201876bb2199156aa465d25b9dd14b7c0c20f77d2fdb088435c"
+    },
+    {
+      "path": "assets/previews/portfolio-portrait.webp",
+      "bytes": 111484,
+      "sha256": "3d5f868689502cecd1a2a763a327f27dcb9daf96ea99943aaf3adb0612b69213"
+    },
+    {
+      "path": "assets/previews/portfolio-poster.webp",
+      "bytes": 45546,
+      "sha256": "562f6b897ce371a511b93def773f041f4037f3a904077cdb14bfceb37fca0e55"
+    },
+    {
+      "path": "assets/previews/portfolio.capture.json",
+      "bytes": 2467,
+      "sha256": "6eecd206f3a51ac7ee67ec5620f3a9a4d677894de94fffa0fba4ee6c7e159f18"
+    },
+    {
+      "path": "assets/previews/portfolio.gif",
+      "bytes": 20079292,
+      "sha256": "43bd1e48984fa5e49adc3f1f8780e62038022e622af6090c555f1769bddad0aa"
+    },
+    {
+      "path": "assets/previews/portfolio.mp4",
+      "bytes": 2262875,
+      "sha256": "2d18d8f98c7cb954b335ba11fb7368de3c8329fa3a8b5c18c91ec737ee7a3614"
+    },
+    {
+      "path": "assets/previews/portfolio.webm",
+      "bytes": 1385509,
+      "sha256": "d13e28bc34cadfce304df6834a5bcccaeabb5b60ca06382547c686045b0f9a28"
+    },
+    {
+      "path": "assets/previews/profile-portrait.gif",
+      "bytes": 400817,
+      "sha256": "a98479d075506230a71bd94c542012db9b22f15ada9aedc64d9651766b215022"
+    },
+    {
+      "path": "assets/previews/profile-portrait.mp4",
+      "bytes": 153716,
+      "sha256": "21034d7522d4770734e1a3a6108891f83017534de2df3c8cebb9d0f4aa643de3"
+    },
+    {
+      "path": "assets/previews/profile-portrait.webm",
+      "bytes": 67842,
+      "sha256": "ad57236a550e6568868a29befa88849512ec39ce0feaa7c46326e3c360cdfa30"
+    },
+    {
+      "path": "assets/previews/profile-portrait.webp",
+      "bytes": 35398,
+      "sha256": "0c6b766b964bfe8a49206ba10a7df448c623a46cdbc9098db4fb7bf4f6334bb2"
+    },
+    {
+      "path": "assets/previews/profile-poster.webp",
+      "bytes": 12010,
+      "sha256": "f1bea136116cc77ba2fa0a3742d0e55d6d8222f20ec00db0b3b356da30522705"
+    },
+    {
+      "path": "assets/previews/profile.capture.json",
+      "bytes": 1669,
+      "sha256": "ee32502f4ec9a09d317adbf045c2ecbb591269be9a702c48e0b559f759a361a9"
+    },
+    {
+      "path": "assets/previews/profile.gif",
+      "bytes": 56798,
+      "sha256": "e95d44c2e95af77fd03b07cd3d4c98591329f7a927ac94fcf98dc27ffb2baa6b"
+    },
+    {
+      "path": "assets/previews/profile.mp4",
+      "bytes": 41469,
+      "sha256": "19469abe41b9bce4f289b0ba1c175e6626b2b1843b9427f87f4748fc633346ca"
+    },
+    {
+      "path": "assets/previews/profile.webm",
+      "bytes": 23570,
+      "sha256": "1d8a952e25de9993eb535c253451843944b8f76451628cb8f2a8e09fe447f372"
+    },
+    {
+      "path": "assets/previews/visual-music-v2751-poster.webp",
+      "bytes": 461824,
+      "sha256": "489a32bc2f8073148200545d6f3168eaa7acd50eb57f6df426f9d0b3a49a632a"
+    },
+    {
+      "path": "assets/previews/visual-music-v2751.gif",
+      "bytes": 22155228,
+      "sha256": "f2ef8f168a0d01c9d2a5f161c91937f0c07de24c348e51b7fbbcb4addc6dba72"
+    },
+    {
+      "path": "assets/previews/visual-music-v2751.mp4",
+      "bytes": 4172149,
+      "sha256": "7d680aa7cff4a0cbc3c84a733728a93e75ad1c65e325e340976f0e80d68b26d6"
+    },
+    {
+      "path": "assets/previews/visual-music-v2751.webm",
+      "bytes": 4564692,
+      "sha256": "b9cb3dedb9d534bc19f56ab470d566644b5c88fabeeb196ae67a4682d7be67ea"
+    },
+    {
+      "path": "assets/profile/profile-128.png",
+      "bytes": 27881,
+      "sha256": "8818a015f07374179423b55a42ee6bbf36a72947eb0b4409c1753a6f95076b73"
+    },
+    {
+      "path": "assets/profile/profile-192.png",
+      "bytes": 57199,
+      "sha256": "d8ef9def64eadc011111e3b334f62f196a02c9907816641a9e671d6185cd0317"
+    },
+    {
+      "path": "assets/profile/profile-32.png",
+      "bytes": 2489,
+      "sha256": "f3992693debc3541bffa9770fcb343e1ccedeb1e7d277da7696e6b6ea03c4875"
+    },
+    {
+      "path": "assets/profile/profile-48.png",
+      "bytes": 5045,
+      "sha256": "3f77bb95ab589ebd153fa278399e31010185ec86f667b222a3a82ec16d366e8c"
+    },
+    {
+      "path": "assets/profile/profile-512.png",
+      "bytes": 324530,
+      "sha256": "b673539f2bcc87ed4b61a3dc366296449b9c7ffa0414e3a8a0566810b8e39089"
+    },
+    {
+      "path": "assets/profile/profile-v12-128.png",
+      "bytes": 33395,
+      "sha256": "3afe47d7fb7d6392aa2266ad7facc8bc7865a880c05cbf844a4918852998a0ac"
+    },
+    {
+      "path": "assets/profile/profile-v12-192.png",
+      "bytes": 67573,
+      "sha256": "cf3b20c107eb3bd8520683f4f1a76d5ed14ed00710520393e2d1c4ebfe6db584"
+    },
+    {
+      "path": "assets/profile/profile-v12-32.png",
+      "bytes": 2575,
+      "sha256": "ef8528fda1cdf5101c99fd8bc0924fc889442e1e6ee9e6eef1d2c8eb040083f4"
+    },
+    {
+      "path": "assets/profile/profile-v12-48.png",
+      "bytes": 5524,
+      "sha256": "ec840e23b4d3a74dd3f4097a8387b5f689a2f3934e22958dbaafb8719dfa4306"
+    },
+    {
+      "path": "assets/profile/profile-v12-512.png",
+      "bytes": 353992,
+      "sha256": "70fd9fb2a599ab0152538d903ad59395f81e932ad61eaf832596828186d2f123"
+    },
+    {
+      "path": "assets/profile/profile-v12-64.png",
+      "bytes": 9521,
+      "sha256": "bdcfc07d7874fa37e64a603a361367df0f715841138f016438710823852deba1"
+    },
+    {
+      "path": "assets/projects/earth-desktop.webp",
+      "bytes": 58576,
+      "sha256": "c60bf8045ab6822ace7c947506330d6501cf364911c1a687648c8316504c6c09"
+    },
+    {
+      "path": "assets/projects/earth-portrait.webp",
+      "bytes": 22744,
+      "sha256": "f56502ec72f29b497012e91695e98f5e98dc0bf6d25a3df9d72be6c30bf8f8f5"
+    },
+    {
+      "path": "assets/projects/menu-anatomy.webp",
+      "bytes": 109806,
+      "sha256": "140fc75dc4ea50b5bb5d5db9e92e29ebc749b08961f6ac65fb0ce62955ffe32d"
+    },
+    {
+      "path": "assets/projects/menu-environment.webp",
+      "bytes": 108504,
+      "sha256": "6af68b588942c7fed41a571e0fde791dd2a079f1a3676d587dac094d0077b20b"
+    },
+    {
+      "path": "assets/projects/menu-hero-portrait.webp",
+      "bytes": 38622,
+      "sha256": "d54cbc897c5f2665700c1b8029d33393086a7554838cd9b8c9518c67aa223e77"
+    },
+    {
+      "path": "assets/projects/menu-hero.webp",
+      "bytes": 125406,
+      "sha256": "7c1e85766a24ad80d02c3e88bf2d843044d480632fc6b4e283a342d660a87040"
+    },
+    {
+      "path": "assets/projects/pelagic-ocean.webp",
+      "bytes": 63140,
+      "sha256": "d8d803a88b3be27a5268ae83dde46792547f76f1e064a156ccb60c567b4da8ae"
+    },
+    {
+      "path": "assets/projects/pelagic-portrait.webp",
+      "bytes": 41134,
+      "sha256": "aa814033005113c11dc884e683a5778cddc1d221eae643555818b767a0f01924"
+    },
+    {
+      "path": "assets/worlds/clouds.webp",
+      "bytes": 530726,
+      "sha256": "e050d35c4f580ca922625a69bfe7d4b5feb134063f21dfb76f12807b6882f657"
+    },
+    {
+      "path": "assets/worlds/earth.webp",
+      "bytes": 250082,
+      "sha256": "f61dfaeca9b55ff6ddd1e43f6d2702571466fb99f334928896cd62f5d73a9baa"
+    },
+    {
+      "path": "assets/worlds/milkyway.webp",
+      "bytes": 709586,
+      "sha256": "8099bff867257b10e61a076f98e2d998cf442d389975a17c210899802ffbd7ed"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 428,
+      "sha256": "a4a996b3604ed95264509a172bec50b9d34b93a8e6454e5922fbd41c97ff5e22"
+    },
+    {
+      "path": "fonts/menu-v9/BebasNeue.ttf",
+      "bytes": 61400,
+      "sha256": "08e4623805102d819f58601e46e345648846075e363b2ceb23313c2d1c83ec73"
+    },
+    {
+      "path": "fonts/menu-v9/DMSans.ttf",
+      "bytes": 240164,
+      "sha256": "8cd08d97e89c24d0aa92edd2f0f4c8ee6195eee9b7c9f154865a58b02f0c1c0d"
+    },
+    {
+      "path": "fonts/menu-v9/Rubik.ttf",
+      "bytes": 359804,
+      "sha256": "1b3a7437ba2af80e465e773ed60c5036d1ba6ace492d89046dbcf18fb31e4e88"
+    },
+    {
+      "path": "fonts/menu-v9/SixCaps.ttf",
+      "bytes": 46388,
+      "sha256": "7b54a46671722fb670647c9c3951e6e618b6a9d876fc5d9ae34dfd311628ae5a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1670,
+      "sha256": "c28b3e9d33aafb8af26310ee2134222c0e99cd1e2940047966a4dcd502208511"
+    },
+    {
+      "path": "licenses/Aurelia-MIT.txt",
+      "bytes": 1066,
+      "sha256": "49cadd09aca5e05f73e4d8fae839f15c3d8aba9fbbd7c2047b2aebdcfd9d7c13"
+    },
+    {
+      "path": "licenses/BebasNeue-OFL.txt",
+      "bytes": 4337,
+      "sha256": "72082f6cb4d04be2ecf7cc7d9e1e7d73787f0af8a5a278a47cade70c16b78341"
+    },
+    {
+      "path": "licenses/DMSans-OFL.txt",
+      "bytes": 4482,
+      "sha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1"
+    },
+    {
+      "path": "licenses/IBM-Plex-OFL.txt",
+      "bytes": 5299,
+      "sha256": "23b0a9d0c6d3f140a0b77e483c5cfa6bba574325ef5cb189ed9f2fec4884533f"
+    },
+    {
+      "path": "licenses/Instrument-Sans-OFL.txt",
+      "bytes": 4538,
+      "sha256": "c27a3c53c3beed7f5c26853afa15991478ff7145d3754a36b0382f84e10c0d03"
+    },
+    {
+      "path": "licenses/Instrument-Serif-OFL.txt",
+      "bytes": 4405,
+      "sha256": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521"
+    },
+    {
+      "path": "licenses/Inter-OFL.txt",
+      "bytes": 4380,
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "path": "licenses/Kattis-MIT.txt",
+      "bytes": 1075,
+      "sha256": "f00c78ff231a3108544ba2c2c2c57758e411cb74742ef124391080d8a98aa298"
+    },
+    {
+      "path": "licenses/Kona-MIT.txt",
+      "bytes": 1070,
+      "sha256": "616f338e3de9bcca4ede3577c779dd0dfdc3dee6d5347b0d0cb6e0a43fe1f1fc"
+    },
+    {
+      "path": "licenses/Pelagic-source-LICENSE.md",
+      "bytes": 1290,
+      "sha256": "57c463bc497237e56cc4534af28a8b879cccb95cb0b68be9d75634d5bbed6969"
+    },
+    {
+      "path": "licenses/Rare-UI-usage.txt",
+      "bytes": 451,
+      "sha256": "cce0c61e1f3e33c40cb40f81aaf2d177fdccf9ed4d5f9fdefe57f5f4e4087d5c"
+    },
+    {
+      "path": "licenses/Rare-UI.txt",
+      "bytes": 1069,
+      "sha256": "462930f8d54c9e96b4de326336f499dc7da70e3e5f5d9b28adedbb0080ff9ea9"
+    },
+    {
+      "path": "licenses/Rubik-OFL.txt",
+      "bytes": 4384,
+      "sha256": "472cbe7c25441df63e9c7864b43eb3c0f4b3df950c66a76224e6cfe1eae843fb"
+    },
+    {
+      "path": "licenses/SixCaps-OFL.txt",
+      "bytes": 4410,
+      "sha256": "29cca754098468057880970c604e55c4e2bcb8479742e4130c94f2ddc0363f9c"
+    },
+    {
+      "path": "licenses/Thinking-Orbs-MIT.txt",
+      "bytes": 1063,
+      "sha256": "1c87dcf3935109d8f8dfa2435aa71dfd28164a1f84d0b243030936fd2062ca57"
+    }
+  ]
+}

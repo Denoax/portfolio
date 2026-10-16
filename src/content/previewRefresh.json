@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-13",
-  "scope": "Active refresh for Pelagic and Kona only. Codex \u00d7 Hermes and Kattis restored to their original Worlds previews at the user request. Preserve other media, eight IDs/order/actions, native fields and protected travel.",
+  "date": "2026-10-15",
+  "scope": "v27.5.1 adds Visual Music motion media and a still Hermes Workspace interface preview. Existing Pelagic and Kona refreshes retain their original capture records; Codex \u00d7 Hermes and Kattis retain their restored original Worlds previews. Preserve the existing eight identities, relative order, media and actions, native fields and protected travel.",
   "entries": [
     {
       "name": "pelagic-jellyfish-webgl",
@@ -15,6 +15,22 @@
       "sourceRevision": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
       "source": "https://github.com/Denoax/konata-hyprland-dotfiles/tree/e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
       "note": "Original native Kona V3 master at 1000/33fps, sampled at 30fps. Reused full 960x540 frames; Wi-Fi SSID and weather privacy edits retained, 0.3s lap dissolve. No upscale or optical-flow frames. Konata artwork remains owned by its rights holders."
+    },
+    {
+      "name": "visual-music",
+      "mediaStem": "visual-music-v2751",
+      "sourceRevision": "41076b775a7c3be27b1867aa410a518cf2be5073",
+      "source": "https://github.com/Denoax/visual-music",
+      "motion": true,
+      "note": "Actual locally captured Visual Music runtime at the recorded source revision. The public website is a newer deployment; this preview documents its captured revision rather than claiming a byte-identical production recording."
+    },
+    {
+      "name": "hermes-workspace",
+      "mediaStem": "hermes-workspace-v2751",
+      "sourceRevision": "5408c825b1ba35a3db73a2ce8e23a2e45c28d186",
+      "source": "https://github.com/Denoax/hermes-workspace/tree/5408c825b1ba35a3db73a2ce8e23a2e45c28d186",
+      "motion": false,
+      "note": "Actual published Hermes Workspace interface, shown as a still with labelled documentation fixtures. The capture establishes interface appearance, without claiming a live inference response or VM qualification."
     }
   ]
 }

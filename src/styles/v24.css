@@ -167,3 +167,13 @@
     background: CanvasText !important;
   }
 }
+
+/* The new two-line heading owns its full text height inside the reel slot. */
+.selection-hub .menu-stage .menu-project[data-project-id="1420094845"] h1.menu-title--two {
+  height: auto;
+  min-height: calc(var(--text-slot-height) * 0.48);
+}
+.selection-hub .menu-stage .menu-project[data-project-id="1420137767"] h1 {
+  white-space: nowrap;
+  font-size: min(clamp(84px, calc(var(--text-slot-height) * 0.54), 198px), calc(var(--text-slot-width) * 0.43));
+}

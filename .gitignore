@@ -6,3 +6,8 @@ dist/
 # Local-only build and review output
 dist/
 showcase/v24-evidence/
+
+# Local opening validation output
+showcase/intro-motion-followup/
+showcase/intro-pressure-hold/
+showcase/releases/v28-1-pressure/browser-local/

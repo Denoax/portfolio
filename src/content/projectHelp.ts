@@ -11,6 +11,22 @@ const copy: Record<string, { overview: string; details: string[] }> = {
       'Underwater lighting, thermal shimmer and optical effects sample the living scene.',
     ],
   },
+  '1420137767': {
+    overview:
+      'A WebGL dance floor with raised LED waves, free steering and audio-synchronised lighting.',
+    details: [
+      'Use the pointer, touch or keyboard to steer through the floor.',
+      'The public repository publishes the playable website and credits.',
+    ],
+  },
+  '1420094845': {
+    overview:
+      'A local Hermes interface for persistent projects, conversations and file review.',
+    details: [
+      'Projects, conversations and files share one interface with retained drafts.',
+      'The preview shows the actual interface with labelled documentation fixtures.',
+    ],
+  },
   '1355818842': {
     overview:
       'My Arch Linux desktop, built around Hyprland and Quickshell. Kona brings its configuration, controls and recovery tools together.',
@@ -55,7 +71,7 @@ const copy: Record<string, { overview: string; details: string[] }> = {
     overview:
       'This portfolio brings my projects together with real previews and interactive motion. Its intro and selection reel lead into the Pelagic journey.',
     details: [
-      'The live reel contains eight projects, with their own media and resource links.',
+      `The live reel contains ${projects.length} projects, with their own media and resource links.`,
       'The source includes the typography intro, reversible descent and accessible controls.',
     ],
   },

@@ -604,8 +604,10 @@ export function SelectionHub({
             <a
               href={actionHref}
               className="menu-media-action"
-              aria-label={`Preview or open ${project.title}`}
-              aria-description="Hover or focus to preview. On touch, tap once to preview and again to open."
+              aria-label={`${project.previewMotion ? 'Preview or open' : 'Open'} ${project.title}`}
+              aria-description={project.previewMotion
+                ? 'Hover or focus to preview. On touch, tap once to preview and again to open.'
+                : 'Open this project’s resource.'}
               onPointerDown={(event) => {
                 gesture.current = {
                   x: event.clientX,
@@ -650,6 +652,7 @@ export function SelectionHub({
                 }
                 if (
                   matchMedia('(pointer:coarse)').matches &&
+                  project.previewMotion &&
                   event.detail > 0 &&
                   touchPreview.current !== project.id &&
                   !presentation.current.reduced

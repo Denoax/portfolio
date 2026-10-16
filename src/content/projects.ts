@@ -10,6 +10,7 @@ export interface Project {
   description: string
   kind: 'webgl' | 'desktop' | 'cli' | 'web' | 'code' | 'documentation'
   presentation: 'media' | 'gravity' | 'activity'
+  previewMotion: boolean
   accent: string
   publishedRevision: string
   capturedSourceRevision: string
@@ -41,6 +42,15 @@ const content = [
     '#020b17',
   ],
   [
+    'visual-music',
+    'Visual Music',
+    ['Visual Music'],
+    'A dance floor you can fly through.',
+    'webgl',
+    'visual-music-v2751',
+    '#020b17',
+  ],
+  [
     'konata-hyprland-dotfiles',
     'Konatachan Desktop',
     ['Konatachan', 'Desktop'],
@@ -56,6 +66,15 @@ const content = [
     'Bounded delegation. Verified action.',
     'cli',
     'codex-hermes',
+    '#08111f',
+  ],
+  [
+    'hermes-workspace',
+    'Hermes Workspace',
+    ['Hermes', 'Workspace'],
+    'Local projects, conversations and file review.',
+    'desktop',
+    'hermes-workspace-v2751',
     '#08111f',
   ],
   [
@@ -114,6 +133,7 @@ const catalogue: Project[] = content.map(
       )
     const refreshed = previewRefresh.entries.find((entry) => entry.name === name)
     const base = `/assets/previews/${refreshed?.mediaStem ?? media}`
+    const previewMotion = refreshed?.motion !== false
     return {
       id: String(repo.id),
       fullName: repo.full_name,
@@ -127,8 +147,9 @@ const catalogue: Project[] = content.map(
           : name === 'Denoax'
             ? 'activity'
             : 'media',
+      previewMotion,
       accent: order.find((item) => item.id === String(repo.id))!
-        .accent_preserved,
+        .accent,
       publishedRevision: repo.observed_head ?? '',
       capturedSourceRevision:
         refreshed?.sourceRevision ??
@@ -143,26 +164,36 @@ const catalogue: Project[] = content.map(
           ? { kind: 'pelagic', label: 'Explore' }
           : {
               kind: 'link',
-              label: 'View resource',
+              label: name === 'visual-music' ? 'Play' : 'View resource',
               href:
-                name === 'Denoax' ? 'https://github.com/Denoax' : repo.html_url,
+                name === 'visual-music'
+                  ? 'https://denoax.github.io/visual-music/'
+                  : name === 'Denoax'
+                    ? 'https://github.com/Denoax'
+                    : repo.html_url,
             },
       image: `${base}-poster.webp`,
       portrait: ['cli', 'code'].includes(kind)
         ? `${base}-portrait.webp`
         : `${base}-poster.webp`,
-      video: `${base}.webm`,
-      mp4: `${base}.mp4`,
-      portraitVideo: ['cli', 'code'].includes(kind)
-        ? `${base}-portrait.webm`
-        : `${base}.webm`,
-      portraitMp4: ['cli', 'code'].includes(kind)
-        ? `${base}-portrait.mp4`
-        : `${base}.mp4`,
-      gif: `${base}.gif`,
-      portraitGif: ['cli', 'code'].includes(kind)
-        ? `${base}-portrait.gif`
-        : `${base}.gif`,
+      video: previewMotion ? `${base}.webm` : '',
+      mp4: previewMotion ? `${base}.mp4` : '',
+      portraitVideo: !previewMotion
+        ? ''
+        : ['cli', 'code'].includes(kind)
+          ? `${base}-portrait.webm`
+          : `${base}.webm`,
+      portraitMp4: !previewMotion
+        ? ''
+        : ['cli', 'code'].includes(kind)
+          ? `${base}-portrait.mp4`
+          : `${base}.mp4`,
+      gif: previewMotion ? `${base}.gif` : '',
+      portraitGif: !previewMotion
+        ? ''
+        : ['cli', 'code'].includes(kind)
+          ? `${base}-portrait.gif`
+          : `${base}.gif`,
       background,
     }
   },
@@ -180,5 +211,5 @@ if (
   new Set(projects.map((p) => p.id)).size !== projects.length
 )
   throw new Error(
-    'Every public repository must have exactly one factual project and real media',
+    'Every catalogue repository must have exactly one factual project and real media',
   )

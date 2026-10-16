@@ -3,7 +3,7 @@
   "complete": true,
   "pages": 1,
   "public_owner": "Denoax",
-  "count": 8,
+  "count": 10,
   "repositories": [
     {
       "id": 1367284706,
@@ -22,7 +22,8 @@
         "url": "https://api.github.com/licenses/mit",
         "node_id": "MDc6TGljZW5zZTEz"
       },
-      "observed_head": "36d0bf560e3dcd99f1eadcaffe97da7af2d469cc"
+      "observed_head": "36d0bf560e3dcd99f1eadcaffe97da7af2d469cc",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1353608040,
@@ -35,7 +36,8 @@
       "archived": false,
       "default_branch": "main",
       "license": null,
-      "observed_head": "c338be1625df776e6017c077978000a9ce78b36f"
+      "observed_head": "c338be1625df776e6017c077978000a9ce78b36f",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1388326955,
@@ -48,7 +50,8 @@
       "archived": false,
       "default_branch": "main",
       "license": null,
-      "observed_head": "7349113bfd7218e8600b3d20576179a7749bfee1"
+      "observed_head": "7349113bfd7218e8600b3d20576179a7749bfee1",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1353607509,
@@ -67,7 +70,8 @@
         "url": "https://api.github.com/licenses/mit",
         "node_id": "MDc6TGljZW5zZTEz"
       },
-      "observed_head": "cd18c04f1d17c624fbd635fad074162a7eafa52d"
+      "observed_head": "cd18c04f1d17c624fbd635fad074162a7eafa52d",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1375135091,
@@ -86,7 +90,8 @@
         "url": "https://api.github.com/licenses/mit",
         "node_id": "MDc6TGljZW5zZTEz"
       },
-      "observed_head": "0cc95c2c88cc19e93f87ff92e070932cb4ac1435"
+      "observed_head": "0cc95c2c88cc19e93f87ff92e070932cb4ac1435",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1355818842,
@@ -105,7 +110,8 @@
         "url": "https://api.github.com/licenses/mit",
         "node_id": "MDc6TGljZW5zZTEz"
       },
-      "observed_head": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6"
+      "observed_head": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1357004367,
@@ -124,7 +130,8 @@
         "url": null,
         "node_id": "MDc6TGljZW5zZTA="
       },
-      "observed_head": "66dff315da2290959aa3dd4bf92627e4850bab0d"
+      "observed_head": "66dff315da2290959aa3dd4bf92627e4850bab0d",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
     },
     {
       "id": 1352586659,
@@ -137,7 +144,41 @@
       "archived": false,
       "default_branch": "main",
       "license": null,
-      "observed_head": "5abd1ce0e3da3c441ff50063bda2f02b64e4d373"
+      "observed_head": "5abd1ce0e3da3c441ff50063bda2f02b64e4d373",
+      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
+    },
+    {
+      "id": 1420094845,
+      "name": "hermes-workspace",
+      "full_name": "Denoax/hermes-workspace",
+      "html_url": "https://github.com/Denoax/hermes-workspace",
+      "description": "Hermes \u00d7 your local model: a local workspace for projects, conversations and code, with separately gated guest-execution controls.",
+      "homepage": null,
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": null,
+      "private": false,
+      "observed_head": "96d9e4bf201f6488067d367df3b0b3eb59ceab43",
+      "observed_utc": "2026-10-15T09:22:08.733876+00:00"
+    },
+    {
+      "id": 1420137767,
+      "name": "visual-music",
+      "full_name": "Denoax/visual-music",
+      "html_url": "https://github.com/Denoax/visual-music",
+      "description": "Visual Music \u2014 fly through an audio-reactive LED dance floor.",
+      "homepage": "https://denoax.github.io/visual-music/",
+      "fork": false,
+      "archived": false,
+      "default_branch": "main",
+      "license": null,
+      "private": false,
+      "observed_head": "84b527230038ccaa957d27bb048847926b8befb4",
+      "observed_utc": "2026-10-15T09:22:08.733876+00:00"
     }
-  ]
+  ],
+  "catalogue_verified_utc": "2026-10-15T09:22:08.733876+00:00",
+  "selection": "Public, non-fork, non-archived repositories owned by Denoax",
+  "verification_note": "Existing eight metadata/media revisions retain their original observation dates; all ten current identities/visibility verified against the live public owner inventory. New entries observed now."
 }

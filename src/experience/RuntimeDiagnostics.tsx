@@ -5,10 +5,13 @@ import type { RefObject } from 'react'
 import type { MenuPresentation } from '../core/menuReel'
 import type { QualityProfile } from '../core/quality'
 import { narrative } from '../core/narrative'
+import { createIntroTransport, type IntroTransport } from '../core/introMotion'
 interface Diagnostics {
   introZoom: {
     octave: string
     phase: number
+    loopPeriod: number
+    transport: IntroTransport
     pending: number
     instances: number
     attributeBytes: number
@@ -52,6 +55,11 @@ interface Diagnostics {
   tier: string
   particles: number
   dpr: number
+  framebuffer: {
+    requested: number[]
+    allocated: number[]
+    viewport: number[]
+  }
   state: number
   elapsed: number
   camera: number[]
@@ -86,6 +94,8 @@ export function RuntimeDiagnostics({
       introZoom: {
         octave: '0',
         phase: 0,
+        loopPeriod: presentation.current.intro.loopPeriod,
+        transport: createIntroTransport(),
         pending: 0,
         instances: 0,
         attributeBytes: 0,
@@ -126,6 +136,11 @@ export function RuntimeDiagnostics({
       tier: quality.tier,
       particles: quality.particles,
       dpr: gl.getPixelRatio(),
+      framebuffer: {
+        requested: [gl.domElement.width, gl.domElement.height],
+        allocated: [context.drawingBufferWidth, context.drawingBufferHeight],
+        viewport: [0, 0, 0, 0],
+      },
       state: 0,
       elapsed: 0,
       camera: camera.position.toArray(),
@@ -151,9 +166,16 @@ export function RuntimeDiagnostics({
     )
       return
     elapsed.current = 0
+    const context = gl.getContext()
+    const viewport = gl.getCurrentViewport(new THREE.Vector4())
+    owned.current.framebuffer.requested = [gl.domElement.width, gl.domElement.height]
+    owned.current.framebuffer.allocated = [context.drawingBufferWidth, context.drawingBufferHeight]
+    owned.current.framebuffer.viewport = viewport.toArray()
     const intro = presentation.current.intro
     owned.current.introZoom.octave = intro.zoom.octave.toString()
     owned.current.introZoom.phase = intro.zoom.phase
+    owned.current.introZoom.loopPeriod = intro.loopPeriod
+    Object.assign(owned.current.introZoom.transport, intro.transport)
     owned.current.introZoom.pending = intro.zoomDelta
     owned.current.introZoom.velocity = intro.zoomVelocity
     owned.current.introZoom.resetting = intro.resetActive || intro.zoomReset

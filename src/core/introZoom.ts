@@ -10,6 +10,9 @@ export function advanceZoom(state: IntroZoom, delta: number): IntroZoom {
     throw new Error('Zoom input exceeds event range')
   return { octave: state.octave + BigInt(whole), phase: total - whole }
 }
-export function boundedZoom(state: IntroZoom) {
-  return Number(((state.octave % 6n) + 6n) % 6n) + state.phase
+export function boundedZoom(state: IntroZoom, period = 6) {
+  if (!Number.isSafeInteger(period) || period < 1)
+    throw new Error('Positive integer projection period required')
+  const modulus = BigInt(period)
+  return Number(((state.octave % modulus) + modulus) % modulus) + state.phase
 }

@@ -1,3 +1,37 @@
+# v28.1 publication authority
+
+Mani explicitly requested publishing the newest portfolio to GitHub and
+manimarami.com on2026-10-15. This supersedes the preceding local-only boundary
+for this release.
+
+- Reviewed runtime: `3464e2c65fd77cbdb40d580d644a0789b09d2797`.
+- Reviewed local evidence: `4d5e59b1d52aa00a161f64dd6abab56d756cf3d7`.
+- Complete source/evidence review ZIP SHA256:
+  `9427e0d69f19df4d67a2c72527c0ffa5f9a710d6a5354910486fd2233c411204`.
+- 389 runtime inputs and 259 static outputs are byte-identical to the reviewed state.
+
+This release carries the accepted continuous intro field, sharp sparse-to-word
+formation, slow outer arrivals, reversible zoom and sustained held-letter pressure,
+plus all ten current projects. Original Pelagic, protected descent and functional
+settings remain intact. GitHub's existing banner, presentation, cleanup and history
+are preserved. Private handoffs/full recordings remain in the original local
+checkout and verified ZIP; this public checkout contains the actual runtime,
+credits and focused reproducible checks.
+
+Publish the exact prebuilt output to the existing Vercel project, stage production
+without changing domains, verify upload identity, then promote. Keep the actual
+previous production deployment for rollback. Current rollout evidence will be
+recorded in `showcase/releases/v28-1-pressure/deployment.json`; until that receipt
+exists, publication and public browser checks must not be inferred from this file.
+No DNS, driver, gateway or external Pelagic changes.
+
+Technical evidence does not establish untested browser/physical-device or
+continuous human motion approval. See README and the deployment receipt for scope.
+
+---
+
+## Historical publications
+
 # v26 publication authority
 
 Mani explicitly requested updating GitHub and manimarami.com on2026-10-14. This supersedes the local-only v25/v26 review boundary for this release.

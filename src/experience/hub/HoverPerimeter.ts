@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import type { MenuPresentation } from '../../core/menuReel'
+import { projectedActionBox } from '../../core/projectedElementBox'
 // One analytic emitter shares the menu draw. No extra particles, RAF, target or
 // invisible GlassField hit regions. Alpha owns brief retirement independently.
 export class HoverPerimeter {
@@ -16,6 +17,9 @@ export class HoverPerimeter {
     alpha: 0,
     retiredMs: 0,
     targets: 1,
+    pigment: [0, 0, 0],
+    boxSize: [1, 1],
+    boxInverse: [1, 0, 0, 0, 1, 0, 0, 0, 1],
   }
   private x = NaN
   private y = NaN
@@ -23,6 +27,10 @@ export class HoverPerimeter {
   private leaveAge = 0
   private transform = ''
   private emittedProjectId = ''
+  private hit: Element | null = null
+  get quiet() {
+    return Boolean(this.hit?.closest('a:not(.menu-media-action),button,input,textarea,select,dialog,.portfolio-nav-shell,[contenteditable=true]'))
+  }
   connect() {
     const move = (e: PointerEvent) => {
       if (e.pointerType === 'mouse') {
@@ -46,20 +54,25 @@ export class HoverPerimeter {
   clear() {
     this.x = this.y = NaN
     this.target = null
+    this.hit = null
     this.uniforms.uBoxAlpha.value = 0
     this.evidence.emitting = false
     this.evidence.alpha = 0
   }
-  step(dt: number, menu: MenuPresentation) {
+  step(dt: number, menu: MenuPresentation, pointer: Readonly<THREE.Vector2> | null) {
+    const eligible = Boolean(pointer)
+    if (pointer) { this.x = pointer.x; this.y = pointer.y }
+    if (!eligible || menu.reduced) this.clear()
     let target: HTMLElement | null = null
+    this.hit = null
     if (
       !document.hidden &&
       !menu.intro.active &&
-      !menu.paused &&
+      eligible && !menu.reduced &&
       Number.isFinite(this.x)
     ) {
-      const hit = document.elementFromPoint(this.x, this.y)
-      target = hit?.closest<HTMLElement>('[data-smoke-target]') ?? null
+      this.hit = document.elementFromPoint(this.x, this.y)
+      target = !menu.paused ? this.hit?.closest<HTMLElement>('[data-smoke-target]') ?? null : null
       if (
         target?.dataset.smokeTarget === 'media' &&
         target.dataset.ready !== 'true'
@@ -81,14 +94,17 @@ export class HoverPerimeter {
       this.leaveAge = 0
       this.emittedProjectId = target.dataset.projectId ?? menu.selectedId
       const style = getComputedStyle(target),
-        r = target.getBoundingClientRect(),
-        size = new THREE.Vector2(target.offsetWidth, target.offsetHeight)
+        r = target.getBoundingClientRect()
+      const projected = projectedActionBox(target, style, r),
+        size = new THREE.Vector2(projected?.width ?? target.offsetWidth, projected?.height ?? target.offsetHeight)
       const matrix =
         target.dataset.smokeTarget === 'media' ? style.transform : 'none'
-      const key = `${matrix}:${r.x}:${r.y}:${size.x}:${size.y}`
+      const key = `${projected?.matrix.join(',') ?? matrix}:${r.x}:${r.y}:${size.x}:${size.y}`
       if (key !== this.transform) {
         this.transform = key
-        if (matrix !== 'none') {
+        if (projected) {
+          u.uBoxInverse.value.set(...projected.matrix).invert()
+        } else if (matrix !== 'none') {
           const m = new DOMMatrixReadOnly(matrix)
           u.uBoxInverse.value
             .set(m.m11, m.m21, m.m41, m.m12, m.m22, m.m42, m.m14, m.m24, m.m44)
@@ -100,6 +116,10 @@ export class HoverPerimeter {
           size.y / 2,
           parseFloat(style.borderRadius) || 22,
         )
+        this.evidence.boxSize[0] = size.x
+        this.evidence.boxSize[1] = size.y
+        for (let index = 0; index < 9; index++)
+          this.evidence.boxInverse[index] = u.uBoxInverse.value.elements[index]
       }
       u.uBoxAlpha.value +=
         (1 - u.uBoxAlpha.value) * (1 - Math.exp(-Math.min(dt, 0.05) / 0.05))
