@@ -142,7 +142,7 @@ node scripts/intro-section-checks.mjs
 node scripts/v28-transport-checks.mjs
 ```
 
-Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.
+Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive; [current public captures and rollout checks](showcase/releases/v28-1-pressure/README.md) record the live result. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.
 
 ## Credits
 

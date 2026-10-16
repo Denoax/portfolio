@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-15",
+  "site": "https://manimarami.com/",
+  "provider": "Vercel Hobby",
+  "project": "manimarami-portfolio",
+  "authorization": "User explicitly requested updating manimarami.com to the newest release and updating GitHub. This release supersedes the earlier local-only publication boundary.",
+  "runtimeRevision": "3464e2c65fd77cbdb40d580d644a0789b09d2797",
+  "localEvidenceRevision": "4d5e59b1d52aa00a161f64dd6abab56d756cf3d7",
+  "releaseRevision": "18a367754cf88a58e73c970b4d2fcc35431e8a58",
+  "previousRemoteMain": "08eb0e5c1fd14b683eb4e34fee644ed41069ea90",
+  "deploymentId": "dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha",
+  "deploymentUrl": "manimarami-portfolio-i5p3c4okl-denoaxlp-4452.vercel.app",
+  "previousLiveDeploymentId": "dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD",
+  "verified": {
+    "reviewedRuntimeInputsByteIdentical": 389,
+    "releaseBuildAndTypecheck": true,
+    "productionGeometryCases": 7,
+    "transportContracts": 12,
+    "stagedUploadedContentDigests": 259,
+    "stagedHttpIndexSha256": true,
+    "unchangedBuildOutputRoutes": true,
+    "publicHttpsOutputHashesAndSizes": 259,
+    "nativeDesktopPortraitCases": 2,
+    "heldPressureAtStationaryZoomAndSpin": true,
+    "releaseReversesOnce": true,
+    "tenProjectIdsAndOrder": true,
+    "realForwardReverseReelScroll": true,
+    "settingsOpenAndEscapeClose": true,
+    "exploreStartsProtectedDescentAndReturn": true,
+    "pageErrors": 0,
+    "failedAssets": 0,
+    "creditsSpa": true,
+    "missingAsset404": true,
+    "byteCorrectVideoRange": {
+      "path": "assets/previews/visual-music-v2751.mp4",
+      "status": 206,
+      "bytes": 1024
+    },
+    "wwwCanonical": {
+      "status": 301,
+      "location": "https://manimarami.com/"
+    },
+    "ssoProtectionRetained": {
+      "deploymentType": "all_except_custom_domains"
+    },
+    "temporaryCliBypassRevoked": true,
+    "finalBypassCount": 0
+  },
+  "coverageLimits": [
+    "Native Chromium desktop plus portrait/DPR emulation; independent Brave/Safari, physical touch/assistive technology, calibrated displays, high-refresh and listening checks unverified.",
+    "Explore reached early Earth descent and Return; full canonical jellyfish arrival was not traversed by this release smoke.",
+    "Selected public frames inspected; no continuous human motion or new performance approval claimed.",
+    "Initial public test counted the rail during the normal intro transition; adverse take retained, then corrected with actual hub/intro-detached waits. No application changes were needed."
+  ],
+  "securityAndCacheHeaders": {
+    "cache-control": "no-cache, no-store, must-revalidate",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-content-type-options": "nosniff",
+    "referrer-policy": "strict-origin-when-cross-origin"
+  },
+  "publicBrowserEvidenceSha256": "c816e21aec143ef76c7124e1cae6cb461185bbf5fe6f93e6530ab7c28179979f",
+  "originalPublicRecordings": [
+    {
+      "path": "1440x900-dpr1-dark/unedited-public.webm",
+      "bytes": 5040392,
+      "sha256": "493dbef43022c1a0133fe907fccb8acbbeb7b27f1080c10949450dfdf0315a49"
+    },
+    {
+      "path": "390x844-dpr2-light/unedited-public.webm",
+      "bytes": 4033005,
+      "sha256": "2d6af18f9599aab2a23f7eabbb498e22ef64de79eeb7d43e61f12d2407223ee0"
+    }
+  ],
+  "reviewArchiveSha256": "9427e0d69f19df4d67a2c72527c0ffa5f9a710d6a5354910486fd2233c411204",
+  "preserved": [
+    "GitHub main cleanup, approved animated intro banner and existing presentation assets",
+    "Approved v2 on4173, development4174, gallery4180 and reviewed frozen4218",
+    "All ten projects and source media; original Pelagic/protected descent, preferences and graphics fallback",
+    "Private handoffs, historical evidence, review archives and development history",
+    "DNS, gateway, drivers, other services and Vercel preview protection"
+  ],
+  "rollback": "vercel rollback dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD --scope denoaxlp-4452",
+  "rollbackRehearsed": false
+}

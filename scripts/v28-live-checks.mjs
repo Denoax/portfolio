@@ -130,6 +130,10 @@ try {
       assert.equal(reversed.runtime.introZoom.transport.committedToken, heldFirst.intro.transport.activeGesture)
       await page.mouse.click(width * .5, height * .5, { delay: 60 })
       stage = 'ten-project Worlds and scroll'
+      // The preview is preloaded behind the opening. It does not establish
+      // completion of the visible, loader-free transition into Worlds.
+      await page.waitForSelector('[data-surface=hub]')
+      await page.locator('.identity-intro').waitFor({ state: 'detached' })
       await page.waitForSelector('.menu-preview-target[data-ready=true]')
       const actualIds = await page.locator('.menu-project[data-project-id]').evaluateAll(nodes => nodes.map(node => node.dataset.projectId))
       assert.deepEqual(actualIds, projectIds)
@@ -150,7 +154,7 @@ try {
       await page.screenshot({ path: `${dir}/settings.png` })
       await page.keyboard.press('Escape')
       await page.waitForFunction(() => !document.querySelector('#experience-settings[open]'))
-      stage = 'original Pelagic launch and return'
+      stage = 'Pelagic journey launch and early-descent return'
       await page.locator('.menu-project[data-current=true] .ui-primary').click()
       await page.waitForSelector('[data-surface=world]', { timeout: 65000 })
       await sample('public original Pelagic')
@@ -164,7 +168,7 @@ try {
       assert(inputs.length && inputs.every(event => event.trusted))
       assert.deepEqual(errors, []); assert.deepEqual(failedAssets, [])
       row = { name, status: 'PASS', source, identity, snapshots, gpuFrames, actualIds, inputs, errors, failedAssets,
-        scope: 'Anonymous public HTTPS on identified native Chromium. Actual held framebuffer ink changes with canonical radial/spin pose fixed; trusted release/short click, ten project IDs/order, one real forward/reverse wheel scroll, Settings open/Escape, original Pelagic launch/Return. Original unedited recording; no uniform/controller mutation, authentication bypass, remote writes, timing benchmark, physical-device or Brave/Safari approval. Portrait/DPR2 is emulation; allocated buffer is recorded.' }
+        scope: 'Anonymous public HTTPS on identified native Chromium. Actual held framebuffer ink changes with canonical radial/spin pose fixed; trusted release/short click, ten project IDs/order, one real forward/reverse wheel scroll, Settings open/Escape, Pelagic journey launch into the early Earth descent and Return. Full jellyfish arrival is not traversed. Original unedited recording; no uniform/controller mutation, authentication bypass, remote writes, timing benchmark, physical-device or Brave/Safari approval. Portrait/DPR2 is emulation; allocated buffer is recorded.' }
     } catch (error) {
       failure = error
       await page.screenshot({ path: `${dir}/failure.png` }).catch(() => {})

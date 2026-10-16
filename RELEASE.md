@@ -30,6 +30,17 @@ continuous human motion approval. See README and the deployment receipt for scop
 
 ---
 
+## Verified v28.1 publication
+
+GitHub main received runtime release `18a367754cf88a58e73c970b4d2fcc35431e8a58`
+by normal fast-forward. Vercel production `dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha`
+serves all259 reviewed files with matching sizes/SHA256. Public desktop/portrait
+checks passed held pressure/reversal, ten projects, reel scrolling, Settings and
+Explore into early descent/Return; full canonical jellyfish arrival was not traversed.
+Preview protection remains enabled and the temporary CLI access secret was revoked.
+Previous production `dpl_EGmgAET8sM3LxLZjDeX5nmxnq6zD` is retained for rollback.
+[Receipt and coverage](showcase/releases/v28-1-pressure/deployment.json).
+
 ## Historical publications
 
 # v26 publication authority
