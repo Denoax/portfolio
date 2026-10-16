@@ -1,6 +1,7 @@
 import { descentProgress } from './descent'
 import { clamp } from './math'
 
+// Legacy exports serve the retained, unmounted journey source only.
 export const EARTH_HOLD = descentProgress(0.4)
 export type Surface =
   | 'intro'
@@ -11,52 +12,19 @@ export type Surface =
   | 'returning'
 export type DestinationIntent = 'launch' | 'earth' | 'pelagic'
 export interface HubState {
-  surface: Surface
+  surface: 'intro' | 'hub'
   request: number
-  intent: DestinationIntent
   notice: string
 }
 export type HubAction =
   | { type: 'introDone' }
-  | { type: 'enter'; intent: DestinationIntent }
-  | { type: 'ready'; request: number }
-  | { type: 'arrived' }
-  | { type: 'return' }
   | { type: 'hub'; notice?: string }
-  | { type: 'returned'; request: number }
   | { type: 'replay' }
 
 export function hubReducer(state: HubState, action: HubAction): HubState {
   switch (action.type) {
     case 'introDone':
       return state.surface === 'intro' ? { ...state, surface: 'hub' } : state
-    case 'enter':
-      if (!['hub', 'intro'].includes(state.surface)) return state
-      return {
-        ...state,
-        surface: 'loading',
-        request: state.request + 1,
-        intent: action.intent,
-        notice: '',
-      }
-    case 'ready':
-      if (state.surface !== 'loading' || state.request !== action.request)
-        return state
-      return {
-        ...state,
-        surface: state.intent === 'launch' ? 'launch' : 'world',
-      }
-    case 'arrived':
-      return state.surface === 'launch' ? { ...state, surface: 'world' } : state
-    case 'return':
-      if (state.surface === 'loading')
-        return { ...state, surface: 'hub', request: state.request + 1 }
-      if (!['world', 'launch'].includes(state.surface)) return state
-      return { ...state, surface: 'returning', request: state.request + 1 }
-    case 'returned':
-      return state.surface === 'returning' && state.request === action.request
-        ? { ...state, surface: 'hub' }
-        : state
     case 'hub':
       return {
         ...state,
@@ -72,11 +40,11 @@ export function hubReducer(state: HubState, action: HubAction): HubState {
 export function parseHubRoute(
   path: string,
   hash: string,
-): 'hub' | 'earth' | 'pelagic' | 'removed' {
+): 'hub' | 'removed' {
   if (path !== '/' && path !== '') return 'removed'
-  if (hash === '#earth') return 'earth'
-  if (hash === '#pelagic' || hash === '#work') return 'pelagic'
-  return !hash || hash === '#worlds' || hash === '#opening' ? 'hub' : 'removed'
+  return !hash || ['#worlds', '#opening', '#earth', '#pelagic', '#work'].includes(hash)
+    ? 'hub'
+    : 'removed'
 }
 
 // Monotone cubic interpolation shares velocity at knots. Progress remains the

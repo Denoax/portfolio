@@ -1,6 +1,5 @@
 import { useAnchoredHelp } from '../hooks/useAnchoredHelp'
 import { PaneCloseButton } from './PaneCloseButton'
-import { PELAGIC_LIVE_URL } from '../core/pelagicHandoff'
 import { useNonmodalDialog } from '../hooks/useNonmodalDialog'
 import { useGlassDialogMotion } from '../hooks/useGlassDialogMotion'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -57,8 +56,7 @@ export function ProjectHelp({
   }, [selected])
   useEffect(() => () => contentAnimation.current?.cancel(), [])
   useNonmodalDialog(dialog, true, close, request.trigger, '[role=tab]')
-  const link =
-    project.action.kind === 'pelagic' ? PELAGIC_LIVE_URL : project.action.href
+  const link = project.action.href
   return (
     <dialog
       ref={dialog}
@@ -159,26 +157,17 @@ export function ProjectHelp({
                       onResource(project)
                     }}
                   >
-                    {project.action.kind === 'pelagic'
-                      ? 'Explore Pelagic'
-                      : 'Open resource'}{' '}
+                    Open resource{' '}
                     <span aria-hidden="true">↗</span>
                   </a>
+                  {project.upstream && (
+                    <a href={project.upstream} target="_blank" rel="noreferrer">
+                      Upstream: getpaseo/paseo ↗
+                    </a>
+                  )}
                   <a href={project.repository} target="_blank" rel="noreferrer">
                     Repository ↗
                   </a>
-                  {project.action.kind === 'pelagic' && (
-                    <>
-                      <a href="/work/pelagic">Case study ↗</a>
-                      <a
-                        href={PELAGIC_LIVE_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Live website ↗
-                      </a>
-                    </>
-                  )}
                 </div>
               )}
             </section>

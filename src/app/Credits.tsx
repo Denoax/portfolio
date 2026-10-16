@@ -7,8 +7,7 @@ export function Credits() {
       <main>
         <h1>Credits</h1>
         <p>
-          Galaxy, choreography, and portfolio: Mani Marami Milani. The galaxy is
-          an artistic procedural field, not a scientific star catalogue.
+          Typography, interaction choreography, and portfolio: Mani Marami Milani.
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
@@ -82,7 +81,7 @@ export function Credits() {
           .
         </p>
         <p>
-          Current airy ripple swishes: Swishes Sound Pack by{' '}
+          Archived airy ripple swishes: Swishes Sound Pack by{' '}
           <a href="https://opengameart.org/content/swishes-sound-pack">
             artisticdude
           </a>
@@ -91,6 +90,14 @@ export function Credits() {
             Sources, edits and hashes
           </a>
           .
+        </p>
+        <p>
+          Hold tension and release snap: a real rubber-band recording by{' '}
+          <a href="https://freesound.org/people/walthamstow_walker/sounds/563260/">
+            walthamstow_walker
+          </a>, CC0. Trimmed, filtered and looped at its natural rate.{' '}
+          <a href="/assets/audio/intro-charge/CREDITS.json">Source and edits</a>.
+          {' '}<a href="/assets/audio/intro-charge/SNAP_CREDITS.json">Snap edit</a>.
         </p>
         <p>
           Elastic Settings sliders studied from{' '}
@@ -156,17 +163,24 @@ export function Credits() {
           </a>
           . Creator media is reference material only.
         </p>
+        <h2>Paseo Kona</h2>
+        <p>
+          Kona theme and desktop integration: Mani Marami Milani. Community fork of{' '}
+          <a href="https://github.com/getpaseo/paseo">getpaseo/paseo</a>; the upstream
+          agent workspace remains credited under its Apache 2.0 licence.{' '}
+          <a href="https://github.com/Denoax/paseo-kona/tree/kona">Theme source and credits</a>.
+        </p>
         <h2>Pelagic</h2>
         <p>
           Original procedural jellyfish anatomy and motion from{' '}
           <a href="https://github.com/Denoax/pelagic-jellyfish-webgl">
             Pelagic
           </a>
-          , adapted into a shared Three.js renderer. Aurelia foundation ·
+          , shown in original project captures. Aurelia foundation ·
           Holtsetio: <a href="/licenses/Aurelia-MIT.txt">MIT notice</a>. Still
           fallback images were captured from the original project.
         </p>
-        <h2>Worlds and original project media</h2>
+        <h2>Original project media and archived journey</h2>
         <p>
           Milky Way imagery: NASA/Goddard Space Flight Center Scientific
           Visualization Studio, Gaia DR2 / ESA / Gaia / DPAC. Visualization:

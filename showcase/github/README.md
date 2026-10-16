@@ -1,3 +1,9 @@
+# Current intro banner and historical gallery
+
+The active repository banner is [portfolio-current-intro-v282.gif](portfolio-current-intro-v282.gif), reused from the existing current-intro export. It contains no speech bubble and is linked only to the website. [Source and output identity](current-intro-source.json). The profile-only buddy invitation is unchanged. Worlds keeps the original interactive Portfolio panel.
+
+The following v24 gallery record and old banner files are historical provenance; they are not the active intro banner.
+
 # Repository showcase sources
 
 These visuals describe the actual v24 portfolio. They are documentation assets,

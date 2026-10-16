@@ -5,7 +5,7 @@ import { projects } from './projects'
 const copy: Record<string, { overview: string; details: string[] }> = {
   '1357004367': {
     overview:
-      'Pelagic is an interactive WebGL ocean with procedural jellyfish. Explore follows the portfolio’s descent into the live Pelagic experience.',
+      'Pelagic is an interactive WebGL ocean with procedural jellyfish. Explore opens its GitHub repository, where the live ocean and source are linked.',
     details: [
       'The jellyfish deform and swim through a current-coupled ocean in real time.',
       'Underwater lighting, thermal shimmer and optical effects sample the living scene.',
@@ -43,6 +43,14 @@ const copy: Record<string, { overview: string; details: string[] }> = {
       'Configuration and terminal tools define authority and worker limits.',
     ],
   },
+  '1419820592': {
+    overview:
+      'A Kona theme and desktop integration for Paseo. This is a community fork of getpaseo/paseo.',
+    details: [
+      'The Kona layer adds a navy appearance, theme checks and an Arch/Wayland desktop launcher integration.',
+      'The underlying agent workspace is upstream Paseo; its source, licence and credit remain intact.',
+    ],
+  },
   '1353607509': {
     overview:
       'janktrace finds main-thread stalls in Chrome performance traces. It streams the trace and reports long tasks and their likely causes.',
@@ -69,10 +77,10 @@ const copy: Record<string, { overview: string; details: string[] }> = {
   },
   '1352586659': {
     overview:
-      'This portfolio brings my projects together with real previews and interactive motion. Its intro and selection reel lead into the Pelagic journey.',
+      'This portfolio brings my projects together with real previews and interactive motion. Its intro leads into a selection reel with direct project links.',
     details: [
       `The live reel contains ${projects.length} projects, with their own media and resource links.`,
-      'The source includes the typography intro, reversible descent and accessible controls.',
+      'The active site includes the typography intro, project reel and accessible controls.',
     ],
   },
   '1353608040': {

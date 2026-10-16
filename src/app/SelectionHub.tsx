@@ -430,10 +430,7 @@ export function SelectionHub({
       if (project.presentation === 'media') previews.start(project)
     }
   }
-  const actionHref =
-    project.action.kind === 'pelagic'
-      ? 'https://denoax.github.io/pelagic-jellyfish-webgl/'
-      : project.action.href
+  const actionHref = project.action.href
   const openProject = (
     event: MouseEvent<HTMLAnchorElement>,
     media = false,
@@ -737,10 +734,7 @@ export function SelectionHub({
             {menuViews.map((item) => {
               const current = item.id === menuViews[view].id
               const project = item
-              const actionHref =
-                project.action.kind === 'pelagic'
-                  ? 'https://denoax.github.io/pelagic-jellyfish-webgl/'
-                  : project.action.href
+              const actionHref = project.action.href
               return (
                 <div
                   className="menu-project"

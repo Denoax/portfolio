@@ -1,5 +1,6 @@
 export const RIPPLE_SLOTS = 4
 export const RIPPLE_LIFETIME = 12
+export const SNAP_LIFETIME = 0.65
 export interface IntroRipple {
   id: number
   startedAt: number
@@ -7,10 +8,14 @@ export interface IntroRipple {
 }
 export interface IntroRipples {
   sequence: number
+  snapSequence: number
+  snapStartedAt: number | null
   slots: IntroRipple[]
 }
 export const createIntroRipples = (): IntroRipples => ({
   sequence: 0,
+  snapSequence: 0,
+  snapStartedAt: null,
   slots: Array.from({ length: RIPPLE_SLOTS }, () => ({
     id: 0,
     startedAt: 0,
@@ -39,6 +44,19 @@ export function admitIntroRipple(
 export function clearIntroRipples(state: IntroRipples) {
   // Keep sequence monotonic so audio IDs cannot be replayed after an art reset.
   for (const slot of state.slots) slot.active = false
+  state.snapStartedAt = null
+}
+// A short release impact has its own lifetime, independent of the four older
+// travelling waves. Saturation must not suppress a new snap or replay old ones.
+export function admitIntroSnap(state: IntroRipples, now: number, animate = true): number | null {
+  if (!Number.isFinite(now) || now < 0) return null
+  state.snapStartedAt = animate ? now : null
+  return ++state.snapSequence
+}
+export function snapEnvelope(age: number) {
+  if (!Number.isFinite(age) || age < 0 || age >= SNAP_LIFETIME) return 0
+  const end = Math.max(0, Math.min(1, (age - 0.45) / 0.2))
+  return Math.sin(age * 28) * Math.exp(-age * 7.5) * (1 - end * end * (3 - 2 * end))
 }
 export function rippleEnvelope(age: number, radius: number) {
   if (age < 0) return 0

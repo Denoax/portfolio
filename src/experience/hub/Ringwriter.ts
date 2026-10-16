@@ -1,4 +1,4 @@
-import { pruneIntroRipples, clearIntroRipples } from '../../core/introRipples'
+import { pruneIntroRipples, clearIntroRipples, snapEnvelope } from '../../core/introRipples'
 import { stepIntroZoom, hintOpacity } from '../../core/introMotion'
 import { boundedZoom } from '../../core/introZoom'
 import {
@@ -44,7 +44,7 @@ export class Ringwriter {
       side: THREE.FrontSide, toneMapped: false,
       uniforms: {
         uInk: { value: new THREE.Color('#f4f4f2') }, uAtlas: { value: this.texture },
-        uPressure: { value: 0 }, uPressureTime: { value: 0 },
+        uPressure: { value: 0 }, uPressureTime: { value: 0 }, uSnap: { value: 0 },
         uTime: { value: 0 }, uZoom: { value: 0 }, uPeriod: { value: this.layout.depthPeriod },
         uLower: { value: this.layout.lower }, uOuterSupportLog: { value: this.layout.outerSupportLog }, uScale: { value: 1 },
         uQuadFactor: { value: this.layout.quadFactor },
@@ -59,7 +59,7 @@ export class Ringwriter {
       },
       vertexShader: `attribute float aLog,aTheta,aChar,aOpacity,aSpeed,aIndex,aFormationRank,aFormationOffset;
       uniform float uTime,uScale,uQuadFactor,uInkHeight,uCharge,uZoom,uPeriod,uLower,uOuterSupportLog,uCssPixelScale,uRenderPixelRatio,uStrokeRatio,uAtlasCell,uShuffle,uShuffleSeed;
-      uniform float uPressure,uPressureTime;
+      uniform float uPressure,uPressureTime,uSnap;
       uniform float uPulseAges[4];uniform vec2 uCenter,uPointer;
       varying vec2 vUv;varying float vChar,vOpacity;
       float hash(float n){return fract(sin(n*127.1+uShuffleSeed*311.7)*43758.5453);}
@@ -90,6 +90,10 @@ export class Ringwriter {
         vec2 radial=vec2(cos(theta),sin(theta)),tangent=vec2(radial.y,-radial.x);
         vec2 center=radial*(radius*(1.+scatter*.07)+pulse*.018*(.5+radius))+uCenter;
         vec2 local=(tangent*position.x+radial*position.y)*radius*uQuadFactor;
+        // The release kick moves existing glyphs, with a small damped recoil.
+        // CSS-pixel bounds keep it legible at every ring scale and viewport.
+        center+=radial*uSnap*clamp(inkCss*.16,1.5,8.)/uCssPixelScale;
+        local*=1.+uSnap*.045;
         float reach=.10+uCharge*.12;
         vec2 fromPointer=center-uPointer;
         float influence=1.-smoothstep(reach*.25,reach,length(fromPointer));
@@ -190,6 +194,7 @@ export class Ringwriter {
       this.running = false
       this.pressure = 0
       this.material.uniforms.uPressure.value = 0
+      this.material.uniforms.uSnap.value = 0
     }
     document.addEventListener('visibilitychange', resetClock)
     window.addEventListener('pointermove', move, { passive: true })
@@ -231,6 +236,8 @@ export class Ringwriter {
     uniforms.uZoom.value = introSectionProjection(boundedZoom(intro.zoom, this.layout.period), this.layout)
     uniforms.uTime.value = intro.transport.angularTime
     uniforms.uPressure.value = this.pressure
+    uniforms.uSnap.value = intro.holding || intro.exiting || intro.inputBlocked ? 0
+      : snapEnvelope(intro.ripples.snapStartedAt === null ? -1 : intro.elapsed - intro.ripples.snapStartedAt)
     // Integer harmonic frequencies make this bounded active-time wrap seamless.
     uniforms.uPressureTime.value = intro.elapsed % (2 * Math.PI)
     uniforms.uShuffle.value = intro.transport.shuffleAmount

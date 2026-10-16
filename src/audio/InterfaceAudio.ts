@@ -1,5 +1,6 @@
 import { NoRepeatBag } from './NoRepeatBag'
 import { audioBank } from './audioBank'
+import { INTRO_HOLD_SECONDS } from '../core/introMotion'
 export type SoundCue =
   | 'activate'
   | 'toggle'
@@ -12,6 +13,7 @@ export type SoundCue =
   | 'cancel'
   | 'hover'
   | 'ripple'
+  | 'snap'
   | 'buddy'
 export type ResourcePhase = 'cover' | 'resolve' | 'settle'
 export type AudioScene = 'intro' | 'selection' | 'loading' | 'world'
@@ -19,18 +21,26 @@ type Voice = { source: AudioBufferSourceNode; gain: GainNode; role?: Role }
 type Bed = Voice & { id: string; offset: number; started: number }
 type Role = 'press' | 'hover' | 'back' | 'ripple' | 'buddy'
 const legacy = ['transition-soft', 'intro-bed', 'selection-bed']
+const chargeName = 'intro-charge-stretch'
+const snapName = 'intro-release-snap'
 const names: readonly string[] = [
   ...audioBank.map((item) => item.id),
   ...legacy,
+  chargeName,
+  snapName,
 ]
 const urlFor = (name: string) =>
-  name.startsWith('v22-')
+  name === chargeName
+    ? '/assets/audio/intro-charge/stretch-6843e99c0f99.wav'
+    : name === snapName
+      ? '/assets/audio/intro-charge/snap-1959ad4e2caf.wav'
+    : name.startsWith('v22-')
     ? `/assets/audio/v22/${name.slice(4)}.wav`
     : name.startsWith('v18-')
       ? `/assets/audio/v18/${name.slice(4)}.wav`
       : `/assets/audio/${legacy.includes(name) ? 'v13' : 'v16'}/${name}.wav`
 // Conservative role gains reserve measured peak headroom for four SFX voices
-// plus both existing crossfaded beds. No sample is pitch-shifted.
+// plus both existing crossfaded beds and one quiet charge. Natural sample rates.
 const roleGain = {
   press: 0.2,
   back: 0.18,
@@ -57,6 +67,8 @@ export class InterfaceAudio {
   private bytes = new Map<string, Promise<ArrayBuffer>>()
   private buffers = new Map<string, Promise<AudioBuffer>>()
   private voices = new Set<Voice>()
+  private charge: Voice | null = null
+  private chargeEpoch = 0
   private beds = new Map<string, Bed>()
   private retiringBeds = new Set<Bed>()
   private offsets = new Map<string, number>()
@@ -74,6 +86,7 @@ export class InterfaceAudio {
   private lastUI = -Infinity
   private lastHover = -Infinity
   private lastRippleId = 0
+  private lastSnapId = 0
   private token: number | null = null
   private phases = new Set<ResourcePhase>()
   private abort = new AbortController()
@@ -229,6 +242,7 @@ export class InterfaceAudio {
   setScene(scene: AudioScene) {
     if (this.scene === scene) return
     this.scene = scene
+    if (scene !== 'intro') this.stopIntroCharge()
     this.bedEpoch++
     this.syncBeds()
   }
@@ -250,10 +264,81 @@ export class InterfaceAudio {
   playRipple(id: number) {
     this.play('ripple', undefined, id)
   }
-  play(cue: SoundCue, token?: number, rippleId?: number) {
+  playIntroSnap(id: number) {
+    this.play('snap', undefined, id)
+  }
+  startIntroCharge() {
+    this.stopIntroCharge()
+    const ctx = this.context,
+      pending = this.buffers.get(chargeName)
+    if (
+      !ctx ||
+      !pending ||
+      !this.sfx ||
+      this.disposed ||
+      !this.enabled ||
+      !this.volume ||
+      document.hidden ||
+      this.scene !== 'intro'
+    )
+      return
+    const epoch = this.chargeEpoch,
+      requestedAt = ctx.currentTime
+    void Promise.all([pending, ctx.state === 'running' ? Promise.resolve() : ctx.resume()])
+      .then(([buffer]) => {
+        // Decode/unlock completion may never revive a released gesture.
+        if (
+          epoch !== this.chargeEpoch ||
+          ctx !== this.context ||
+          ctx.state !== 'running' ||
+          this.disposed ||
+          !this.enabled ||
+          !this.volume ||
+          document.hidden ||
+          this.scene !== 'intro' ||
+          !this.sfx
+        )
+          return
+        const source = ctx.createBufferSource(),
+          gain = ctx.createGain(),
+          filter = ctx.createBiquadFilter()
+        const start = Math.max(ctx.currentTime, requestedAt + INTRO_HOLD_SECONDS)
+        source.buffer = buffer
+        source.loop = true
+        filter.type = 'lowpass'
+        filter.Q.value = 0.5
+        filter.frequency.setValueAtTime(900, start)
+        filter.frequency.exponentialRampToValueAtTime(4600, start + 1.8)
+        gain.gain.setValueAtTime(0, ctx.currentTime)
+        gain.gain.setValueAtTime(0, start)
+        gain.gain.linearRampToValueAtTime(0.035, start + 0.06)
+        gain.gain.exponentialRampToValueAtTime(0.25, start + 1.8)
+        source.connect(filter).connect(gain).connect(this.sfx)
+        const voice = { source, gain }
+        this.charge = voice
+        source.onended = () => {
+          if (this.charge === voice) this.charge = null
+          source.disconnect()
+          filter.disconnect()
+          gain.disconnect()
+        }
+        source.start(start)
+        this.journal({ type: 'charge', state: 'scheduled', name: chargeName, start, epoch })
+      })
+      .catch(error => this.journal({ type: 'drop', cue: 'charge', reason: 'decode-or-unlock-failed', error: String(error) }))
+  }
+  stopIntroCharge() {
+    this.chargeEpoch++
+    if (!this.charge) return
+    const voice = this.charge
+    this.charge = null
+    this.stopVoice(voice, 0.045)
+    this.journal({ type: 'charge', state: 'stopped', epoch: this.chargeEpoch })
+  }
+  play(cue: SoundCue, token?: number, effectId?: number) {
     const at = performance.now()
     const drop = (reason: string) =>
-      this.journal({ type: 'drop', cue, token, rippleId, reason })
+      this.journal({ type: 'drop', cue, token, effectId, reason })
     const ctx = this.context
     if (document.hidden) return drop('hidden-document')
     if (this.disposed || !this.enabled || !this.volume)
@@ -262,10 +347,10 @@ export class InterfaceAudio {
       return drop('locked-context')
     if (token !== undefined && token !== this.token) return drop('stale-epoch')
     if (
-      rippleId !== undefined &&
-      (!Number.isSafeInteger(rippleId) || rippleId <= this.lastRippleId)
+      effectId !== undefined &&
+      (!Number.isSafeInteger(effectId) || effectId <= (cue === 'snap' ? this.lastSnapId : this.lastRippleId))
     )
-      return drop('duplicate-or-invalid-ripple')
+      return drop('duplicate-or-invalid-effect')
     const role: Role =
       cue === 'buddy'
         ? 'buddy'
@@ -273,13 +358,13 @@ export class InterfaceAudio {
           ? 'back'
           : cue === 'hover'
             ? 'hover'
-            : cue === 'ripple'
+            : cue === 'ripple' || cue === 'snap'
               ? 'ripple'
               : 'press'
     const transition = cue === 'resolve' || cue === 'settle'
+    const fixedName = cue === 'snap' ? snapName : transition ? 'transition-soft' : null
     const bag = this.bags.get(role)
-    if (!transition && !bag) return drop('unresolved-or-rejected-decode')
-    if (transition && !this.decoded.has('transition-soft'))
+    if (fixedName ? !this.decoded.has(fixedName) : !bag)
       return drop('unresolved-or-rejected-decode')
     if (token === undefined && role !== 'ripple') {
       if (
@@ -294,7 +379,7 @@ export class InterfaceAudio {
     let delay = Math.max(0, this.admitAfter - ctx.currentTime)
     if (delay > 0.025) return drop('stale-event')
     if (this.voices.size >= 4) {
-      // UI hovering cannot clip a protected wave's swish. Prefer retiring an
+      // UI hovering cannot clip a protected release cue. Prefer retiring an
       // incidental UI voice; four live ripple voices decline extra sounds.
       const disposable = [...this.voices].find(
         (voice) => voice.role !== 'ripple',
@@ -304,14 +389,17 @@ export class InterfaceAudio {
       delay = Math.max(delay, 0.008)
       this.journal({ type: 'retire', reason: 'voice-budget' })
     }
-    const name = transition ? 'transition-soft' : bag!.next()
-    if (rippleId !== undefined) this.lastRippleId = rippleId
+    const name = fixedName ?? bag!.next()
+    if (effectId !== undefined) {
+      if (cue === 'snap') this.lastSnapId = effectId
+      else this.lastRippleId = effectId
+    }
     if (role === 'hover') this.lastHover = at
     else if (role !== 'ripple') this.lastUI = at
     const source = ctx.createBufferSource(),
       gain = ctx.createGain()
     source.buffer = this.decoded.get(name)!
-    gain.gain.value = transition ? 0.12 : roleGain[role]
+    gain.gain.value = cue === 'snap' ? 0.18 : transition ? 0.12 : roleGain[role]
     source.connect(gain).connect(this.sfx)
     const voice = { source, gain, role }
     this.voices.add(voice)
@@ -327,7 +415,8 @@ export class InterfaceAudio {
       cue,
       role,
       token,
-      rippleId,
+      rippleId: cue === 'ripple' ? effectId : undefined,
+      snapId: cue === 'snap' ? effectId : undefined,
       pcmHash: audioBank.find((item) => item.id === name)?.pcmHash,
       voices: this.voices.size,
       eventTime: at,
@@ -349,6 +438,7 @@ export class InterfaceAudio {
   }
   retireSfx(token?: number) {
     if (token !== undefined && token !== this.token) return
+    this.stopIntroCharge()
     this.epoch++
     if (this.context && this.voices.size)
       this.admitAfter = Math.max(

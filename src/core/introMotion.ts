@@ -17,6 +17,10 @@ export const INTRO_SHUFFLE_SECONDS = 0.45
 export const INTRO_WAIT_SECONDS = 0.26
 const BRAKE_SECONDS = 0.12
 const MANUAL_IDLE_SECONDS = 0.7
+const SCROLL_BOOST_SECONDS = 2.4
+const MAX_SCROLL_SPEED = INTRO_AUTO_RATE * 2.5
+const MAX_SCROLL_IMPULSE = INTRO_AUTO_RATE * 0.45
+const VELOCITY_EASING_SECONDS = 0.055
 const ANGULAR_PERIOD = Math.PI * 2000
 
 export interface IntroTransport {
@@ -39,6 +43,7 @@ export interface IntroTransport {
   waitAge: number
   manualActive: boolean
   manualIdle: number
+  scrollBoost: number // Signed velocity offset from the committed automatic rate.
 }
 
 export function createIntroTransport(): IntroTransport {
@@ -62,6 +67,7 @@ export function createIntroTransport(): IntroTransport {
     waitAge: 0,
     manualActive: false,
     manualIdle: MANUAL_IDLE_SECONDS,
+    scrollBoost: 0,
   }
 }
 
@@ -87,7 +93,9 @@ export function cancelIntroTransport(intro: Intro) {
   intro.holding = false
   intro.zoomDelta = 0
   intro.zoomReset = intro.resetActive = false
+  intro.ripples.snapStartedAt = null
   transport.manualActive = false
+  transport.scrollBoost = 0
 }
 
 export function beginIntroGesture(intro: Intro): number | null {
@@ -147,13 +155,35 @@ export function requestIntroZoom(intro: Intro, delta: number) {
   )
     return
   intro.zoomDelta += delta
+  intro.transport.scrollBoost = 0
   intro.transport.manualActive = true
   intro.transport.manualIdle = 0
+}
+
+export function requestIntroScroll(intro: Intro, delta: number) {
+  const transport = intro.transport
+  if (
+    !Number.isFinite(delta) || delta === 0 || intro.paused ||
+    intro.holding || intro.exiting || intro.inputBlocked ||
+    (transport.state !== 'AUTO_IN' && transport.state !== 'AUTO_OUT')
+  ) return
+  // Add signed momentum. Counter-scroll first brakes the accumulated speed;
+  // no single large wheel packet can reverse a normally moving field.
+  const impulse = Math.max(-MAX_SCROLL_IMPULSE, Math.min(MAX_SCROLL_IMPULSE, delta / SCROLL_BOOST_SECONDS))
+  const current = transport.lastDirection * INTRO_AUTO_RATE + transport.scrollBoost
+  const target = Math.max(-MAX_SCROLL_SPEED, Math.min(MAX_SCROLL_SPEED, current + impulse))
+  if (target !== 0) transport.lastDirection = target < 0 ? -1 : 1
+  transport.state = autoState(transport.lastDirection)
+  transport.scrollBoost = target - transport.lastDirection * INTRO_AUTO_RATE
+  transport.manualActive = false
+  intro.zoomDelta = 0
+  intro.zoomReset = intro.resetActive = false
 }
 
 export function requestIntroReset(intro: Intro) {
   if (intro.holding || intro.exiting || intro.inputBlocked) return
   intro.zoomReset = true
+  intro.transport.scrollBoost = 0
   intro.transport.manualActive = true
   intro.transport.manualIdle = 0
 }
@@ -278,11 +308,18 @@ export function stepIntroZoom(
       step = brakeStep(intro, seconds)
     } else {
       const target = transport.lastDirection * INTRO_AUTO_RATE
-      const decay = Math.exp(-seconds / 0.055)
+      const decay = Math.exp(-seconds / VELOCITY_EASING_SECONDS)
+      const boostDecay = Math.exp(-seconds / SCROLL_BOOST_SECONDS)
+      const boost = transport.scrollBoost *
+        SCROLL_BOOST_SECONDS / (SCROLL_BOOST_SECONDS - VELOCITY_EASING_SECONDS)
+      // Integrate the decaying boost and velocity easing together, so wheel
+      // momentum and total travel do not depend on the display frame rate.
       step =
         target * seconds +
-        (intro.zoomVelocity - target) * 0.055 * (1 - decay)
-      intro.zoomVelocity = target + (intro.zoomVelocity - target) * decay
+        (intro.zoomVelocity - target) * VELOCITY_EASING_SECONDS * (1 - decay) +
+        boost * (SCROLL_BOOST_SECONDS * (1 - boostDecay) - VELOCITY_EASING_SECONDS * (1 - decay))
+      intro.zoomVelocity = target + (intro.zoomVelocity - target) * decay + boost * (boostDecay - decay)
+      transport.scrollBoost *= boostDecay
     }
   }
   intro.zoom = advanceZoom(intro.zoom, step)

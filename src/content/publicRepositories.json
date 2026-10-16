@@ -1,184 +1,181 @@
 {
-  "captured_utc": "2026-10-06T23:08:56.975135+00:00",
+  "captured_utc": "2026-10-16T08:41:51.642391+00:00",
   "complete": true,
   "pages": 1,
   "public_owner": "Denoax",
-  "count": 10,
+  "count": 11,
   "repositories": [
     {
-      "id": 1367284706,
-      "name": "codex-hermes-router",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Authority-aware local inference offload for Codex.",
+      "fork": false,
       "full_name": "Denoax/codex-hermes-router",
       "html_url": "https://github.com/Denoax/codex-hermes-router",
-      "description": "Authority-aware local inference offload for Codex.",
-      "homepage": null,
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
+      "id": 1367284706,
+      "name": "codex-hermes-router",
+      "updated_at": "2026-10-14T04:06:19Z",
       "license": {
-        "key": "mit",
         "name": "MIT License",
-        "spdx_id": "MIT",
-        "url": "https://api.github.com/licenses/mit",
-        "node_id": "MDc6TGljZW5zZTEz"
+        "spdx_id": "MIT"
       },
-      "observed_head": "36d0bf560e3dcd99f1eadcaffe97da7af2d469cc",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
+      "observed_head": "006bdeb15433d72bacc8557933af81980ebd55c4",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
     },
     {
-      "id": 1353608040,
-      "name": "Denoax",
+      "archived": false,
+      "default_branch": "main",
+      "description": null,
+      "fork": false,
       "full_name": "Denoax/Denoax",
       "html_url": "https://github.com/Denoax/Denoax",
-      "description": null,
-      "homepage": null,
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
+      "id": 1353608040,
+      "name": "Denoax",
+      "updated_at": "2026-10-16T08:36:01Z",
       "license": null,
-      "observed_head": "c338be1625df776e6017c077978000a9ce78b36f",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
+      "observed_head": "2face02d6c562315c7edb49087cb8145f08f2388",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
     },
     {
-      "id": 1388326955,
-      "name": "farm-stand",
+      "archived": false,
+      "default_branch": "main",
+      "description": "Private source for the Farm Stand website demonstration",
+      "fork": false,
       "full_name": "Denoax/farm-stand",
       "html_url": "https://github.com/Denoax/farm-stand",
-      "description": "Private source for the Farm Stand website demonstration",
-      "homepage": null,
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
+      "id": 1388326955,
+      "name": "farm-stand",
+      "updated_at": "2026-10-01T06:51:44Z",
       "license": null,
       "observed_head": "7349113bfd7218e8600b3d20576179a7749bfee1",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
     },
     {
-      "id": 1353607509,
-      "name": "janktrace",
-      "full_name": "Denoax/janktrace",
-      "html_url": "https://github.com/Denoax/janktrace",
-      "description": "Stream Chrome performance traces and find main-thread stalls.",
-      "homepage": null,
-      "fork": false,
       "archived": false,
       "default_branch": "main",
-      "license": {
-        "key": "mit",
-        "name": "MIT License",
-        "spdx_id": "MIT",
-        "url": "https://api.github.com/licenses/mit",
-        "node_id": "MDc6TGljZW5zZTEz"
-      },
-      "observed_head": "cd18c04f1d17c624fbd635fad074162a7eafa52d",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
-    },
-    {
-      "id": 1375135091,
-      "name": "Kattis",
-      "full_name": "Denoax/Kattis",
-      "html_url": "https://github.com/Denoax/Kattis",
-      "description": "C++ competitive-programming solutions and practice from the Open Kattis problem archive.",
-      "homepage": null,
+      "description": "Hermes \u00d7 your local model: a local workspace for projects, conversations and code, with separately gated guest-execution controls.",
       "fork": false,
-      "archived": false,
-      "default_branch": "main",
-      "license": {
-        "key": "mit",
-        "name": "MIT License",
-        "spdx_id": "MIT",
-        "url": "https://api.github.com/licenses/mit",
-        "node_id": "MDc6TGljZW5zZTEz"
-      },
-      "observed_head": "0cc95c2c88cc19e93f87ff92e070932cb4ac1435",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
-    },
-    {
-      "id": 1355818842,
-      "name": "konata-hyprland-dotfiles",
-      "full_name": "Denoax/konata-hyprland-dotfiles",
-      "html_url": "https://github.com/Denoax/konata-hyprland-dotfiles",
-      "description": "Konata Izumi-themed Arch + Hyprland desktop with a custom sidebar, Mono Rain scene, unified controls, system Light/Dark, and recovery tooling.",
-      "homepage": "https://manimarami.com",
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
-      "license": {
-        "key": "mit",
-        "name": "MIT License",
-        "spdx_id": "MIT",
-        "url": "https://api.github.com/licenses/mit",
-        "node_id": "MDc6TGljZW5zZTEz"
-      },
-      "observed_head": "e1e8ad65ccb7e7b20b82485f959d5249a5ff41b6",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
-    },
-    {
-      "id": 1357004367,
-      "name": "pelagic-jellyfish-webgl",
-      "full_name": "Denoax/pelagic-jellyfish-webgl",
-      "html_url": "https://github.com/Denoax/pelagic-jellyfish-webgl",
-      "description": "A silent interactive WebGL descent through a living jellyfish ocean, with pulse-driven swimming and a liquid-glass idle clock.",
-      "homepage": "https://denoax.github.io/pelagic-jellyfish-webgl/",
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
-      "license": {
-        "key": "other",
-        "name": "Other",
-        "spdx_id": "NOASSERTION",
-        "url": null,
-        "node_id": "MDc6TGljZW5zZTA="
-      },
-      "observed_head": "66dff315da2290959aa3dd4bf92627e4850bab0d",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
-    },
-    {
-      "id": 1352586659,
-      "name": "portfolio",
-      "full_name": "Denoax/portfolio",
-      "html_url": "https://github.com/Denoax/portfolio",
-      "description": "Information under gravity \u2014 a cinematic React, TypeScript and Three.js portfolio with a continuous eight-state particle journey.",
-      "homepage": "https://manimarami.com",
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
-      "license": null,
-      "observed_head": "5abd1ce0e3da3c441ff50063bda2f02b64e4d373",
-      "observed_utc": "2026-10-06T23:08:56.975135+00:00"
-    },
-    {
-      "id": 1420094845,
-      "name": "hermes-workspace",
       "full_name": "Denoax/hermes-workspace",
       "html_url": "https://github.com/Denoax/hermes-workspace",
-      "description": "Hermes \u00d7 your local model: a local workspace for projects, conversations and code, with separately gated guest-execution controls.",
-      "homepage": null,
-      "fork": false,
-      "archived": false,
-      "default_branch": "main",
+      "id": 1420094845,
+      "name": "hermes-workspace",
+      "updated_at": "2026-10-16T07:24:25Z",
       "license": null,
-      "private": false,
-      "observed_head": "96d9e4bf201f6488067d367df3b0b3eb59ceab43",
-      "observed_utc": "2026-10-15T09:22:08.733876+00:00"
+      "observed_head": "086234864ab59809df1fec4880ea9773f23a7d09",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
     },
     {
-      "id": 1420137767,
-      "name": "visual-music",
-      "full_name": "Denoax/visual-music",
-      "html_url": "https://github.com/Denoax/visual-music",
-      "description": "Visual Music \u2014 fly through an audio-reactive LED dance floor.",
-      "homepage": "https://denoax.github.io/visual-music/",
-      "fork": false,
       "archived": false,
       "default_branch": "main",
+      "description": "Stream Chrome performance traces and find main-thread stalls.",
+      "fork": false,
+      "full_name": "Denoax/janktrace",
+      "html_url": "https://github.com/Denoax/janktrace",
+      "id": 1353607509,
+      "name": "janktrace",
+      "updated_at": "2026-09-01T13:53:51Z",
+      "license": {
+        "name": "MIT License",
+        "spdx_id": "MIT"
+      },
+      "observed_head": "cd18c04f1d17c624fbd635fad074162a7eafa52d",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "description": "C++ competitive-programming solutions and practice from the Open Kattis problem archive.",
+      "fork": false,
+      "full_name": "Denoax/Kattis",
+      "html_url": "https://github.com/Denoax/Kattis",
+      "id": 1375135091,
+      "name": "Kattis",
+      "updated_at": "2026-10-15T07:51:42Z",
+      "license": {
+        "name": "MIT License",
+        "spdx_id": "MIT"
+      },
+      "observed_head": "2ac843c52d48ffd74f7fa3cf13f5308d5a4f68b2",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "description": "Konata Izumi-themed Arch + Hyprland desktop with a custom sidebar, Mono Rain scene, unified controls, system Light/Dark, and recovery tooling.",
+      "fork": false,
+      "full_name": "Denoax/konata-hyprland-dotfiles",
+      "html_url": "https://github.com/Denoax/konata-hyprland-dotfiles",
+      "id": 1355818842,
+      "name": "konata-hyprland-dotfiles",
+      "updated_at": "2026-10-13T07:13:04Z",
+      "license": {
+        "name": "MIT License",
+        "spdx_id": "MIT"
+      },
+      "observed_head": "a9f433ad9cf5b870ee18ceed72d7200f402008e8",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "kona",
+      "description": "A calm Kona edition of Paseo for local coding agents on Arch Linux and Wayland.",
+      "fork": true,
+      "full_name": "Denoax/paseo-kona",
+      "html_url": "https://github.com/Denoax/paseo-kona",
+      "id": 1419820592,
+      "name": "paseo-kona",
+      "updated_at": "2026-10-15T02:35:35Z",
+      "license": {
+        "name": "Other",
+        "spdx_id": "NOASSERTION"
+      },
+      "observed_head": "93c7eea0e5229997bc7674003493b99d60118f91",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "description": "A silent interactive WebGL descent through a living jellyfish ocean, with pulse-driven swimming and a liquid-glass idle clock.",
+      "fork": false,
+      "full_name": "Denoax/pelagic-jellyfish-webgl",
+      "html_url": "https://github.com/Denoax/pelagic-jellyfish-webgl",
+      "id": 1357004367,
+      "name": "pelagic-jellyfish-webgl",
+      "updated_at": "2026-10-14T04:25:55Z",
+      "license": {
+        "name": "Other",
+        "spdx_id": "NOASSERTION"
+      },
+      "observed_head": "82f469a2e897052129c91ef51c7b32490b4b9e2d",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "description": "Interactive portfolio with a living typographic opening, eight real projects, responsive light/dark controls and a reversible galaxy-to-Pelagic journey.",
+      "fork": false,
+      "full_name": "Denoax/portfolio",
+      "html_url": "https://github.com/Denoax/portfolio",
+      "id": 1352586659,
+      "name": "portfolio",
+      "updated_at": "2026-10-16T04:48:17Z",
       "license": null,
-      "private": false,
-      "observed_head": "84b527230038ccaa957d27bb048847926b8befb4",
-      "observed_utc": "2026-10-15T09:22:08.733876+00:00"
+      "observed_head": "e4f7fdada95bafde1ff2cbeb2d63d15abee0d555",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
+    },
+    {
+      "archived": false,
+      "default_branch": "main",
+      "description": "Visual Music \u2014 fly through an audio-reactive LED dance floor.",
+      "fork": false,
+      "full_name": "Denoax/visual-music",
+      "html_url": "https://github.com/Denoax/visual-music",
+      "id": 1420137767,
+      "name": "visual-music",
+      "updated_at": "2026-10-16T08:32:04Z",
+      "license": null,
+      "observed_head": "e7f6570b86cbed260325fc4c38e06c728c505ba5",
+      "observed_utc": "2026-10-16T08:41:51.642391+00:00"
     }
-  ],
-  "catalogue_verified_utc": "2026-10-15T09:22:08.733876+00:00",
-  "selection": "Public, non-fork, non-archived repositories owned by Denoax",
-  "verification_note": "Existing eight metadata/media revisions retain their original observation dates; all ten current identities/visibility verified against the live public owner inventory. New entries observed now."
+  ]
 }

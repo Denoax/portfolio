@@ -5,12 +5,14 @@
   "bio": "build impossible things",
   "avatar_url": "https://avatars.githubusercontent.com/u/56500734?v=4",
   "html_url": "https://github.com/Denoax",
-  "public_repos": 8,
+  "public_repos": 11,
   "followers": 4,
   "following": 12,
   "fetched_at_utc": "2026-10-09T01:44:25.025193+00:00",
   "source_url": "https://api.github.com/users/Denoax",
   "source_sha256": "216661faf129ab6b1c296ca336c592e63bfb970692cff5c76c7b796c34400b1e",
   "avatar_local": "github-avatar.jpg",
-  "avatar_sha256": "77d6fb7f3729e4ad00414fb0373fa3bea875395281cebb38cadfdae7ebc34376"
+  "avatar_sha256": "77d6fb7f3729e4ad00414fb0373fa3bea875395281cebb38cadfdae7ebc34376",
+  "repository_count_observed_at_utc": "2026-10-16T08:41:51.642391+00:00",
+  "repository_count_source": "https://api.github.com/users/Denoax"
 }

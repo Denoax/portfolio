@@ -159,7 +159,7 @@ check('A saturated independent ripple pool cannot suppress or replay reversal', 
   assert.equal(intro.transport.lastDirection, 1)
   assert.deepEqual(intro.ripples, old)
 })
-check('Manual wheel/key requests override temporarily, preserve direction and cannot move an active hold', () => {
+check('Discrete keyboard requests override temporarily, preserve direction and cannot move an active hold', () => {
   const intro = fixture()
   run(intro, 1)
   const before = logical(intro)
@@ -177,6 +177,106 @@ check('Manual wheel/key requests override temporarily, preserve direction and ca
   run(intro, 1)
   assert.deepEqual(intro.zoom, held)
   assert.equal(intro.zoomReset, false)
+})
+check('Scrolling boosts continuous travel without entering positional settling or stalling', () => {
+  for (const direction of [-1, 1]) {
+    const intro = fixture()
+    intro.transport.lastDirection = direction
+    intro.transport.state = direction < 0 ? 'AUTO_OUT' : 'AUTO_IN'
+    run(intro, 1)
+    const initialVelocity = intro.zoomVelocity
+    m.requestIntroScroll(intro, direction * (0.1 / 1.75))
+    near(intro.zoomVelocity, initialVelocity)
+    assert.equal(intro.transport.manualActive, false)
+    let peak = 0
+    for (let tick = 0; tick < 240; tick++) {
+      if (tick === 12 || tick === 24) m.requestIntroScroll(intro, direction * (0.1 / 1.75))
+      m.stepIntroZoom(intro, 1 / 120)
+      const speed = intro.zoomVelocity * direction
+      assert(speed >= m.INTRO_AUTO_RATE - 1e-8, 'A scroll gesture must not brake into a stationary interval')
+      peak = Math.max(peak, speed)
+    }
+    assert(peak > m.INTRO_AUTO_RATE * 1.5 && peak <= m.INTRO_AUTO_RATE * 2.5)
+    run(intro, 40)
+    near(intro.zoomVelocity, direction * m.INTRO_AUTO_RATE, 1e-8)
+  }
+})
+check('Counter-scroll brakes accumulated momentum before several inputs reverse it', () => {
+  const intro = fixture()
+  run(intro, 1)
+  for (let event = 0; event < 10; event++) m.requestIntroScroll(intro, -0.5)
+  run(intro, 0.2)
+  const before = intro.zoomVelocity
+  m.requestIntroScroll(intro, 0.1 / 1.75)
+  near(intro.zoomVelocity, before)
+  assert.equal(intro.transport.lastDirection, -1, 'One opposite notch cannot instantly reverse stacked momentum')
+  run(intro, 0.1)
+  assert(intro.zoomVelocity < 0 && intro.zoomVelocity > before, 'The first counter-scroll actually decelerates the field')
+  let counterScrolls = 1
+  while (intro.transport.lastDirection < 0 && counterScrolls < 12) {
+    m.requestIntroScroll(intro, 0.1 / 1.75)
+    run(intro, 0.1)
+    counterScrolls++
+  }
+  assert(counterScrolls >= 3 && counterScrolls <= 9)
+  run(intro, 1)
+  assert(intro.zoomVelocity > 0)
+  assert.equal(intro.transport.lastDirection, 1)
+  assert.equal(intro.transport.manualActive, false)
+})
+check('Scroll momentum is bounded, frame-rate independent and cancelled by holds', () => {
+  const distances = []
+  for (const hz of [30, 60, 120, 240]) {
+    const intro = fixture()
+    run(intro, 1, hz)
+    for (const delta of [-0.057, -0.057, 0.057, 0.057, 0.057, 0.057]) {
+      m.requestIntroScroll(intro, delta)
+      run(intro, 0.2, hz)
+      assert(Math.abs(intro.zoomVelocity) <= m.INTRO_AUTO_RATE * 2.5)
+    }
+    run(intro, 2, hz)
+    distances.push(logical(intro))
+    hold(intro, 0.4, hz)
+    assert.equal(intro.transport.scrollBoost, 0)
+    const held = structuredClone(intro.zoom)
+    m.requestIntroScroll(intro, 0.05)
+    run(intro, 1, hz)
+    assert.deepEqual(intro.zoom, held)
+  }
+  for (const distance of distances) near(distance, distances[0], 1e-8)
+  const intro = fixture()
+  for (const invalid of [0, NaN, Infinity, -Infinity]) m.requestIntroScroll(intro, invalid)
+  assert.equal(intro.transport.scrollBoost, 0)
+})
+check('One oversized counter-scroll cannot flip normal travel; momentum stays capped', () => {
+  const intro = fixture()
+  run(intro, 1)
+  m.requestIntroScroll(intro, 1000)
+  assert.equal(intro.transport.lastDirection, -1)
+  for (let event = 0; event < 1000; event++) m.requestIntroScroll(intro, -1000)
+  run(intro, 0.5)
+  assert(Math.abs(intro.zoomVelocity) <= m.INTRO_AUTO_RATE * 2.5)
+})
+check('Snap rebounds are bounded, settle to zero and survive travelling-wave saturation', () => {
+  const state = ripple.createIntroRipples()
+  for (let index = 0; index < ripple.RIPPLE_SLOTS; index++) ripple.admitIntroRipple(state, 0)
+  assert.equal(ripple.admitIntroRipple(state, 0.1), null)
+  assert.equal(ripple.admitIntroSnap(state, 0.1), 1)
+  assert.equal(ripple.snapEnvelope(0), 0)
+  assert(ripple.snapEnvelope(0.04) > 0.5)
+  assert(ripple.snapEnvelope(0.16) < -0.2)
+  assert.equal(ripple.snapEnvelope(ripple.SNAP_LIFETIME), 0)
+  assert.equal(ripple.snapEnvelope(NaN), 0)
+  for (let tick = 0; tick < 1000; tick++) assert(Math.abs(ripple.snapEnvelope(tick / 1000)) < 0.75)
+  ripple.clearIntroRipples(state)
+  assert.equal(state.snapStartedAt, null)
+  assert.equal(ripple.admitIntroSnap(state, 0.2), 2, 'Clearing the visual effect cannot replay an audio identity')
+  assert.equal(ripple.admitIntroSnap(state, 0.3, false), 3)
+  assert.equal(state.snapStartedAt, null, 'Reduced/static release must not leave a dormant visual burst')
+  const intro = fixture()
+  ripple.admitIntroSnap(intro.ripples, 0.4)
+  m.cancelIntroTransport(intro)
+  assert.equal(intro.ripples.snapStartedAt, null)
 })
 check('Reset follows the current viewport period instead of assuming six octaves', () => {
   for (const period of [10, 11, 12]) for (const phase of [-100.7, -9.8, 0.3, 8.2, 100.2]) {

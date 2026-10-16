@@ -1,86 +1,6 @@
 [
   {
     "position": 1,
-    "id": "1357004367",
-    "full_name": "Denoax/pelagic-jellyfish-webgl",
-    "title": "Pelagic",
-    "sequence_class": "visual",
-    "accent": "#00DDF5",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/pelagic-jellyfish-webgl"
-  },
-  {
-    "position": 2,
-    "id": "1420137767",
-    "full_name": "Denoax/visual-music",
-    "title": "Visual Music",
-    "sequence_class": "visual",
-    "accent": "#32FF9A",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/visual-music"
-  },
-  {
-    "position": 3,
-    "id": "1367284706",
-    "full_name": "Denoax/codex-hermes-router",
-    "title": "Codex \u00d7 Hermes",
-    "sequence_class": "code/documentation",
-    "accent": "#FF4D70",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/codex-hermes-router"
-  },
-  {
-    "position": 4,
-    "id": "1420094845",
-    "full_name": "Denoax/hermes-workspace",
-    "title": "Hermes Workspace",
-    "sequence_class": "code/documentation",
-    "accent": "#7C8CFF",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/hermes-workspace"
-  },
-  {
-    "position": 5,
-    "id": "1355818842",
-    "full_name": "Denoax/konata-hyprland-dotfiles",
-    "title": "Konatachan Desktop",
-    "sequence_class": "visual",
-    "accent": "#AD62FF",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/konata-hyprland-dotfiles"
-  },
-  {
-    "position": 6,
-    "id": "1353607509",
-    "full_name": "Denoax/janktrace",
-    "title": "janktrace",
-    "sequence_class": "code/documentation",
-    "accent": "#9CEB16",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/janktrace"
-  },
-  {
-    "position": 7,
-    "id": "1388326955",
-    "full_name": "Denoax/farm-stand",
-    "title": "Farm Stand",
-    "sequence_class": "visual",
-    "accent": "#FF902E",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/farm-stand"
-  },
-  {
-    "position": 8,
-    "id": "1375135091",
-    "full_name": "Denoax/Kattis",
-    "title": "Kattis",
-    "sequence_class": "code/documentation",
-    "accent": "#4285FF",
-    "presentation": "real-source-media",
-    "repository": "https://github.com/Denoax/Kattis"
-  },
-  {
-    "position": 9,
     "id": "1352586659",
     "full_name": "Denoax/portfolio",
     "title": "Portfolio",
@@ -90,7 +10,99 @@
     "repository": "https://github.com/Denoax/portfolio"
   },
   {
+    "position": 2,
+    "id": "1357004367",
+    "full_name": "Denoax/pelagic-jellyfish-webgl",
+    "title": "Pelagic",
+    "sequence_class": "visual",
+    "accent": "#00DDF5",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/pelagic-jellyfish-webgl"
+  },
+  {
+    "position": 3,
+    "id": "1420137767",
+    "full_name": "Denoax/visual-music",
+    "title": "Visual Music",
+    "sequence_class": "visual",
+    "accent": "#32FF9A",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/visual-music"
+  },
+  {
+    "position": 4,
+    "id": "1367284706",
+    "full_name": "Denoax/codex-hermes-router",
+    "title": "Codex \u00d7 Hermes",
+    "sequence_class": "code/documentation",
+    "accent": "#FF4D70",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/codex-hermes-router"
+  },
+  {
+    "position": 5,
+    "id": "1420094845",
+    "full_name": "Denoax/hermes-workspace",
+    "title": "Hermes Workspace",
+    "sequence_class": "code/documentation",
+    "accent": "#7C8CFF",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/hermes-workspace"
+  },
+  {
+    "position": 6,
+    "id": "1355818842",
+    "full_name": "Denoax/konata-hyprland-dotfiles",
+    "title": "Konatachan Desktop",
+    "sequence_class": "visual",
+    "accent": "#AD62FF",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/konata-hyprland-dotfiles"
+  },
+  {
+    "id": "1419820592",
+    "full_name": "Denoax/paseo-kona",
+    "title": "Paseo Kona",
+    "sequence_class": "visual/integration",
+    "accent": "#8EB8FF",
+    "repository": "https://github.com/Denoax/paseo-kona",
+    "upstream": "https://github.com/getpaseo/paseo",
+    "description": "A Kona theme and desktop integration for Paseo.",
+    "previewMotion": false,
+    "position": 7
+  },
+  {
+    "position": 8,
+    "id": "1353607509",
+    "full_name": "Denoax/janktrace",
+    "title": "janktrace",
+    "sequence_class": "code/documentation",
+    "accent": "#9CEB16",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/janktrace"
+  },
+  {
+    "position": 9,
+    "id": "1388326955",
+    "full_name": "Denoax/farm-stand",
+    "title": "Farm Stand",
+    "sequence_class": "visual",
+    "accent": "#FF902E",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/farm-stand"
+  },
+  {
     "position": 10,
+    "id": "1375135091",
+    "full_name": "Denoax/Kattis",
+    "title": "Kattis",
+    "sequence_class": "code/documentation",
+    "accent": "#4285FF",
+    "presentation": "real-source-media",
+    "repository": "https://github.com/Denoax/Kattis"
+  },
+  {
+    "position": 11,
     "id": "1353608040",
     "full_name": "Denoax/Denoax",
     "title": "GitHub Profile",

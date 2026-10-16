@@ -1,0 +1,29 @@
+{
+  "title": "Rubber Stetch.wav",
+  "creator": "walthamstow_walker",
+  "source": "https://freesound.org/people/walthamstow_walker/sounds/563260/",
+  "download": "https://cdn.freesound.org/previews/563/563260_12143735-hq.mp3",
+  "license": "CC0 1.0",
+  "license_reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "provenance": "Real rubber exercise band stretching/rubbing/twanging, recorded with MixPre6ii and FEL EM172 microphones. Public HQ preview, not the original login-only WAV.",
+  "source_sha256": "d5b2eaffb42df193d78f8a0925ab796fd43e87030091516e5b4751035d02d022",
+  "listening": "Human speaker/headphone audition and subjective approval remain pending.",
+  "runtime": "public/assets/audio/intro-charge/snap-1959ad4e2caf.wav",
+  "sha256": "e11192c9407cb332973b38b8680631739761e196bc4a705ed5084be1bd0ddbfd",
+  "pcm_sha256": "1959ad4e2caf5e5a02763f935b979f77db92942b11e954645105109d1e2d43ac",
+  "bytes": 15920,
+  "duration": 0.18,
+  "sample_rate": 44100,
+  "channels": 1,
+  "processing": {
+    "trim_seconds": [
+      90.10956916099774,
+      90.28956916099774
+    ],
+    "ffmpeg_filter": "highpass=f=220,lowpass=f=10500",
+    "fade_in_seconds": 0.001,
+    "fade_out_seconds": 0.045,
+    "peak_target": 0.6,
+    "selection": "Largest natural attack energy increase in the existing4.8s licensed source excerpt; no synthesis or pitch shift."
+  }
+}

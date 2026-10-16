@@ -1,6 +1,14 @@
 import snapshot from './publicRepositories.json'
 import order from './projectOrder.json'
 import previewRefresh from './previewRefresh.json'
+import nativePreviews from './nativePreviews.json'
+
+interface NativePreview {
+  name: string
+  sourceRevision: string
+  idle: { src: string; portrait?: string }
+  hover: { webm: string; mp4: string; gif: string; portraitWebm?: string; portraitMp4?: string; portraitGif?: string } | null
+}
 
 export interface Project {
   id: string
@@ -15,9 +23,8 @@ export interface Project {
   publishedRevision: string
   capturedSourceRevision: string
   repository: string
-  action:
-    | { kind: 'pelagic'; label: string }
-    | { kind: 'link'; label: string; href: string }
+  upstream?: string
+  action: { kind: 'link'; label: string; href: string }
   image: string
   portrait: string
   video: string
@@ -78,6 +85,15 @@ const content = [
     '#08111f',
   ],
   [
+    'paseo-kona',
+    'Paseo Kona',
+    ['Paseo Kona'],
+    'A Kona theme and desktop integration for Paseo.',
+    'desktop',
+    'paseo-kona',
+    '#10141c',
+  ],
+  [
     'janktrace',
     'janktrace',
     ['janktrace'],
@@ -133,7 +149,8 @@ const catalogue: Project[] = content.map(
       )
     const refreshed = previewRefresh.entries.find((entry) => entry.name === name)
     const base = `/assets/previews/${refreshed?.mediaStem ?? media}`
-    const previewMotion = refreshed?.motion !== false
+    const native = (nativePreviews.entries as NativePreview[]).find((entry) => entry.name === name)
+    const previewMotion = native ? native.hover !== null : refreshed?.motion !== false
     return {
       id: String(repo.id),
       fullName: repo.full_name,
@@ -152,44 +169,47 @@ const catalogue: Project[] = content.map(
         .accent,
       publishedRevision: repo.observed_head ?? '',
       capturedSourceRevision:
-        refreshed?.sourceRevision ??
+        native?.sourceRevision ?? refreshed?.sourceRevision ??
         (name === 'codex-hermes-router'
           ? 'ed330a88b60013a0e9377a0d4802331f4ecbd965'
           : name === 'portfolio'
             ? 'local v11 candidate based on 45c06c2; see capture manifest'
             : (repo.observed_head ?? '')),
       repository: repo.html_url,
-      action:
-        name === 'pelagic-jellyfish-webgl'
-          ? { kind: 'pelagic', label: 'Explore' }
-          : {
-              kind: 'link',
-              label: name === 'visual-music' ? 'Play' : 'View resource',
-              href:
-                name === 'visual-music'
-                  ? 'https://denoax.github.io/visual-music/'
-                  : name === 'Denoax'
-                    ? 'https://github.com/Denoax'
-                    : repo.html_url,
-            },
-      image: `${base}-poster.webp`,
-      portrait: ['cli', 'code'].includes(kind)
+      upstream: name === 'paseo-kona' ? 'https://github.com/getpaseo/paseo' : undefined,
+      action: {
+        kind: 'link',
+        label:
+          name === 'pelagic-jellyfish-webgl'
+            ? 'Explore'
+            : name === 'visual-music'
+              ? 'Play'
+              : 'View resource',
+        href:
+          name === 'visual-music'
+            ? 'https://denoax.github.io/visual-music/'
+            : name === 'Denoax'
+              ? 'https://github.com/Denoax'
+              : repo.html_url,
+      },
+      image: native?.idle.src ?? `${base}-poster.webp`,
+      portrait: native ? native.idle.portrait ?? native.idle.src : ['cli', 'code'].includes(kind)
         ? `${base}-portrait.webp`
         : `${base}-poster.webp`,
-      video: previewMotion ? `${base}.webm` : '',
-      mp4: previewMotion ? `${base}.mp4` : '',
-      portraitVideo: !previewMotion
+      video: native ? native.hover?.webm ?? '' : previewMotion ? `${base}.webm` : '',
+      mp4: native ? native.hover?.mp4 ?? '' : previewMotion ? `${base}.mp4` : '',
+      portraitVideo: native ? native.hover?.portraitWebm ?? native.hover?.webm ?? '' : !previewMotion
         ? ''
         : ['cli', 'code'].includes(kind)
           ? `${base}-portrait.webm`
           : `${base}.webm`,
-      portraitMp4: !previewMotion
+      portraitMp4: native ? native.hover?.portraitMp4 ?? native.hover?.mp4 ?? '' : !previewMotion
         ? ''
         : ['cli', 'code'].includes(kind)
           ? `${base}-portrait.mp4`
           : `${base}.mp4`,
-      gif: previewMotion ? `${base}.gif` : '',
-      portraitGif: !previewMotion
+      gif: native ? native.hover?.gif ?? '' : previewMotion ? `${base}.gif` : '',
+      portraitGif: native ? native.hover?.portraitGif ?? native.hover?.gif ?? '' : !previewMotion
         ? ''
         : ['cli', 'code'].includes(kind)
           ? `${base}-portrait.gif`

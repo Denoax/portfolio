@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { admitIntroRipple } from '../core/introRipples'
+import { admitIntroRipple, admitIntroSnap } from '../core/introRipples'
 import { useRouteFade } from '../hooks/useRouteFade'
 import type { RefObject } from 'react'
 import { advanceZoom, boundedZoom } from '../core/introZoom'
@@ -10,6 +10,7 @@ import {
   exitIntroTransport,
   releaseIntroGesture,
   requestIntroReset,
+  requestIntroScroll,
   requestIntroZoom,
 } from '../core/introMotion'
 
@@ -24,7 +25,8 @@ export function IdentityIntro({
   onExitStateChange,
   onActivate,
   onInteract,
-  onRipple,
+  onSnap,
+  onHold,
   ready,
 }: {
   presentation: RefObject<MenuPresentation>
@@ -37,7 +39,8 @@ export function IdentityIntro({
   onExitStateChange: (value: boolean) => void
   onActivate: () => void
   onInteract: () => void
-  onRipple: (id: number) => void
+  onSnap: (id: number) => void
+  onHold: (holding: boolean) => void
   ready: boolean
 }) {
   const root = useRef<HTMLDivElement>(null)
@@ -57,6 +60,7 @@ export function IdentityIntro({
     gesture.current = null
     touchPointers.current.clear()
     pinched.current = false
+    onHold(false)
     cancelIntroTransport(presentation.current.intro)
     if (id !== undefined && root.current?.hasPointerCapture(id))
       root.current.releasePointerCapture(id)
@@ -252,7 +256,10 @@ export function IdentityIntro({
       if (paused || exiting || e.ctrlKey || e.metaKey || e.altKey) return
       e.preventDefault()
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1
-      zoom(Math.max(-0.25, Math.min(0.25, (-e.deltaY * unit) / 1400)))
+      const distance = Math.max(-0.25, Math.min(0.25, (-e.deltaY * unit) / 1400))
+      const delta = distance / 1.75
+      if (staticView) zoom(delta)
+      else requestIntroScroll(presentation.current.intro, delta)
     }
     const node = root.current
     node?.addEventListener('wheel', wheel, { passive: false })
@@ -285,6 +292,7 @@ export function IdentityIntro({
               pinched.current = true
               const id = gesture.current?.id
               gesture.current = null
+              onHold(false)
               cancelIntroTransport(presentation.current.intro)
               if (id !== undefined && e.currentTarget.hasPointerCapture(id))
                 e.currentTarget.releasePointerCapture(id)
@@ -305,6 +313,7 @@ export function IdentityIntro({
           onInteract()
           const token = beginIntroGesture(presentation.current.intro)
           if (token === null) return
+          onHold(true)
           gesture.current = {
             id: e.pointerId,
             x: e.clientX,
@@ -338,6 +347,7 @@ export function IdentityIntro({
           gesture.current = null
           const intro = presentation.current.intro
           if (!g || g.id !== e.pointerId) return
+          onHold(false)
           const action = releaseIntroGesture(
             intro,
             g.token,
@@ -346,8 +356,9 @@ export function IdentityIntro({
             !staticView,
           )
           if (action === 'reverse' || action === 'ripple') {
-            const id = admitIntroRipple(intro.ripples, intro.elapsed)
-            if (id !== null) onRipple(id)
+            admitIntroRipple(intro.ripples, intro.elapsed)
+            const id = admitIntroSnap(intro.ripples, intro.elapsed, !staticView)
+            if (id !== null) onSnap(id)
           } else if (action === 'enter') activate()
         }}
       >

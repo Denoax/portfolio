@@ -43,7 +43,8 @@ assert(section.outerFadeOctaves > INTRO_LOG_GAP,
 assert.equal(section.gapOctaves, undefined, 'The superseded whole-field empty interval must not remain active')
 assert(motion.INTRO_AUTO_RATE > 0 && motion.INTRO_AUTO_RATE < .075,
   'Automatic radial speed must be materially slower than the rejected .1 octaves/s')
-assert.equal(INTRO_PHRASE, 'MANI MARAMI MILANI   SELECT A PROJECT   ')
+assert.equal(INTRO_PHRASE, 'MANI MARAMI MILANI SELECT A PROJECT ')
+assert(!/ {2,}/u.test(INTRO_PHRASE), 'Identity/project and loop seams must not reserve oversized blank word slots')
 assert(!INTRO_GLYPHS.includes('·') && !INTRO_GLYPHS.includes('.'))
 const phrase = Array.from(INTRO_PHRASE)
 const inkPerBand = phrase.filter(glyph => glyph !== ' ').length * 2

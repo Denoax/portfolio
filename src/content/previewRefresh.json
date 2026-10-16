@@ -31,6 +31,14 @@
       "source": "https://github.com/Denoax/hermes-workspace/tree/5408c825b1ba35a3db73a2ce8e23a2e45c28d186",
       "motion": false,
       "note": "Actual published Hermes Workspace interface, shown as a still with labelled documentation fixtures. The capture establishes interface appearance, without claiming a live inference response or VM qualification."
+    },
+    {
+      "name": "paseo-kona",
+      "mediaStem": "paseo-kona-v282-06db24e78af1",
+      "sourceRevision": "93c7eea0e5229997bc7674003493b99d60118f91",
+      "source": "https://github.com/Denoax/paseo-kona/tree/93c7eea0e5229997bc7674003493b99d60118f91",
+      "motion": false,
+      "note": "Native1600x600README static banner, unchanged bytes. Community theme/integration fork; upstream getpaseo/paseo credited."
     }
   ]
 }

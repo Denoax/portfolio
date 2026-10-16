@@ -1,15 +1,15 @@
 <div align="center">
 
-> V28.1 release · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
+> Intro snap and momentum · [live portfolio](https://manimarami.com/) · [source and verification](RELEASE.md)
 
 <a href="https://manimarami.com/">
-  <img src="showcase/github/portfolio-intro-zoom-loop.gif" alt="Portfolio intro — closer dark-mode infinite zoom loop from the original site renderer" width="100%">
+  <img src="showcase/github/portfolio-current-intro-v282.gif" alt="Current portfolio intro — continuous ring typography from the latest renderer, without a speech bubble" width="100%">
 </a>
 
 # Mani Marami Milani · Portfolio
 
-**Ten real projects. One continuous journey.**<br>
-An interactive portfolio with a living typographic opening, a scrolling project reel and a galaxy-to-ocean descent.
+**Eleven real projects. Direct links to the work.**<br>
+An interactive portfolio with a living typographic opening, a scrolling project reel and direct project links.
 
 [![React](https://img.shields.io/badge/React-19-20232a?logo=react&logoColor=61dafb)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-20232a?logo=typescript&logoColor=3178c6)](https://www.typescriptlang.org/)
@@ -22,13 +22,13 @@ An interactive portfolio with a living typographic opening, a scrolling project 
 
 <img src="showcase/github/projects-light.webp" alt="The light project reel: Pelagic's original jellyfish, editorial typography and Explore action" width="100%">
 
-*Real project imagery, original interaction code, and a live WebGL world.*
+*Real project imagery and original interactive typography.*
 
 </div>
 
 ## The experience
 
-The opening is an infinite field of type. Rings fill the field around a small calm centre. Scroll to move through them; hold to stop the spin and build a sustained pressure tremble, release to shuffle and reverse, then enter a reel of ten actual repositories, now including Visual Music and Hermes Workspace. Pelagic launches the protected galaxy, Earth, cloud and ocean journey; the other projects open their real destinations.
+The opening is an infinite field of type. Rings fill the field around a small calm centre. Scroll to build bounded zoom momentum; opposite scrolling brakes before reversing. Hold to stop the spin and build a rubber-stretch sound and pressure tremble, then release for a short snap, letter rebound and direction reversal, then enter a reel of eleven actual projects, including Visual Music, Hermes Workspace and Paseo Kona. Pelagic opens its [GitHub repository](https://github.com/Denoax/pelagic-jellyfish-webgl) using the same direct resource-link flow as the other projects.
 
 | Opening | Project reel |
 |:---:|:---:|
@@ -37,15 +37,15 @@ The opening is an infinite field of type. Rings fill the field around a small ca
 
 <img src="showcase/github/interaction.gif" alt="Actual v24 browser recording: opening, entry, About and Settings" width="100%">
 
-The motion preview is a silent, resized copy of a real browser recording at its original pace. It does not replace the interactive site.
+This historical v24 motion preview is a silent, resized copy of a real browser recording at its original pace. It does not replace the interactive site.
 
-### From galaxy to Pelagic
+### Original Pelagic
 
 <a href="https://github.com/Denoax/pelagic-jellyfish-webgl">
   <img src="showcase/github/pelagic.webp" alt="The original procedural Pelagic jellyfish in its deep blue underwater environment" width="100%">
 </a>
 
-Pelagic retains its original anatomy, underwater lighting and motion. Travel has authored camera staging and supports forward and reverse movement. The final water crossing opens the canonical [Pelagic project](https://denoax.github.io/pelagic-jellyfish-webgl/); browser Back returns to the portfolio.
+The original Pelagic project and its real rock-lit jellyfish previews remain intact. Explore opens the [Pelagic repository](https://github.com/Denoax/pelagic-jellyfish-webgl), where the live experience is linked; browser Back returns to the reel. The former galaxy-to-ocean bridge is retired, with recoverable source [indexed here](archive/retired-journey-20261016/README.md).
 
 ### Light and dark
 
@@ -53,7 +53,7 @@ Pelagic retains its original anatomy, underwater lighting and motion. Travel has
 |:---:|:---:|
 | <img src="showcase/github/settings-light.webp" alt="Light Settings pane with brightness, volume, Less motion and Reset settings" width="100%"> | <img src="showcase/github/settings-dark.webp" alt="The same functional live-glass Settings pane in Dark mode" width="100%"> |
 
-The theme buddy changes the appearance. Brightness, sound volume and Less motion control actual rendering and playback behavior. Elastic sliders keep their numeric values bounded while allowing the thumb to travel beyond the pane. The compact shared-glass Reset restores those three visible preferences without changing the selected theme or tour speed.
+The theme buddy changes the appearance. Brightness, sound volume and Less motion control actual rendering and playback behavior. Elastic sliders keep their numeric values bounded while allowing the thumb to travel beyond the pane. The compact shared-glass Reset restores those three visible preferences without changing the selected theme.
 
 <details>
 <summary><strong>Portrait gallery</strong></summary>
@@ -75,11 +75,11 @@ Mobile has its own composition, safe edge spacing, scrollable pane bodies and pe
 | Area | Behavior |
 |:---|:---|
 | Opening | Continuous sharp Ringwriter, slowly arriving outer rings, pressure hold and reversible zoom |
-| Projects | Ten real entries, manual scrolling, hover media and direct selection |
-| Position rail | Displayed-position bulge on 21 fine ticks, stronger pointer hover and 10 settled markers |
+| Projects | Eleven real entries, manual scrolling, hover media and direct selection |
+| Position rail | Displayed-position bulge on 21 fine ticks, stronger pointer hover and 11 settled markers |
 | Panes | Real-content4px flying panes, native controls, immediate dismissal and shared Close |
 | Preferences | Light/dark, bounded brightness, sound volume, Less motion and a scoped Reset |
-| Pelagic | Original procedural jellyfish, reversible descent, tour speed and canonical handoff |
+| Pelagic | Original procedural jellyfish previews and direct repository link |
 | Resilience | Readiness-gated route fades, cancellation, graphics retry and static content |
 
 ## Controls
@@ -92,11 +92,10 @@ Mobile has its own composition, safe edge spacing, scrollable pane bodies and pe
 | Navigation | Projects | Enter the project reel |
 | Project reel | Scroll or select a rail marker | Browse or select a real project |
 | Project preview | Hover with a pointer | Play its actual media |
-| Project | Explore | Launch Pelagic's journey or open the selected project's destination |
+| Project | Explore | Open the selected project's destination |
 | About / Projects / Settings | Close or Escape | Dismiss the pane and restore appropriate focus |
 | Settings | Drag a slider; arrow keys when focused | Adjust the actual preference |
 | Theme buddy | Activate | Change light/dark appearance |
-| Journey | Scroll forward/back; Return to projects | Travel or return to the reel |
 | About | Return to the start | Replay the opening explicitly |
 
 ## Run locally
@@ -123,7 +122,7 @@ WebGL support depends on the browser and GPU. With graphics unavailable, the des
 |:---|:---|:---|
 | Application | [`src/app`](src/app) | Intro, reel, navigation, panes and explicit user actions |
 | State and motion | [`src/core`](src/core), [`src/hooks`](src/hooks) | Routing, preferences, input ownership, rail stability and slider flight |
-| Rendering | [`src/experience`](src/experience) | Shared Three.js / React Three Fiber scene and authored journey |
+| Rendering | [`src/experience`](src/experience) | Three.js / React Three Fiber typography, previews and glass |
 | Audio | [`src/audio`](src/audio) | User-activated playback and bounded interaction voices |
 | Content | [`src/content`](src/content), [`public/assets`](public/assets) | Actual project records, captured media and source notices |
 | Delivery | [`Dockerfile`](Dockerfile), [`Caddyfile`](Caddyfile) | Locked Vite build, SPA routing and static asset caching |
@@ -132,9 +131,9 @@ React 19 · TypeScript 5.9 · Three.js 0.180 · React Three Fiber 9 · Motion 14
 
 ## Validation
 
-This release publishes the reviewed v28.1 runtime and its manual refinements: continuous ring spacing, sharper letter formation, slower rotation, gradual outer arrivals, pressure trembling during hold, and all ten real projects. The original Pelagic, protected journey, preferences and existing graphics fallback are preserved.
+The 2026-10-16 release publishes the source at `2f9293f`: bounded accumulated scroll momentum, multi-input braking before reversal, real rubber-stretch hold audio, a short release snap and damped glyph rebound. It also carries the current eleven-project catalogue, original interactive Portfolio panel, current intro banner and direct Pelagic repository navigation. Preferences, reduced motion and graphics fallback remain intact.
 
-Typecheck/build, seven production geometry cases, twelve transport contracts and actual native Chromium desktop/portrait hold/release/re-press/cancellation checks passed locally. Reduced motion was checked through its existing static renderer. The complete review ZIP was clean-extracted and rebuilt; all 259 output files matched the reviewed build. Selected frames were inspected; continuous playback, independent Brave/Safari, physical touch/assistive technology, high-refresh displays, calibrated colour and listening checks remain unverified. No new performance claim is made.
+The source-bound local checks cover seventeen transport contracts, seven production geometry cases and native Chromium desktop/portrait scroll, hold/release, snap and cancellation behavior. Actual browser audio checks verify one audio context, five successive snaps despite travelling-wave saturation, mute and blur cancellation. The production build and public rollout are verified separately in the [release receipt](showcase/releases/intro-snap-momentum/deployment.json). Original recordings and full handoff evidence remain local. Independent Brave/Safari, physical devices, assistive technology, calibrated displays, listening and continuous human motion approval remain unverified; no new performance claim is made.
 
 ```sh
 npm run typecheck
@@ -142,15 +141,16 @@ node scripts/intro-section-checks.mjs
 node scripts/v28-transport-checks.mjs
 ```
 
-Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive; [current public captures and rollout checks](showcase/releases/v28-1-pressure/README.md) record the live result. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.
+Review history and original recordings are retained locally. [Release provenance](RELEASE.md) identifies the reviewed source and archive; [current rollout checks](showcase/releases/intro-snap-momentum/README.md) record the live result. Tests establish behavior within their scope; they do not grant subjective visual approval or physical-device coverage.
 
 ## Credits
 
-- Portfolio, procedural galaxy and choreography: **Mani Marami Milani**.
+- Portfolio, typography and choreography: **Mani Marami Milani**.
 - Original [Pelagic](https://github.com/Denoax/pelagic-jellyfish-webgl), with the Aurelia foundation by Holtsetio; [MIT notice](public/licenses/Aurelia-MIT.txt).
 - Menu composition studied from [Anderson Mancini](https://andersonmancini.dev/); independently implemented with Mani's real project content.
 - Flying-menu interaction study: George / @vanjek via [Inspora](https://www.inspora.design/posts/flying-dropdown-menu); independently authored tile animation, softened for this portfolio.
-- Current ripple swishes: artisticdude's [Swishes Sound Pack](https://opengameart.org/content/swishes-sound-pack), CC0; [source, edits and hashes](public/assets/audio/v22/ASSET_CREDITS.json).
+- Intro hold and release: walthamstow_walker’s [Rubber Stetch.wav](https://freesound.org/people/walthamstow_walker/sounds/563260/), CC0; [hold processing and hashes](public/assets/audio/intro-charge/CREDITS.json), [snap processing and hashes](public/assets/audio/intro-charge/SNAP_CREDITS.json).
+- Archived ripple swishes: artisticdude's [Swishes Sound Pack](https://opengameart.org/content/swishes-sound-pack), CC0; [source, edits and hashes](public/assets/audio/v22/ASSET_CREDITS.json).
 - Interaction studies, navigation, fonts, NASA/ESA imagery and other media: [complete site credits](https://manimarami.com/credits), [licenses](public/licenses) and [asset notices](public/assets/notices).
 - Repository presentation follows the banner/gallery/documentation structure of Mani's [Kona Desktop repository](https://github.com/Denoax/konata-hyprland-dotfiles). Its artwork is not copied. [Showcase source record](showcase/github/README.md).
 

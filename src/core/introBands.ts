@@ -1,6 +1,6 @@
 // One scale lattice owns the lettering; whitespace keeps its angular slots.
 // Physical roles repeat after a complete period; travel itself remains unbounded.
-export const INTRO_PHRASE = 'MANI MARAMI MILANI   SELECT A PROJECT   '
+export const INTRO_PHRASE = 'MANI MARAMI MILANI SELECT A PROJECT '
 export const INTRO_GLYPHS = [...new Set(Array.from(INTRO_PHRASE))]
 export const INTRO_MOTIFS = 2
 export const INTRO_GLYPHS_PER_BAND = Array.from(INTRO_PHRASE).length * INTRO_MOTIFS

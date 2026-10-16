@@ -2,8 +2,6 @@ import { GlassLayer } from './glass/GlassLayer'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   Component,
-  Suspense,
-  lazy,
   useCallback,
   useEffect,
   useMemo,
@@ -11,7 +9,6 @@ import {
 } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import type { ExperiencePreferences } from '../core/experienceSettings'
-import { WorldFrameObserver } from './WorldFrameObserver'
 import { configureDisplayOutput } from './displayOutput'
 import { retainCompilingMaterials } from './retainCompilingMaterials'
 import { bindDefaultFramebuffer } from './defaultFramebuffer'
@@ -25,22 +22,15 @@ import { HubScene } from './hub/HubScene'
 import type { PreviewPlayback } from '../core/previewPlayback'
 import type { MenuPresentation } from '../core/menuReel'
 
-const WorldScene = lazy(() => import('./WorldScene'))
-
 interface ExperienceCanvasProps {
   preferences: RefObject<ExperiencePreferences>
   quality: QualityProfile
-  onReady: () => void
   onFailure: () => void
   onOverload: () => void
-  onAssetState: (state: 'loading' | 'ready' | 'failed') => void
-  parked: boolean
   visible: boolean
-  world: boolean
   presentation: RefObject<MenuPresentation>
   previews: PreviewPlayback
   onHubReady: () => void
-  onWorldFrame: () => void
 }
 
 class GraphicsBoundary extends Component<
@@ -62,20 +52,15 @@ class GraphicsBoundary extends Component<
   }
 }
 
-// Both surfaces share one renderer, but retire different offscreen targets and
-// materials. The returning menu retires that GPU state. The destination
-// keeps ownership of its existing shader/binding setup; the new menu does
-// not invalidate that protected pipeline.
-function RendererHandover({ world }: { world: boolean }) {
+// Restore the main target before the hub's offscreen simulation/render passes.
+// This remains necessary after resizes and browser drawing-buffer clamps.
+function DefaultFramebuffer() {
   const { gl } = useThree()
-  const previous = useRef<boolean | null>(null)
+  const initialized = useRef(false)
   useFrame(() => {
-    if (previous.current !== world) {
-      previous.current = world
-      if (!world) gl.resetState()
-      // HubScene owns its theme clear color. Retiring it must restore the
-      // protected world's original dark clear, including its first visible frame.
-      if (world) gl.setClearColor('#020205', 1)
+    if (!initialized.current) {
+      initialized.current = true
+      gl.resetState()
       gl.autoClear = true
       gl.autoClearColor = true
       gl.autoClearDepth = true
@@ -91,18 +76,13 @@ function RendererHandover({ world }: { world: boolean }) {
 
 export function ExperienceCanvas({
   quality,
-  world,
   presentation,
   previews,
   onHubReady,
   preferences,
-  onReady,
   onFailure,
   onOverload,
   visible,
-  parked,
-  onAssetState,
-  onWorldFrame,
 }: ExperienceCanvasProps) {
   const baseFrame = useRef(0)
   // R3F retires its root asynchronously. Callbacks from that retired renderer
@@ -116,18 +96,9 @@ export function ExperienceCanvas({
       detachContextListener.current?.()
     }
   }, [])
-  const reportReady = useCallback(() => {
-    if (alive.current) onReady()
-  }, [onReady])
   const reportFailure = useCallback(() => {
     if (alive.current) onFailure()
   }, [onFailure])
-  const reportAssets = useCallback(
-    (state: 'loading' | 'ready' | 'failed') => {
-      if (alive.current) onAssetState(state)
-    },
-    [onAssetState],
-  )
   const webglAvailable = useMemo(() => {
     try {
       return Boolean(document.createElement('canvas').getContext('webgl2'))
@@ -148,7 +119,7 @@ export function ExperienceCanvas({
       <GraphicsBoundary onFailure={reportFailure}>
         <Canvas
           dpr={quality.dpr}
-          frameloop={parked ? 'demand' : 'always'}
+          frameloop="always"
           camera={{ position: [0.2, 4.2, 13.5], fov: 41, near: 0.1, far: 140 }}
           gl={{
             antialias: quality.tier !== 'low',
@@ -172,40 +143,19 @@ export function ExperienceCanvas({
               gl.domElement.removeEventListener('webglcontextlost', lost)
           }}
         >
-          <RendererHandover world={world} />
+          <DefaultFramebuffer />
           <AmbientClock />
           <QualityController quality={quality} onOverload={onOverload} />
-          {world ? (
-            <>
-              <Suspense fallback={null}>
-                <WorldScene
-                  quality={quality}
-                  preferences={preferences}
-                  onReady={reportReady}
-                  onFailure={reportFailure}
-                  onAssetState={reportAssets}
-                />
-              </Suspense>
-            </>
-          ) : (
-            <HubScene
-              baseFrame={baseFrame}
-              quality={quality}
-              preferences={preferences}
-              presentation={presentation}
-              previews={previews}
-              onReady={onHubReady}
-              onFailure={reportFailure}
-            />
-          )}
-          {world && (
-            <WorldFrameObserver enabled={visible} onFrame={onWorldFrame} />
-          )}
-          <GlassLayer
-            key={world ? 'world-glass' : 'hub-glass'}
-            world={world}
+          <HubScene
             baseFrame={baseFrame}
+            quality={quality}
+            preferences={preferences}
+            presentation={presentation}
+            previews={previews}
+            onReady={onHubReady}
+            onFailure={reportFailure}
           />
+          <GlassLayer world={false} baseFrame={baseFrame} />
           <RuntimeDiagnostics quality={quality} presentation={presentation} />
         </Canvas>
       </GraphicsBoundary>

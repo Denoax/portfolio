@@ -138,7 +138,6 @@ export function HubScene({
         void main(){vec2 p=(vUv-.5)*uSize;vec2 q=abs(p)-(uSize*.5-vec2(.05));float d=length(max(q,0.))+min(max(q.x,q.y),0.)-.05;float alpha=1.-smoothstep(-fwidth(d),fwidth(d),d);if(alpha<.01)discard;
         // Contain preserves every command line and the actual source aspect.
         vec2 uv=vUv;float aspect=uSize.x/uSize.y;if(aspect>uAspect)uv.x=(uv.x-.5)*aspect/uAspect+.5;else uv.y=(uv.y-.5)*uAspect/aspect+.5;
-        vec2 centered=uv-.5;uv+=centered*dot(centered,centered)*.004;
         bool matte=any(lessThan(uv,vec2(0.))) || any(greaterThan(uv,vec2(1.)));
         vec3 sampled=uCustom?uCustomColor:matte?vec3(.006,.008,.012):texture2D(uImage,uv).rgb;
         if(uVideo&&!matte&&!uCustom)sampled=mix(pow(sampled*.9478672986+.0521327014,vec3(2.4)),sampled*.0773993808,lessThanEqual(sampled,vec3(.04045)));

@@ -1,3 +1,19 @@
+# Intro snap and momentum release — 2026-10-16
+
+The user explicitly requested updating the portfolio GitHub repository and publishing the current changes to manimarami.com. This authorization supersedes the preceding local-only boundary for this release.
+
+- Exact development source: `2f9293fd6b18744afb36ea32d8fb1955d8106bde`.
+- Public parent: `e4f7fdada95bafde1ff2cbeb2d63d15abee0d555`.
+- Previous production: `dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha`, retained for rollback.
+
+Publish the existing continuous intro, bounded stacked scroll momentum, braking before reversal, real CC0 rubber hold/snap audio and letter rebound. Include eleven current projects, the restored interactive Portfolio panel, current intro-only README banner and direct Pelagic GitHub navigation. The retired galaxy bridge remains disconnected; original Pelagic media and historical source remain intact. The profile-only speech bubble and other repositories are untouched.
+
+The isolated release follows current GitHub main without merging private historical packs or recordings. All source, public assets and build configuration match the development revision byte for byte. Preserve existing repository presentation and historical evidence. Stage the production build without moving domains, verify uploaded content, then promote that same output. No new application design or dependency changes.
+
+[Deployment receipt](showcase/releases/intro-snap-momentum/deployment.json) records completed publication, actual public checks and limitations. Until that receipt exists, this document is release intent, not proof of deployment. Native Chromium and portrait emulation do not establish independent Brave/Safari, physical-device, listening or subjective visual approval. No new performance claim.
+
+## Historical releases
+
 # v28.1 publication authority
 
 Mani explicitly requested publishing the newest portfolio to GitHub and
