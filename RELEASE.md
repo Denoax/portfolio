@@ -12,6 +12,10 @@ The isolated release follows current GitHub main without merging private histori
 
 [Deployment receipt](showcase/releases/intro-snap-momentum/deployment.json) records completed publication, actual public checks and limitations. Until that receipt exists, this document is release intent, not proof of deployment. Native Chromium and portrait emulation do not establish independent Brave/Safari, physical-device, listening or subjective visual approval. No new performance claim.
 
+## Verified publication
+
+GitHub main received runtime release `90fce29b6e6c4d3f337c8afa738df84b55973acc` by normal fast-forward. Vercel `dpl_CUwMrDpwsupEj65EULFfaEn3KyME` serves all267 frozen outputs with matching public HTTPS SHA256 and sizes. Native public desktop/portrait checks passed accumulated momentum, multi-notch braking, real snap and observed signed glyph rebound, eleven project identities, the original interactive Portfolio panel, direct Pelagic link, forward/reverse reel scrolling and Settings. Preview protection remains enabled with zero bypasses. Previous production `dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha` remains available for rollback. [Full receipt and limits](showcase/releases/intro-snap-momentum/deployment.json).
+
 ## Historical releases
 
 # v28.1 publication authority

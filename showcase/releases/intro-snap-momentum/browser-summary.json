@@ -1,0 +1,75 @@
+{
+  "sourceRevision": "2f9293fd6b18744afb36ea32d8fb1955d8106bde",
+  "result": "PASS",
+  "base": "https://manimarami.com",
+  "views": [
+    {
+      "name": "desktop",
+      "result": "PASS",
+      "renderer": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4070/PCIe/SSE2, OpenGL ES 3.2)",
+        "gpuTimers": true,
+        "hardwareApproval": "UNVERIFIED"
+      },
+      "projectIds": [
+        "1352586659",
+        "1357004367",
+        "1420137767",
+        "1367284706",
+        "1420094845",
+        "1355818842",
+        "1419820592",
+        "1353607509",
+        "1388326955",
+        "1375135091",
+        "1353608040"
+      ],
+      "pelagicHref": "https://github.com/Denoax/pelagic-jellyfish-webgl",
+      "oppositeNotchesFromStackedToReverse": 7,
+      "firstCounterScrollKeepsDirection": true,
+      "snapOutwardPeak": 0.6767220486092451,
+      "snapRecoil": -0.2872634654541705,
+      "snapSettled": 0,
+      "releaseSnapCount": 1,
+      "oldReleaseSwishes": 0,
+      "allInputsTrusted": true,
+      "pageErrors": [],
+      "failedAssets": []
+    },
+    {
+      "name": "portrait",
+      "result": "PASS",
+      "renderer": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 4070/PCIe/SSE2, OpenGL ES 3.2)",
+        "gpuTimers": true,
+        "hardwareApproval": "UNVERIFIED"
+      },
+      "projectIds": [
+        "1352586659",
+        "1357004367",
+        "1420137767",
+        "1367284706",
+        "1420094845",
+        "1355818842",
+        "1419820592",
+        "1353607509",
+        "1388326955",
+        "1375135091",
+        "1353608040"
+      ],
+      "pelagicHref": "https://github.com/Denoax/pelagic-jellyfish-webgl",
+      "oppositeNotchesFromStackedToReverse": 7,
+      "firstCounterScrollKeepsDirection": true,
+      "snapOutwardPeak": 0.6801947098783367,
+      "snapRecoil": -0.2902951741162556,
+      "snapSettled": 0,
+      "releaseSnapCount": 0,
+      "oldReleaseSwishes": 0,
+      "allInputsTrusted": true,
+      "pageErrors": [],
+      "failedAssets": []
+    }
+  ]
+}

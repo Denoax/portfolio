@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-16",
+  "site": "https://manimarami.com/",
+  "provider": "Vercel",
+  "project": "manimarami-portfolio",
+  "authorization": "User explicitly requested updating GitHub portfolio and publishing current changes to manimarami.com on 2026-10-16.",
+  "sourceRevision": "2f9293fd6b18744afb36ea32d8fb1955d8106bde",
+  "releaseRevision": "90fce29b6e6c4d3f337c8afa738df84b55973acc",
+  "previousRemoteMain": "e4f7fdada95bafde1ff2cbeb2d63d15abee0d555",
+  "deploymentId": "dpl_CUwMrDpwsupEj65EULFfaEn3KyME",
+  "deploymentUrl": "https://manimarami-portfolio-7f9zzfou4-denoaxlp-4452.vercel.app",
+  "previousLiveDeploymentId": "dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha",
+  "verified": {
+    "reviewedRuntimeInputsByteIdentical": 399,
+    "productionBuildAndTypecheck": true,
+    "productionTransportContracts": 17,
+    "productionGeometryCases": 7,
+    "stagedUploadedFilesMatched": 267,
+    "stagedHttpIndexMatches": true,
+    "routeConfigurationPreserved": true,
+    "publicHttpsFilesMatched": 267,
+    "nativeDesktopPortraitViews": 2,
+    "accumulatedBoundedScrollWithBraking": true,
+    "realReleaseSnapAndObservedGlyphRebound": true,
+    "oldIntroReleaseSwishCount": 0,
+    "elevenProjectIdsAndOrder": true,
+    "originalInteractivePortfolioPanel": true,
+    "directPelagicGitHubLink": true,
+    "forwardReverseProjectScrolling": true,
+    "settingsOpenAndEscapeClose": true,
+    "pageErrors": 0,
+    "failedAssets": 0,
+    "routingAndHeaders": {
+      "creditsSpaMatchesIndex": true,
+      "missingAsset404": true,
+      "wwwCanonical": {
+        "status": 301,
+        "location": "https://manimarami.com/"
+      },
+      "videoRange": {
+        "path": "assets/previews/visual-music-v2751.mp4",
+        "status": 206,
+        "bytes": 1024
+      },
+      "securityAndCacheHeaders": {
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin"
+      }
+    },
+    "previewProtectionPreserved": {
+      "deploymentType": "all_except_custom_domains"
+    },
+    "finalBypassCount": 0
+  },
+  "originalPublicRecordings": [
+    {
+      "path": "public-browser/desktop/unedited.webm",
+      "bytes": 2050051,
+      "sha256": "a848344a2e0530c2625ada99044beb536e47764ecff23e2e6ca80e57061fe85c",
+      "location": "Local publication checkpoint; original unedited native-browser recording, retained outside public repository."
+    },
+    {
+      "path": "public-browser/portrait/unedited.webm",
+      "bytes": 1528097,
+      "sha256": "333ee144b5a4086ed78ebfe451aa03825fedf62b32c5ad040ce9296f66fc0b85",
+      "location": "Local publication checkpoint; original unedited native-browser recording, retained outside public repository."
+    }
+  ],
+  "preserved": [
+    "Approved v2 preview4173, development4174 and gallery4180",
+    "Original Pelagic media and interactive gravity-letter Portfolio panel",
+    "Profile-only buddy banner and every unrelated repository",
+    "Private handoffs, original research/evidence and existing development history",
+    "Existing production routes, headers, preview protection, DNS, gateway and drivers"
+  ],
+  "coverageLimits": [
+    "Native Chromium desktop and portrait emulation; independent Brave/Safari, physical devices, assistive technology and calibrated displays remain unverified.",
+    "Browser audio events and actual shader uploads are verified; physical AV latency, human listening and continuous subjective motion approval remain unverified.",
+    "No new performance claim; build retains the existing large-entry-chunk warning.",
+    "The broader v28.2 catalogue handoff remains unfinished; this publication releases the current saved manual refinements and existing content."
+  ],
+  "rollback": "vercel rollback dpl_J6xBRQ5zSzz8AL15fbqrdp2ZZdha --scope denoaxlp-4452",
+  "rollbackRehearsed": false
+}
