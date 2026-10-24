@@ -38,7 +38,7 @@ assert.deepEqual(material.uniforms.uWaveResolution.value.toArray(), [2880, 1800]
   'Actual buffer dimensions must not receive a second DPR multiplier')
 assert.equal(material.uniforms.uWaveTime.value, 3)
 assert.equal(material.uniforms.uWaveBrightness.value, 1.2)
-assert.equal(material.uniforms.uWaveCellFrequency.value, 900 / 48,
+assert.equal(material.uniforms.uWaveCellFrequency.value, 900 / 40,
   'DPR changes sampling resolution, not CSS cell spacing')
 
 for (const mix of [0, .2, .5, 1, .3, 0, 1]) {
@@ -47,7 +47,7 @@ for (const mix of [0, .2, .5, 1, .3, 0, 1]) {
   assert.equal(waves.geometry, geometry)
   assert.equal(waves.material, material)
 }
-assert.equal(material.uniforms.uWaveCellFrequency.value, 844 / 48)
+assert.equal(material.uniforms.uWaveCellFrequency.value, 844 / 40)
 waves.update({ active: true, exitProgress: .4 }, 9, 0, 390, 844, 100, 844)
 assert.equal(material.uniforms.uWaveVisibility.value, .6)
 waves.update({ active: false, exitProgress: 0 }, 30, 0, 390, 844, 100, 844)

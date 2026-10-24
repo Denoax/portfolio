@@ -5,6 +5,7 @@ export type IntroDirection = -1 | 1
 export type IntroTransportState =
   | 'AUTO_OUT'
   | 'AUTO_IN'
+  | 'COASTING'
   | 'BRAKING'
   | 'HELD'
   | 'SHUFFLE'
@@ -17,9 +18,13 @@ export const INTRO_SHUFFLE_SECONDS = 0.45
 export const INTRO_WAIT_SECONDS = 0.26
 const BRAKE_SECONDS = 0.12
 const MANUAL_IDLE_SECONDS = 0.7
-const SCROLL_BOOST_SECONDS = 2.4
-const MAX_SCROLL_SPEED = INTRO_AUTO_RATE * 2.5
-const MAX_SCROLL_IMPULSE = INTRO_AUTO_RATE * 0.45
+const WHEEL_COAST_SECONDS = 2
+const WHEEL_RESPONSE_SECONDS = 0.15
+const WHEEL_IMPULSE_PER_PIXEL = 1 / 3000 // 120 normalized CSS px adds .04.
+const WHEEL_SPEED_RANGE = 0.65
+const WHEEL_MOMENTUM_LIMIT = 0.9 // Bound latent energy, not ordinary speed.
+const MAX_WHEEL_PACKET_PIXELS = 10000
+const WHEEL_STEP_SECONDS = 1 / 240
 const VELOCITY_EASING_SECONDS = 0.055
 const ANGULAR_PERIOD = Math.PI * 2000
 
@@ -43,7 +48,7 @@ export interface IntroTransport {
   waitAge: number
   manualActive: boolean
   manualIdle: number
-  scrollBoost: number // Signed velocity offset from the committed automatic rate.
+  wheelMomentum: number // Signed input reservoir; COASTING never adds automatic torque.
 }
 
 export function createIntroTransport(): IntroTransport {
@@ -67,7 +72,7 @@ export function createIntroTransport(): IntroTransport {
     waitAge: 0,
     manualActive: false,
     manualIdle: MANUAL_IDLE_SECONDS,
-    scrollBoost: 0,
+    wheelMomentum: 0,
   }
 }
 
@@ -85,7 +90,7 @@ export function cancelIntroTransport(intro: Intro) {
   const transport = intro.transport
   transport.activeGesture = null
   transport.pendingDirection = null
-  transport.state = autoState(transport.lastDirection)
+  transport.state = transport.state === 'COASTING' ? 'COASTING' : autoState(transport.lastDirection)
   transport.gestureAge = 0
   transport.settleAmount = transport.shuffleAmount
   transport.settleAge = 0
@@ -95,7 +100,7 @@ export function cancelIntroTransport(intro: Intro) {
   intro.zoomReset = intro.resetActive = false
   intro.ripples.snapStartedAt = null
   transport.manualActive = false
-  transport.scrollBoost = 0
+  transport.wheelMomentum = 0
 }
 
 export function beginIntroGesture(intro: Intro): number | null {
@@ -155,35 +160,49 @@ export function requestIntroZoom(intro: Intro, delta: number) {
   )
     return
   intro.zoomDelta += delta
-  intro.transport.scrollBoost = 0
+  intro.transport.wheelMomentum = 0
+  if (intro.transport.state === 'COASTING')
+    intro.transport.state = autoState(intro.transport.lastDirection)
   intro.transport.manualActive = true
   intro.transport.manualIdle = 0
 }
 
-export function requestIntroScroll(intro: Intro, delta: number) {
+// WheelEvent units are normalized once at the DOM boundary. Reject corrupted
+// spikes rather than turning an invalid packet into a maximum-strength gesture.
+export function normalizeIntroWheel(delta: number, mode: number, lineHeight: number, pageHeight: number) {
+  const unit = mode === 0 ? 1 : mode === 1 ? lineHeight : mode === 2 ? pageHeight : NaN
+  const pixels = -delta * unit
+  return Number.isFinite(pixels) && unit > 0 && Math.abs(pixels) <= MAX_WHEEL_PACKET_PIXELS ? pixels : 0
+}
+
+export function requestIntroScroll(intro: Intro, pixels: number) {
   const transport = intro.transport
   if (
-    !Number.isFinite(delta) || delta === 0 || intro.paused ||
-    intro.holding || intro.exiting || intro.inputBlocked ||
-    (transport.state !== 'AUTO_IN' && transport.state !== 'AUTO_OUT')
+    !Number.isFinite(pixels) || pixels === 0 || Math.abs(pixels) > MAX_WHEEL_PACKET_PIXELS ||
+    intro.paused || intro.holding || intro.exiting || intro.inputBlocked ||
+    !['AUTO_IN', 'AUTO_OUT', 'COASTING'].includes(transport.state)
   ) return
-  // Add signed momentum. Counter-scroll first brakes the accumulated speed;
-  // no single large wheel packet can reverse a normally moving field.
-  const impulse = Math.max(-MAX_SCROLL_IMPULSE, Math.min(MAX_SCROLL_IMPULSE, delta / SCROLL_BOOST_SECONDS))
-  const current = transport.lastDirection * INTRO_AUTO_RATE + transport.scrollBoost
-  const target = Math.max(-MAX_SCROLL_SPEED, Math.min(MAX_SCROLL_SPEED, current + impulse))
-  if (target !== 0) transport.lastDirection = target < 0 ? -1 : 1
-  transport.state = autoState(transport.lastDirection)
-  transport.scrollBoost = target - transport.lastDirection * INTRO_AUTO_RATE
+  if (transport.state !== 'COASTING') {
+    // Preserve actual displayed velocity on takeover, including a true rest.
+    const range = Math.tanh(WHEEL_MOMENTUM_LIMIT / WHEEL_SPEED_RANGE)
+    transport.wheelMomentum = WHEEL_SPEED_RANGE * Math.atanh(
+      Math.max(-range, Math.min(range, intro.zoomVelocity / WHEEL_SPEED_RANGE)))
+  }
+  transport.wheelMomentum = Math.max(-WHEEL_MOMENTUM_LIMIT, Math.min(WHEEL_MOMENTUM_LIMIT,
+    transport.wheelMomentum + pixels * WHEEL_IMPULSE_PER_PIXEL))
+  transport.state = 'COASTING'
   transport.manualActive = false
   intro.zoomDelta = 0
   intro.zoomReset = intro.resetActive = false
+  // Direction changes only when the displayed velocity crosses zero in step.
 }
 
 export function requestIntroReset(intro: Intro) {
   if (intro.holding || intro.exiting || intro.inputBlocked) return
   intro.zoomReset = true
-  intro.transport.scrollBoost = 0
+  intro.transport.wheelMomentum = 0
+  if (intro.transport.state === 'COASTING')
+    intro.transport.state = autoState(intro.transport.lastDirection)
   intro.transport.manualActive = true
   intro.transport.manualIdle = 0
 }
@@ -242,6 +261,33 @@ function manualStep(intro: Intro, seconds: number) {
   return step
 }
 
+function wheelStep(intro: Intro, seconds: number) {
+  const transport = intro.transport
+  const count = Math.ceil(seconds / WHEEL_STEP_SECONDS), h = seconds / count
+  const halfDecay = Math.exp(-h / (2 * WHEEL_COAST_SECONDS))
+  const target = (m: number) => WHEEL_SPEED_RANGE * Math.tanh(m / WHEEL_SPEED_RANGE)
+  let distance = 0
+  for (let i = 0; i < count; i++) {
+    const m = transport.wheelMomentum, v = intro.zoomVelocity
+    // Exact reservoir decay with fourth-order integration of response/travel.
+    // At most 24 bounded substeps; no hidden-tab catch-up or frame accumulator.
+    const mid = target(m * halfDecay), end = target(m * halfDecay * halfDecay)
+    const k1 = (target(m) - v) / WHEEL_RESPONSE_SECONDS
+    const k2 = (mid - (v + k1 * h / 2)) / WHEEL_RESPONSE_SECONDS
+    const k3 = (mid - (v + k2 * h / 2)) / WHEEL_RESPONSE_SECONDS
+    const k4 = (end - (v + k3 * h)) / WHEEL_RESPONSE_SECONDS
+    distance += h * (v + 2 * (v + k1 * h / 2) + 2 * (v + k2 * h / 2) + (v + k3 * h)) / 6
+    intro.zoomVelocity += h * (k1 + 2 * k2 + 2 * k3 + k4) / 6
+    transport.wheelMomentum = m * halfDecay * halfDecay
+  }
+  if (Math.abs(transport.wheelMomentum) < 1e-7 && Math.abs(intro.zoomVelocity) < 1e-7) {
+    transport.wheelMomentum = intro.zoomVelocity = 0
+  }
+  if (Math.abs(intro.zoomVelocity) > 1e-8)
+    transport.lastDirection = intro.zoomVelocity < 0 ? -1 : 1
+  return distance
+}
+
 export function stepIntroZoom(
   intro: Intro,
   seconds: number,
@@ -253,6 +299,7 @@ export function stepIntroZoom(
     intro.inputBlocked
   )
     return
+  seconds = Math.min(seconds, 0.1) // Active-time guard; never replay a stalled frame.
   const transport = intro.transport
   let step = 0
   if (transport.settleAmount > 0 && transport.state !== 'SHUFFLE') {
@@ -306,20 +353,14 @@ export function stepIntroZoom(
         transport.manualActive = false
     } else if (transport.state === 'SHUFFLE' || transport.state === 'WAIT') {
       step = brakeStep(intro, seconds)
+    } else if (transport.state === 'COASTING') {
+      step = wheelStep(intro, seconds)
     } else {
       const target = transport.lastDirection * INTRO_AUTO_RATE
       const decay = Math.exp(-seconds / VELOCITY_EASING_SECONDS)
-      const boostDecay = Math.exp(-seconds / SCROLL_BOOST_SECONDS)
-      const boost = transport.scrollBoost *
-        SCROLL_BOOST_SECONDS / (SCROLL_BOOST_SECONDS - VELOCITY_EASING_SECONDS)
-      // Integrate the decaying boost and velocity easing together, so wheel
-      // momentum and total travel do not depend on the display frame rate.
-      step =
-        target * seconds +
-        (intro.zoomVelocity - target) * VELOCITY_EASING_SECONDS * (1 - decay) +
-        boost * (SCROLL_BOOST_SECONDS * (1 - boostDecay) - VELOCITY_EASING_SECONDS * (1 - decay))
-      intro.zoomVelocity = target + (intro.zoomVelocity - target) * decay + boost * (boostDecay - decay)
-      transport.scrollBoost *= boostDecay
+      step = target * seconds +
+        (intro.zoomVelocity - target) * VELOCITY_EASING_SECONDS * (1 - decay)
+      intro.zoomVelocity = target + (intro.zoomVelocity - target) * decay
     }
   }
   intro.zoom = advanceZoom(intro.zoom, step)

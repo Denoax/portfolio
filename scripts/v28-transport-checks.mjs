@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import ts from 'typescript'
+import { resolve } from 'node:path'
 
 // Transpile the real controller and its actual numerical/pulse dependencies.
 // The fixture below supplies state only; there is no duplicate controller.
-const source = async path => readFile(path, 'utf8')
+const source = async path => readFile(resolve(process.env.INTRO_SOURCE_ROOT || '.', path), 'utf8')
 const compile = code => ts.transpileModule(code, {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
 }).outputText
@@ -178,84 +179,142 @@ check('Discrete keyboard requests override temporarily, preserve direction and c
   assert.deepEqual(intro.zoom, held)
   assert.equal(intro.zoomReset, false)
 })
-check('Scrolling boosts continuous travel without entering positional settling or stalling', () => {
-  for (const direction of [-1, 1]) {
-    const intro = fixture()
-    intro.transport.lastDirection = direction
-    intro.transport.state = direction < 0 ? 'AUTO_OUT' : 'AUTO_IN'
-    run(intro, 1)
-    const initialVelocity = intro.zoomVelocity
-    m.requestIntroScroll(intro, direction * (0.1 / 1.75))
-    near(intro.zoomVelocity, initialVelocity)
-    assert.equal(intro.transport.manualActive, false)
-    let peak = 0
-    for (let tick = 0; tick < 240; tick++) {
-      if (tick === 12 || tick === 24) m.requestIntroScroll(intro, direction * (0.1 / 1.75))
-      m.stepIntroZoom(intro, 1 / 120)
-      const speed = intro.zoomVelocity * direction
-      assert(speed >= m.INTRO_AUTO_RATE - 1e-8, 'A scroll gesture must not brake into a stationary interval')
-      peak = Math.max(peak, speed)
+// The former auto-floor/return and 2.5x cap assertions are superseded by
+// manual coast-to-rest. All hold/release/cancellation/positional checks remain.
+const manualRest = () => {
+  const intro = fixture()
+  intro.transport.state = 'COASTING'
+  return intro
+}
+const workloads = JSON.parse(await readFile('scripts/fixtures/intro-wheel-v3.json', 'utf8'))
+function simulate(events, end, hz, sign = 1) {
+  const intro = manualRest(), trace = []
+  let time = 0, event = 0, frame = 1
+  while (time < end - 1e-10) {
+    while (event < events.length && events[event].t <= time + 1e-10) {
+      const pixels = events[event++].intent * sign, velocity = intro.zoomVelocity
+      m.requestIntroScroll(intro, pixels)
+      near(intro.zoomVelocity, velocity, 0)
+      trace.push({t:time,input:pixels,velocity,travel:logical(intro),mode:intro.transport.state})
     }
-    assert(peak > m.INTRO_AUTO_RATE * 1.5 && peak <= m.INTRO_AUTO_RATE * 2.5)
-    run(intro, 40)
-    near(intro.zoomVelocity, direction * m.INTRO_AUTO_RATE, 1e-8)
-  }
-})
-check('Counter-scroll brakes accumulated momentum before several inputs reverse it', () => {
-  const intro = fixture()
-  run(intro, 1)
-  for (let event = 0; event < 10; event++) m.requestIntroScroll(intro, -0.5)
-  run(intro, 0.2)
-  const before = intro.zoomVelocity
-  m.requestIntroScroll(intro, 0.1 / 1.75)
-  near(intro.zoomVelocity, before)
-  assert.equal(intro.transport.lastDirection, -1, 'One opposite notch cannot instantly reverse stacked momentum')
-  run(intro, 0.1)
-  assert(intro.zoomVelocity < 0 && intro.zoomVelocity > before, 'The first counter-scroll actually decelerates the field')
-  let counterScrolls = 1
-  while (intro.transport.lastDirection < 0 && counterScrolls < 12) {
-    m.requestIntroScroll(intro, 0.1 / 1.75)
-    run(intro, 0.1)
-    counterScrolls++
-  }
-  assert(counterScrolls >= 3 && counterScrolls <= 9)
-  run(intro, 1)
-  assert(intro.zoomVelocity > 0)
-  assert.equal(intro.transport.lastDirection, 1)
-  assert.equal(intro.transport.manualActive, false)
-})
-check('Scroll momentum is bounded, frame-rate independent and cancelled by holds', () => {
-  const distances = []
-  for (const hz of [30, 60, 120, 240]) {
-    const intro = fixture()
-    run(intro, 1, hz)
-    for (const delta of [-0.057, -0.057, 0.057, 0.057, 0.057, 0.057]) {
-      m.requestIntroScroll(intro, delta)
-      run(intro, 0.2, hz)
-      assert(Math.abs(intro.zoomVelocity) <= m.INTRO_AUTO_RATE * 2.5)
+    const next = Math.min(end, frame / hz, events[event]?.t ?? Infinity)
+    if (next > time + 1e-12) {
+      m.stepIntroZoom(intro, next - time);time = next
+      trace.push({t:time,input:0,velocity:intro.zoomVelocity,travel:logical(intro),mode:intro.transport.state})
     }
-    run(intro, 2, hz)
-    distances.push(logical(intro))
-    hold(intro, 0.4, hz)
-    assert.equal(intro.transport.scrollBoost, 0)
-    const held = structuredClone(intro.zoom)
-    m.requestIntroScroll(intro, 0.05)
-    run(intro, 1, hz)
-    assert.deepEqual(intro.zoom, held)
+    if (time >= frame / hz - 1e-10) frame++
   }
-  for (const distance of distances) near(distance, distances[0], 1e-8)
-  const intro = fixture()
-  for (const invalid of [0, NaN, Infinity, -Infinity]) m.requestIntroScroll(intro, invalid)
-  assert.equal(intro.transport.scrollBoost, 0)
+  return {intro,trace}
+}
+const traces = [], samplingComparisons = []
+check('Manual rest builds gently in both directions beyond the former plateau, then stays at rest', () => {
+  for (const direction of [-1,1]) {
+    const intro = manualRest(), peaks = []
+    for (let i=0;i<6;i++) {
+      m.requestIntroScroll(intro,direction*120);run(intro,.15)
+      peaks.push(Math.abs(intro.zoomVelocity))
+    }
+    assert(peaks[0] > 0 && peaks[0] < .04)
+    assert(peaks.every((v,i)=>i===0||v>peaks[i-1]))
+    assert(peaks.at(-1) > .1625,'Ordinary repeated input must exceed the former early cap')
+    run(intro,40)
+    assert.equal(intro.zoomVelocity,0)
+    assert.equal(intro.transport.wheelMomentum,0)
+    const pose=structuredClone(intro.zoom);run(intro,10);assert.deepEqual(intro.zoom,pose)
+    assert.equal(intro.transport.state,'COASTING')
+  }
 })
-check('One oversized counter-scroll cannot flip normal travel; momentum stays capped', () => {
-  const intro = fixture()
-  run(intro, 1)
-  m.requestIntroScroll(intro, 1000)
-  assert.equal(intro.transport.lastDirection, -1)
-  for (let event = 0; event < 1000; event++) m.requestIntroScroll(intro, -1000)
-  run(intro, 0.5)
-  assert(Math.abs(intro.zoomVelocity) <= m.INTRO_AUTO_RATE * 2.5)
+check('Opposite input brakes, crosses zero once and updates direction only with displayed motion', () => {
+  const workload=workloads.find(x=>x.id==='brake-and-reverse')
+  const result=simulate(workload.events,workload.observe_until,120)
+  const reversal=result.trace.filter(x=>x.t>=1.2)
+  let crosses=0
+  for(let i=1;i<reversal.length;i++)if(reversal[i-1].velocity>0&&reversal[i].velocity<=0)crosses++
+  assert.equal(crosses,1);assert(result.intro.zoomVelocity<0)
+  assert(reversal.find(x=>x.t>1.3).velocity<reversal[0].velocity)
+  assert(reversal.find(x=>x.t>1.21).velocity>0)
+  const intro=manualRest();m.requestIntroScroll(intro,600);run(intro,.5)
+  const velocity=intro.zoomVelocity,direction=intro.transport.lastDirection
+  m.requestIntroScroll(intro,-120);near(intro.zoomVelocity,velocity,0)
+  assert.equal(intro.transport.lastDirection,direction);run(intro,.1)
+  assert(intro.zoomVelocity>0&&intro.zoomVelocity<velocity)
+  traces.push({name:workload.id,hz:120,trace:result.trace})
+})
+check('Timed intent is symmetric and independent of 30/60/120/240Hz frame partitions', () => {
+  for(const workload of workloads.filter(x=>x.events&&x.observe_until)) {
+    const reference=simulate(workload.events,workload.observe_until,240)
+    for(const hz of [30,60,120,240]) {
+      const result=simulate(workload.events,workload.observe_until,hz)
+      near(logical(result.intro),logical(reference.intro),1e-7)
+      near(result.intro.zoomVelocity,reference.intro.zoomVelocity,1e-7)
+      const actualEvents=result.trace.filter(x=>x.input),expectedEvents=reference.trace.filter(x=>x.input)
+      let maxVelocityError=Math.abs(result.intro.zoomVelocity-reference.intro.zoomVelocity)
+      let maxTravelError=Math.abs(logical(result.intro)-logical(reference.intro))
+      for(let i=0;i<actualEvents.length;i++) {
+        const a=actualEvents[i],b=expectedEvents[i]
+        near(a.velocity,b.velocity,1e-7);near(a.travel,b.travel,1e-7)
+        maxVelocityError=Math.max(maxVelocityError,Math.abs(a.velocity-b.velocity))
+        maxTravelError=Math.max(maxTravelError,Math.abs(a.travel-b.travel))
+      }
+      samplingComparisons.push({name:workload.id,hz,maxVelocityError,maxTravelError})
+      traces.push({name:workload.id,hz,trace:result.trace})
+    }
+    const negative=simulate(workload.events,workload.observe_until,240,-1)
+    near(logical(negative.intro),-logical(reference.intro),1e-9)
+    near(negative.intro.zoomVelocity,-reference.intro.zoomVelocity,1e-9)
+  }
+})
+check('Same-time packet splitting and normalized pixel/line/page units preserve intent', () => {
+  const one=manualRest(),split=manualRest()
+  m.requestIntroScroll(one,120)
+  for(let i=0;i<12;i++)m.requestIntroScroll(split,10)
+  run(one,2);run(split,2)
+  near(one.zoomVelocity,split.zoomVelocity,1e-12);near(logical(one),logical(split),1e-12)
+  near(m.normalizeIntroWheel(-120,0,16,900),120)
+  near(m.normalizeIntroWheel(-7.5,1,16,900),120)
+  near(m.normalizeIntroWheel(-120/900,2,16,900),120)
+  near(m.normalizeIntroWheel(-6,1,20,900),120)
+  for(const [delta,mode,line,page] of [[NaN,0,16,900],[Infinity,0,16,900],[1e300,2,16,900],[1,3,16,900],[1,1,NaN,900]])
+    assert.equal(m.normalizeIntroWheel(delta,mode,line,page),0)
+})
+check('Automatic takeover preserves pose/velocity; holds clear wheel intent and release reverses once', () => {
+  const intro=fixture();run(intro,1)
+  const velocity=intro.zoomVelocity,pose=logical(intro)
+  m.requestIntroScroll(intro,-120)
+  near(intro.zoomVelocity,velocity,0);near(logical(intro),pose,0)
+  run(intro,.3);const token=hold(intro)
+  assert.equal(intro.transport.wheelMomentum,0);assert.equal(intro.zoomVelocity,0)
+  const held=structuredClone(intro.zoom)
+  m.requestIntroScroll(intro,120);run(intro,1);assert.deepEqual(intro.zoom,held)
+  assert.equal(m.releaseIntroGesture(intro,token,1.4,false,true),'reverse')
+  assert.equal(m.releaseIntroGesture(intro,token,1.4,false,true),'ignored')
+  run(intro,1);assert.equal(intro.transport.lastDirection,1);assert.equal(intro.transport.committedToken,token)
+  assert.equal(intro.transport.wheelMomentum,0)
+})
+check('Cancellation and paused/input-blocked frames cannot restart rested wheel motion or replay energy', () => {
+  const intro=manualRest();m.requestIntroScroll(intro,120);run(intro,40)
+  m.cancelIntroTransport(intro);run(intro,1);assert.equal(intro.zoomVelocity,0)
+  for(const flag of ['paused','inputBlocked']) {
+    intro[flag]=true;const snapshot=structuredClone(intro)
+    m.requestIntroScroll(intro,120);m.stepIntroZoom(intro,1)
+    assert.deepEqual(intro,snapshot);intro[flag]=false
+  }
+  m.requestIntroZoom(intro,.3);run(intro,.5);assert(logical(intro)>.3)
+})
+check('Pathological input has bounded energy/travel, finite infinite coordinates and no large catch-up', () => {
+  const intro=manualRest(),before=structuredClone(intro)
+  for(const invalid of [0,NaN,Infinity,-Infinity,1e300])m.requestIntroScroll(intro,invalid)
+  assert.deepEqual(intro,before)
+  for(let i=0;i<1000;i++)m.requestIntroScroll(intro,1000)
+  intro.zoom={octave:10n**100n,phase:.99}
+  const octave=intro.zoom.octave;m.stepIntroZoom(intro,1e10)
+  assert(intro.zoom.octave>=octave&&intro.zoom.octave<=octave+1n)
+  assert(intro.zoom.phase>=0&&intro.zoom.phase<1&&Number.isFinite(intro.zoomVelocity))
+  run(intro,1);assert(intro.zoomVelocity>0&&intro.zoomVelocity<.65)
+  for(let i=0;i<4;i++)m.requestIntroScroll(intro,-1000)
+  run(intro,.5);assert(intro.zoomVelocity<0,'Bounded reservoir cannot hide an excessive reversal backlog')
+  assert(Math.abs(intro.zoomVelocity)<.65)
+  run(intro,40);assert.equal(intro.zoomVelocity,0)
 })
 check('Snap rebounds are bounded, settle to zero and survive travelling-wave saturation', () => {
   const state = ripple.createIntroRipples()
@@ -343,7 +402,8 @@ check('Exit never consumes an obsolete release; angular state stays bounded thro
 const out = process.env.OUT || 'showcase/v28-evidence/transport'
 await mkdir(out, { recursive: true })
 await writeFile(`${out}/models.json`, JSON.stringify({
-  status: 'PASS', checks: results,
+  status: 'PASS', checks: results, traces, samplingComparisons,
+  momentumTolerance: {position:1e-7,velocity:1e-7,sameTimePacket:1e-12},
   timings: { hold: m.INTRO_HOLD_SECONDS, shuffle: m.INTRO_SHUFFLE_SECONDS, wait: m.INTRO_WAIT_SECONDS, autoOctavesPerSecond: m.INTRO_AUTO_RATE },
   scope: 'Actual production numerical controller and ripple pool. State contracts only; browser input, rendering, playback, physical devices and human motion approval require separate evidence.',
 }, null, 2) + '\n')

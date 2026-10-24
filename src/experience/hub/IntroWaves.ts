@@ -10,11 +10,14 @@ void coswarp(inout vec3 trip, float scale, float time) {
   trip += scale * .05 * cos(11. * trip.yzx + time * .25);
   trip += scale * .025 * cos(17. * trip.yzx + time * .25);
 }
-float periodicCellRadius(vec2 p) {
-  // Squared sine is periodic in each axis, including matching boundary slopes.
-  // The small radial floor also keeps the derivative finite at cell corners.
-  vec2 s = sin(3.141592653589793 * p);
-  return sqrt(dot(s, s) + .0001);
+float squareCellRadius(vec2 p, float cssCellSize) {
+  // Retain the original fract-based square field. Only the wrapping join is
+  // feathered (1.25 CSS px per side); the cell interior stays a linear ramp.
+  vec2 cell = fract(p);
+  vec2 edge = min(vec2(.15), max(vec2(1.25 / cssCellSize), fwidth(p)));
+  cell = mix(vec2(.5), cell, smoothstep(vec2(0.), edge, cell));
+  cell = mix(cell, vec2(.5), smoothstep(vec2(1.) - edge, vec2(1.), cell));
+  return length(cell);
 }
 float softOrientedRamp(float edge0, float edge1, float x) {
   float delta = edge1 - edge0;
@@ -27,8 +30,8 @@ float softOrientedRamp(float edge0, float edge1, float x) {
 }
 float tomHintonWaves(vec2 coord, vec2 resolution, float time) {
   vec2 uv = (coord - resolution * .5) / max(resolution.y, 1.) + .5;
-  float t = time * .2 + periodicCellRadius((uv - .5) * uWaveCellFrequency);
-  float t2 = time * .1 + periodicCellRadius((uv - .5) * uWaveCellFrequency * 2.);
+  float t = time * .2 + squareCellRadius((uv - .5) * uWaveCellFrequency, 40.);
+  float t2 = time * .1 + squareCellRadius((uv - .5) * uWaveCellFrequency * 2., 20.);
   vec2 original = uv;
   vec3 warp = vec3(uv, 1.);
   coswarp(warp, 3., time);
@@ -42,7 +45,7 @@ float tomHintonWaves(vec2 coord, vec2 resolution, float time) {
 
 export class IntroWaves {
   private readonly darkBase = new THREE.Color('#050607')
-  private readonly darkCrest = new THREE.Color('#151920')
+  private readonly darkCrest = new THREE.Color('#1c222c')
   private readonly lightBase = new THREE.Color('#fafbfd')
   private readonly lightCrest = new THREE.Color('#e4e9ef')
   private ready = false
@@ -60,7 +63,7 @@ export class IntroWaves {
       uWaveBase: { value: new THREE.Color() },
       uWaveCrest: { value: new THREE.Color() },
       uWaveBrightness: { value: 1 },
-      uWaveCellFrequency: { value: 900 / 48 },
+      uWaveCellFrequency: { value: 900 / 40 },
     },
     vertexShader: 'void main(){gl_Position=vec4(position.xy,0.,1.);}',
     fragmentShader: `
@@ -111,7 +114,7 @@ export class IntroWaves {
     uniforms.uWaveTime.value = clock
     uniforms.uWaveResolution.value.set(bufferWidth, bufferHeight)
     // Composition uses CSS pixels; the real buffer remains the sampling owner.
-    uniforms.uWaveCellFrequency.value = cssHeight / 48
+    uniforms.uWaveCellFrequency.value = cssHeight / 40
     uniforms.uWaveVisibility.value = 1 - intro.exitProgress
     uniforms.uWaveBase.value.copy(this.darkBase).lerp(this.lightBase, themeMix)
     uniforms.uWaveCrest.value.copy(this.darkCrest).lerp(this.lightCrest, themeMix)

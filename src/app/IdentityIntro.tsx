@@ -10,6 +10,7 @@ import {
   exitIntroTransport,
   releaseIntroGesture,
   requestIntroReset,
+  normalizeIntroWheel,
   requestIntroScroll,
   requestIntroZoom,
 } from '../core/introMotion'
@@ -252,16 +253,25 @@ export function IdentityIntro({
     return () => window.removeEventListener('keydown', key)
   }, [paused, exiting, staticView, presentation])
   useEffect(() => {
-    const wheel = (e: WheelEvent) => {
-      if (paused || exiting || e.ctrlKey || e.metaKey || e.altKey) return
-      e.preventDefault()
-      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1
-      const distance = Math.max(-0.25, Math.min(0.25, (-e.deltaY * unit) / 1400))
-      const delta = distance / 1.75
-      if (staticView) zoom(delta)
-      else requestIntroScroll(presentation.current.intro, delta)
-    }
     const node = root.current
+    const measuredLine = node ? parseFloat(getComputedStyle(node).lineHeight) : NaN
+    const lineHeight = Number.isFinite(measuredLine) && measuredLine > 0 ? measuredLine : 16
+    const wheel = (e: WheelEvent) => {
+      const intro = presentation.current.intro
+      const mode = e.deltaMode
+      if (paused || exiting || intro.inputBlocked || intro.holding || e.defaultPrevented ||
+        e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
+      if (!staticView && !['AUTO_IN', 'AUTO_OUT', 'COASTING'].includes(intro.transport.state)) return
+      if (e.target instanceof Element &&
+        e.target.closest('button,a,input,textarea,select,[contenteditable="true"],[data-wheel-native]')) return
+      // Mode was read before delta: some browsers choose units on access.
+      const pixels = normalizeIntroWheel(e.deltaY, mode, lineHeight, innerHeight)
+      if (!pixels) return
+      e.preventDefault()
+      if (staticView) zoom(Math.max(-0.25, Math.min(0.25, pixels / 1400)) / 1.75)
+      else requestIntroScroll(intro, pixels)
+    }
     node?.addEventListener('wheel', wheel, { passive: false })
     return () => node?.removeEventListener('wheel', wheel)
   }, [paused, exiting, staticView])
