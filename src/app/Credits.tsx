@@ -11,13 +11,6 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
-          Worlds tube cursor studied from{' '}
-          <a href="https://codepen.io/soju22/pen/qEbdVjK">Kevin Levron — Tubes Cursor (WebGL, WebGPU)</a>
-          . Independently authored rounded geometry, lighting and following in this site's renderer;
-          shared project pigment and circular idle.{' '}
-          <a href="/licenses/Worlds-Tubes-Sources.md">Source and rights record</a>.
-        </p>
-        <p>
           Waves intro backdrop adapted from{' '}
           <a href="https://codepen.io/TomHinton/pen/EajJrBd">
             Tom Hinton — #WCCChallenge : Waves

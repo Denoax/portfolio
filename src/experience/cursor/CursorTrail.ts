@@ -223,9 +223,6 @@ export class CursorTrail {
   get worldsPointerPosition() {
     return this.hasWorldsPointer ? this.worldsPointer : null
   }
-  get displayedWorldsPigment() {
-    return this.worldsActive && this.evidence.active ? this.worlds?.displayedPigment ?? null : null
-  }
   step(
     dt: number,
     width: number,

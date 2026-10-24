@@ -17,7 +17,6 @@ import { GlassField } from './GlassField'
 import type { PreviewPlayback } from '../../core/previewPlayback'
 import { CursorTrail, trailOutputGLSL } from '../cursor/CursorTrail'
 import { worldsTrailOutputGLSL } from '../cursor/WorldsTrailField'
-import { WorldsTubes } from '../cursor/WorldsTubes'
 import { deriveProjectPigment, mixProjectPigment, PigmentResponse } from '../../core/projectPigment'
 
 function mediaGeometry() {
@@ -154,7 +153,6 @@ export function HubScene({
         }),
     )
     const trail = new CursorTrail(gl, true)
-    const tubes = new WorldsTubes()
     const pigments = menuViews.map(view => deriveProjectPigment(view.accent))
     const perimeterColor = new THREE.Color()
     const perimeterPigment = new PigmentResponse()
@@ -198,7 +196,6 @@ export function HubScene({
       geometry,
       materials,
       trail,
-      tubes,
       pigments,
       perimeterColor,
       perimeterPigment,
@@ -221,8 +218,6 @@ export function HubScene({
     media.current = textures
     let preparation: Promise<unknown> | null = null
     const disconnect = resources.trail.connect()
-    const disconnectTubes = resources.tubes.connect(() =>
-      !presentation.current.intro.active && !presentation.current.paused && !presentation.current.reduced)
     const disconnectPerimeter = resources.perimeter.connect()
     const diagnostics = window as unknown as {
       __hoverSmoke?: typeof resources.perimeter.evidence
@@ -297,8 +292,7 @@ export function HubScene({
         const backdrop = resources.waves.prepare(gl, camera).then(() => {
           if (alive) needsRepaint.current = true
         })
-        const tubes = resources.tubes.prepare(gl)
-        preparation = Promise.all([foreground, backdrop, tubes])
+        preparation = Promise.all([foreground, backdrop])
         await foreground
         if (alive) {
           loaded.current = true
@@ -312,7 +306,6 @@ export function HubScene({
       alive = false
       clearTimeout(timeout)
       disconnect()
-      disconnectTubes()
       disconnectPerimeter()
       delete diagnostics.__hoverSmoke
       disconnectIntro()
@@ -328,7 +321,6 @@ export function HubScene({
         resources.geometry.dispose()
         resources.materials.forEach((material) => material.dispose())
         resources.trail.dispose()
-        resources.tubes.dispose()
         resources.plane.dispose()
         resources.trailMaterial.dispose()
       }
@@ -688,10 +680,6 @@ export function HubScene({
     resources.waves.update(menu.intro, menu.clock, q,
       context.drawingBufferWidth, context.drawingBufferHeight,
       preferences.current.settings.displayBrightness, size.height)
-    const tubesActive = resources.tubes.update(smokeDelta, size.width, size.height,
-      !menu.intro.active && !menu.paused && !menu.reduced && menu.decorativeRunning,
-      q, pigment, resources.trail.displayedWorldsPigment,
-      preferences.current.settings.displayBrightness)
     resources.ringwriter.material.uniforms.uTransitionContour.value =
       Math.min(1, q * 8, (1 - q) * 4)
     gl.render(scene, camera)
@@ -715,7 +703,6 @@ export function HubScene({
         gl.autoClear = clear
       }
     }
-    if (tubesActive) resources.tubes.render(gl)
     paintedSize.current = bufferSize
     needsRepaint.current = false
     baseFrame.current++
