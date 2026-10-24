@@ -84,6 +84,15 @@ const diameter = (ring) => {
 }
 assert(diameter(0) < 1e-5 && diameter(71) < 1e-5, 'Both ends taper to a point')
 assert(diameter(35) > 1.79 && diameter(35) < 1.81, 'Rounded middle retains CSS-scale volume')
+for (let strand = 0; strand < 9; strand++) for (let side = 0; side < 8; side++) {
+  const face = (strand * 71 * 8 + 35 * 8 + side) * 6
+  const [a, b, c] = geometry.index.array.slice(face, face + 3)
+  const ab = [position.getX(b) - position.getX(a), position.getY(b) - position.getY(a), position.getZ(b) - position.getZ(a)]
+  const ac = [position.getX(c) - position.getX(a), position.getY(c) - position.getY(a), position.getZ(c) - position.getZ(a)]
+  const cross = [ab[1]*ac[2]-ab[2]*ac[1], ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0]]
+  assert(cross[0]*normal.getX(a)+cross[1]*normal.getY(a)+cross[2]*normal.getZ(a)>0,
+    'Front faces must agree with outward lighting normals, not expose the dark inside of the tubes')
+}
 const hits = []; tubes.mesh.raycast(null, hits); assert.deepEqual(hits, [])
 const oldTail = color.array.slice(71 * 9 * 3, 71 * 9 * 3 + 3)
 update(1 / 60, cyan); update(1 / 60, cyan)

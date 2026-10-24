@@ -74,7 +74,8 @@ The latter reads actual production GPU buffers in a test-only observer; those
 synchronous reads are excluded from performance measurement.
 
 Source tests cover actual orbit, geometry, pigment history and lifetime contracts
-and simulated 30/60/120 Hz input. Native checks cover all eleven project pigments,
+and simulated 30/60/120 Hz input. The outward-face regression fails on the
+first candidate and passes after the bounded index-winding correction. Native checks cover all eleven project pigments,
 real smooth-scroll blending, stationary/leave/re-entry behavior, theme retargets,
 visibility, keyboard/coarse input, responsive/DPR states, ten section cycles and
 an explicit optional-shader failure. Build/tests do not confer visual acceptance.

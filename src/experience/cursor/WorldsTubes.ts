@@ -77,8 +77,8 @@ export class WorldsTubes {
     let offset = 0
     for (let s = 0; s < STRANDS; s++) for (let i = 0; i < SAMPLES - 1; i++) for (let j = 0; j < SIDES; j++) {
       const a = (s * SAMPLES + i) * RING + j, b = a + RING
-      indices[offset++] = a; indices[offset++] = b; indices[offset++] = a + 1
-      indices[offset++] = b; indices[offset++] = b + 1; indices[offset++] = a + 1
+      indices[offset++] = a; indices[offset++] = a + 1; indices[offset++] = b
+      indices[offset++] = b; indices[offset++] = a + 1; indices[offset++] = b + 1
     }
     this.geometry.setIndex(new THREE.BufferAttribute(indices, 1))
     this.geometry.setAttribute('position', new THREE.BufferAttribute(this.positions, 3).setUsage(THREE.DynamicDrawUsage))

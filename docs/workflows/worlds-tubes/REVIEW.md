@@ -7,7 +7,7 @@ retains that last observed anchor. Smoke, native cursor, hover hit testing,
 perimeters and current UI remain independent. The completed Waves intro is
 preserved and never draws tubes.
 
-Implementation checkpoint: `f5256d84057c70956d292c5dfbf3703a8e13ceca`.
+Corrected runtime checkpoint: `a23d13c7cedf302e57cef8ad902dd68caa4a85ce`.
 Local baseline: `48e7fdaa184ac902a31f10695654653c5bb1fb14` (completed Waves).
 Public equivalent baseline: `8269e24adde885b0d8d3c682a36517b700a8ef16`.
 Final local/public identities, build hashes and archive receipt are in the
@@ -73,44 +73,55 @@ after the DOM returned. Harnesses now observe actual readiness/native behavior.
 The same slider check passed on baseline and candidate, with native input/change
 events and no prevented key default. No unrelated control behavior was changed.
 
+Frame review caught a real geometry defect in the first candidate: triangle
+winding opposed outward normals and hid the lit outer surface. Correcting index
+orientation exposes the intended highlights. The same geometric regression
+fails on old `f5256d8` and passes on corrected `a23d13c`; final native checks and
+new recordings use the corrected build. Earlier captures/performance remain
+explicitly identified as pre-correction evidence.
+
 ## Measured cost
 
-Native RTX 4070/ANGLE headless Chromium, 1440×900/DPR1, observed high quality on
-both builds. Three warm five-second repetitions per build/theme/workload; dark
-pair order reversed. No recording, synchronous geometry reads or GPU queries in
-the paired CPU/RAF run. The moving workload uses matched DOM pointer events;
-physical-input claims come from separate browser interaction checks.
+Final corrected runtime `a23d13c7cedf302e57cef8ad902dd68caa4a85ce`, native
+RTX 4070/ANGLE headless Chromium, 1440 × 900 / DPR 1, observed high quality on both
+builds. Three warm five-second repetitions per build/theme/workload; dark pair
+order reversed. No recording, synchronous geometry reads or GPU queries in the
+paired CPU/RAF run. Moving workload uses matched DOM pointer events; actual
+browser pointer interaction comes from separate checks.
 
-All eight aggregates had 903 RAF intervals, median 16.7 ms and maximum 16.8 ms;
-p95 was 16.7 ms except baseline light idle at 16.8 ms. No interval exceeded 50 ms.
-This is a measured 60 Hz callback workload, not GPU timing or device-wide approval.
+Across eight aggregates: 7224 RAF intervals, median 16.7 ms, p95
+16.7–16.8 ms, maximum 16.8 ms, 0 intervals over 50 ms.
+This measures a 60 Hz callback workload, not GPU time or device-wide approval.
 
 | CDP JavaScript ms per callback, average | Baseline | Candidate |
 | --- | ---: | ---: |
-| Light idle | 1.804 | 4.075 |
-| Light moving | 1.887 | 4.117 |
-| Dark idle | 2.093 | 4.140 |
-| Dark moving | 2.190 | 4.374 |
+| Light idle | 1.769 | 4.189 |
+| Light moving | 1.735 | 4.031 |
+| Dark idle | 2.120 | 4.301 |
+| Dark moving | 2.115 | 4.451 |
 
-The feature adds roughly 2.0–2.3 ms of renderer JavaScript in these workloads.
-CDP script/task deltas and raw repetitions are retained; they include the shared
-test fixture overhead and do not represent whole-device CPU time. Native frame
-cadence held, but this additional CPU work can matter on slower devices.
+The feature adds roughly 2.2–2.4 ms of renderer
+JavaScript in these workloads. CDP script/task deltas include shared test-fixture
+overhead and do not represent whole-device CPU time. Native cadence held, but
+this additional CPU work can matter on slower devices. Raw repetitions and all
+adverse samples are retained.
 
 Separate genuine `EXT_disjoint_timer_query_webgl2` measurements summed individual
-draw durations over 60 warm moving frames per build/theme. No disjoint results.
+draw durations over 60 warm moving frames per build/theme; no disjoint results.
 
 | Smoke + tubes GPU draws, ms | Baseline median / p95 | Candidate median / p95 |
 | --- | ---: | ---: |
-| Light | 1.517 / 2.065 | 1.370 / 2.801 |
-| Dark | 1.206 / 1.505 | 1.291 / 2.101 |
+| Light | 1.351 / 1.878 | 1.412 / 3.312 |
+| Dark | 1.232 / 1.738 | 1.201 / 3.791 |
 
-Tube-only medians were 0.0082/0.0092 ms in light/dark; p95 0.0266/0.0358 ms,
-maximum 0.0297/0.1004 ms. The combined adverse tails are retained; mixed medians
-do not prove a speedup. Summed draws exclude clear/upload commands, queue latency
-and physical display. Startup to first diagnostic was 0.486–0.793 s across runs;
-this includes application startup and existing driver caches, not an isolated
-genuinely cold shader compilation measurement.
+Tube-only median light/dark: 0.0092/0.0082ms;
+p95: 0.0276/0.0307ms;
+maximum: 0.0307/0.0461ms.
+Mixed medians and adverse tails are retained; no speedup is inferred. Summed
+draws exclude clears/uploads, queue latency and physical display. Startup to
+first diagnostic was 0.512–0.750s including application startup
+and existing driver caches, not isolated genuinely cold shader compilation.
+The earlier inward-surface run remains separate under pre-correction evidence.
 
 ## Reference, rights and human review
 
