@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "testing/waves-intro-20261023-01a16be6": false
+      "testing/waves-intro-20261023-01a16be6": false,
+      "testing/worlds-tubes-20261023-01a16be6": false
     }
   }
 }

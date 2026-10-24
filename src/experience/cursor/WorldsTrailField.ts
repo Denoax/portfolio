@@ -98,6 +98,7 @@ export class WorldsTrailField {
     this.color.fromArray(pigment.rgb)
     for (let i = 0; i < 3; i++) this.evidence.pigment[i] = pigment.rgb[i]
   }
+  get displayedPigment(): Readonly<Pigment> { return this.pigment.current }
   seedPointer(x: number, y: number, observedAt: number) {
     if (this.initialized || !Number.isFinite(x + y + observedAt)) return
     this.x = this.oldX = x; this.y = this.oldY = y
