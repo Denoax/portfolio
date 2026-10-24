@@ -41,12 +41,12 @@ export class TubeOrbit {
   step(dt: number, dragging: boolean) {
     const delta = Number.isFinite(dt) ? Math.max(0, Math.min(.05, dt)) : 0
     this.age += delta
-    const desired = !dragging && (!this.inside || this.age >= .9) ? 1 : 0
-    const tau = desired > this.mix ? .75 : .18
+    const desired = !dragging && (!this.inside || this.age >= .5) ? 1 : 0
+    const tau = desired > this.mix ? .45 : .18
     this.mix = desired + (this.mix - desired) * Math.exp(-delta / tau)
-    this.phase = (this.phase + delta * TAU / 12) % TAU
-    this.output.x = this.x + 22 * this.mix * Math.cos(this.phase)
-    this.output.y = this.y + 22 * this.mix * Math.sin(this.phase)
+    this.phase = (this.phase + delta * TAU / 5.5) % TAU
+    this.output.x = this.x + 42 * this.mix * Math.cos(this.phase)
+    this.output.y = this.y + 42 * this.mix * Math.sin(this.phase)
     this.output.resetChain = this.discontinuity
     this.discontinuity = false
     return this.output

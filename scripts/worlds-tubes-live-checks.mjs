@@ -15,7 +15,9 @@ function probe() {
   const programs = new Map(), proto = WebGL2RenderingContext.prototype
   const uniform = proto.getUniformLocation, use = proto.useProgram, draw = proto.drawElements
   let current = null, pending = null
-  const evidence = { draws: 0, snapshot: null }
+  const evidence = { draws: 0, glowDraws: 0, targetViewports: [], snapshot: null }
+  const glowPrograms=new WeakSet(),link=proto.linkProgram
+  proto.linkProgram=function(program){const result=link.call(this,program);if(this.getAttachedShaders(program).some(s=>/vGlowPigment|uniform sampler2D uGlow/.test(this.getShaderSource(s))))glowPrograms.add(program);return result}
   proto.getUniformLocation = function (program, name) {
     const location = uniform.call(this, program, name)
     if (name === 'uTubeLight') programs.set(program, true)
@@ -23,6 +25,7 @@ function probe() {
   }
   proto.useProgram = function (program) { current = program; return use.call(this, program) }
   proto.drawElements = function (...args) {
+    if(glowPrograms.has(current)){evidence.glowDraws++;if(evidence.targetViewports.length<3&&this.getParameter(this.FRAMEBUFFER_BINDING))evidence.targetViewports.push([...this.getParameter(this.VIEWPORT)])}
     if (programs.has(current)) {
       evidence.draws++
       if (pending) {
@@ -38,14 +41,14 @@ function probe() {
         this.bindBuffer(this.ARRAY_BUFFER, original)
         const p = arrays.position, heads = [], bounds = [Infinity, Infinity, -Infinity, -Infinity]
         for (let s = 0; s < 9; s++) {
-          const i = s * 72 * 9 * 3
+          const i = s * 32 * 9 * 3
           heads.push([p[i] + innerWidth / 2, innerHeight / 2 - p[i + 1], p[i + 2]])
         }
         for (let i = 0; i < p.length; i += 3) {
           bounds[0] = Math.min(bounds[0], p[i]); bounds[1] = Math.min(bounds[1], p[i + 1])
           bounds[2] = Math.max(bounds[2], p[i]); bounds[3] = Math.max(bounds[3], p[i + 1])
         }
-        evidence.snapshot = { heads, bounds, pigment: [...arrays.color.slice(0, 3)],
+        evidence.snapshot = { heads, bounds, viewport:[...this.getParameter(this.VIEWPORT)],buffer:[this.drawingBufferWidth,this.drawingBufferHeight],outputFramebufferIsCanvas:!this.getParameter(this.FRAMEBUFFER_BINDING),pigment: [...arrays.color.slice(0, 3)],
           finite: Object.values(arrays).every(a => a.every(Number.isFinite)), vertices: p.length / 3,
           light: this.getUniform(current, uniform.call(this, current, 'uTubeLight')),
           opacity: this.getUniform(current, uniform.call(this, current, 'uTubeOpacity')) }
@@ -74,7 +77,7 @@ async function setup(options = {}, fixture = null) {
   return { context, page, errors, consoleErrors }
 }
 const state = page => page.evaluate(() => ({ diagnostic: structuredClone(__portfolio),
-  smoke: structuredClone(window.__worldsTrail), tubeDraws: tubeProbe.draws,
+  smoke: structuredClone(window.__worldsTrail), tubeDraws: tubeProbe.draws, glowDraws:tubeProbe.glowDraws,glowTargetViewports:tubeProbe.targetViewports,
   canvas: document.querySelectorAll('.experience-canvas canvas').length,
   overflow: document.documentElement.scrollWidth > innerWidth }))
 const snapshot = page => page.evaluate(() => readTube())
@@ -96,26 +99,29 @@ try {
   const identity = await rendererIdentity(page)
   await page.mouse.move(300, 720); await page.waitForTimeout(150)
   assert.equal((await state(page)).tubeDraws, 0, 'No tubes in Waves intro')
+  assert.equal((await state(page)).glowDraws,0,'No halo passes in Waves intro')
   await page.screenshot({ path: `${out}/preserved-intro.png` })
   await enter(page)
   assert.equal((await state(page)).tubeDraws, 0, 'No fabricated pointer after keyboard entry')
   await page.mouse.move(310, 720); await page.waitForTimeout(250)
   let shape = await snapshot(page)
-  assert(shape.finite && shape.vertices === 9 * 72 * 9)
+  assert(shape.finite && shape.vertices === 9 * 32 * 9)
+  assert(shape.outputFramebufferIsCanvas);assert.deepEqual(shape.viewport,[0,0,...shape.buffer])
+  assert((await state(page)).glowDraws>0)
   const before = await state(page), samples = []
   for (let i = 0; i < 40; i++) { await page.waitForTimeout(500); samples.push(await snapshot(page)) }
   const stationary = await state(page)
   assert.equal(stationary.smoke.path.admitted, before.smoke.path.admitted, 'Orbit cannot feed smoke samples')
   assert(stationary.tubeDraws > before.tubeDraws + 100)
   const settled = samples.slice(12).map(s => s.heads[0])
-  assert(settled.every(([x, y]) => Math.hypot(x - 310, y - 720) < 28))
-  assert(Math.max(...settled.map(p => p[0])) - Math.min(...settled.map(p => p[0])) > 30)
+  assert(settled.every(([x, y]) => Math.hypot(x - 310, y - 720) < 48))
+  assert(Math.max(...settled.map(p => p[0])) - Math.min(...settled.map(p => p[0])) > 65)
   await page.screenshot({ path: `${out}/light-idle.png` })
   await page.mouse.move(-20, -20)
   const leave = await state(page)
   await page.waitForTimeout(1600); shape = await snapshot(page)
   assert((await state(page)).tubeDraws > leave.tubeDraws)
-  assert(shape.heads.every(([x, y]) => Math.hypot(x - 310, y - 720) < 43))
+  assert(shape.heads.every(([x, y]) => Math.hypot(x - 310, y - 720) < 60))
   assert.equal((await state(page)).smoke.field.pointerKnown, false)
   await page.mouse.move(1320, 760); await page.waitForTimeout(50); shape = await snapshot(page)
   assert(shape.bounds[2] - shape.bounds[0] < 100, 'Large re-entry reseeds without viewport chord')
@@ -171,12 +177,14 @@ try {
     await page.getByRole('button', { name: 'Return to the start', exact: true }).click()
     await page.waitForSelector('[data-surface=intro]')
     const count = (await state(page)).tubeDraws
-    await page.waitForTimeout(100); assert.equal((await state(page)).tubeDraws, count)
+    const glowCount=(await state(page)).glowDraws
+    await page.waitForTimeout(100); assert.equal((await state(page)).tubeDraws, count);assert.equal((await state(page)).glowDraws,glowCount)
     await enter(page); await page.mouse.move(300 + i, 720); await page.waitForTimeout(300)
     cycles.push(await state(page))
   }
   assert(new Set(cycles.map(c => c.diagnostic.geometries)).size === 1)
   assert(new Set(cycles.map(c => c.canvas)).size === 1)
+  assert(new Set(cycles.map(c=>c.diagnostic.textures)).size===1,'Glow targets/media texture resources stay bounded across entry cycles')
   assert.deepEqual(errors, []); assert.deepEqual(consoleErrors, [])
   results.push({ test: 'native-production-contracts', identity, fractional, cycles, errors, consoleErrors,
     scope: 'Real production geometry/input/rendering; hidden state is an explicit visibility fixture. Screenshots and samples are not human continuous-motion approval.' })
@@ -188,7 +196,7 @@ try {
     const observed = await state(page)
     assert.equal(observed.overflow, false)
     if (options.isMobile) assert.equal(observed.tubeDraws, 0, 'Coarse emulation has no mouse tubes')
-    else assert((await snapshot(page)).finite)
+    else {const rendered=await snapshot(page);assert(rendered.finite);assert.deepEqual(rendered.viewport,[0,0,...rendered.buffer]);assert(rendered.outputFramebufferIsCanvas);assert(observed.glowTargetViewports.every(v=>v[2]<=1024&&v[3]<=1024))}
     await page.screenshot({ path: `${out}/${options.isMobile ? 'portrait-coarse' : options.deviceScaleFactor ? 'dpr2' : 'short-landscape'}.png` })
     assert.deepEqual(errors, []); assert.deepEqual(consoleErrors, [])
     results.push({ test: 'responsive-input', options, observed, errors, consoleErrors, scope: 'Browser emulation, not physical-device evidence' })

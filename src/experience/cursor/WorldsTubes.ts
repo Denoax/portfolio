@@ -1,16 +1,15 @@
 import * as THREE from 'three'
 import { TubeOrbit } from '../../core/tubeOrbit'
+import { TubeTrail, TUBE_STRANDS as STRANDS, TUBE_SECTIONS as SAMPLES, TUBE_STEP as STEP } from '../../core/tubeTrail'
+import { TubeGlow } from './TubeGlow'
 import { PigmentResponse } from '../../core/projectPigment'
 import type { Pigment } from '../../core/projectPigment'
 
 // Reference: Kevin Levron, Tubes Cursor / threejs-components 0.0.19.
 // Independently authored geometry, follower, shading and host integration;
 // no creator bundle or engine code is included. See the source/rights record.
-const STRANDS = 9
-const SAMPLES = 72
 const SIDES = 8
 const RING = SIDES + 1
-const STEP = 1 / 60
 const QUIET = 'a:not(.menu-media-action),button:not(.menu-preview-target),input,textarea,select,dialog,.portfolio-nav-shell,[contenteditable=true]'
 
 export class WorldsTubes {
@@ -36,29 +35,31 @@ export class WorldsTubes {
        float secondary=pow(max(0.,dot(n,normalize(fill+v))),65.);
        // A shaded saturated body survives white; narrow tinted reflections
        // describe the round section without a clipped white/rainbow core.
-       vec3 body=vTubePigment*(mix(.28,.17,uTubeLight)+diffuse*mix(.52,.43,uTubeLight));
-       vec3 reflection=mix(vTubePigment,vec3(1.),.26)*(spec*.65+secondary*.24);
-       body+=reflection+vTubePigment*rim*mix(.17,.06,uTubeLight);
+       float core=pow(max(0.,dot(n,v)),16.);
+       vec3 body=vTubePigment*(mix(.65,.24,uTubeLight)+diffuse*mix(.8,.55,uTubeLight));
+       vec3 reflection=mix(vTubePigment,vec3(1.),.18)*(spec*.8+secondary*.28);
+       body+=reflection+vTubePigment*(core*mix(1.3,.9,uTubeLight)+rim*.2);
        gl_FragColor=vec4(body*uTubeBrightness,uTubeOpacity);
        #include <colorspace_fragment>
       }`,
   })
   readonly mesh = new THREE.Mesh(this.geometry, this.material)
   private fine = window.matchMedia('(pointer: fine) and (hover: hover)')
-  private points = new Float32Array(STRANDS * SAMPLES * 3)
-  private previous = new Float32Array(this.points.length)
-  private history = new Float32Array(this.points.length)
-  private oldHistory = new Float32Array(this.points.length)
+  readonly trail = new TubeTrail()
+  readonly glow = new TubeGlow(this.geometry)
+  private readonly heads = new Float32Array(STRANDS * 3)
   private positions = new Float32Array(STRANDS * SAMPLES * RING * 3)
   private normals = new Float32Array(this.positions.length)
   private colors = new Float32Array(this.positions.length)
-  private centers = new Float32Array(SAMPLES * 3)
   private pigment = new PigmentResponse()
   private tangent = new THREE.Vector3()
   private normal = new THREE.Vector3()
   private binormal = new THREE.Vector3()
   private axis = new THREE.Vector3(0, 0, 1)
   private viewport = new THREE.Vector4()
+  private clearColor = new THREE.Color()
+  private readonly ringCos = Float32Array.from({ length: RING }, (_, j) => Math.cos(j / SIDES * Math.PI * 2))
+  private readonly ringSin = Float32Array.from({ length: RING }, (_, j) => Math.sin(j / SIDES * Math.PI * 2))
   private scissor = new THREE.Vector4()
   private accumulator = 0
   private time = 0
@@ -80,6 +81,10 @@ export class WorldsTubes {
       indices[offset++] = a; indices[offset++] = a + 1; indices[offset++] = b
       indices[offset++] = b; indices[offset++] = a + 1; indices[offset++] = b + 1
     }
+    const taper = new Float32Array(STRANDS * SAMPLES * RING)
+    for (let s = 0; s < STRANDS; s++) for (let i = 0; i < SAMPLES; i++)
+      taper.fill(Math.sin(Math.PI * i / (SAMPLES - 1)), (s * SAMPLES + i) * RING, (s * SAMPLES + i + 1) * RING)
+    this.geometry.setAttribute('aTubeTaper', new THREE.BufferAttribute(taper, 1))
     this.geometry.setIndex(new THREE.BufferAttribute(indices, 1))
     this.geometry.setAttribute('position', new THREE.BufferAttribute(this.positions, 3).setUsage(THREE.DynamicDrawUsage))
     this.geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals, 3).setUsage(THREE.DynamicDrawUsage))
@@ -98,9 +103,9 @@ export class WorldsTubes {
       this.dragging = event.buttons !== 0
       this.quiet = event.target instanceof Element && Boolean(event.target.closest(QUIET))
     }
-    const out = (event: PointerEvent) => { if (!event.relatedTarget) { this.orbit.leave(); this.dragging = false } }
-    const blur = () => { this.orbit.leave(); this.dragging = false }
-    const clear = () => { this.orbit.clear(); this.running = false; this.dragging = false }
+    const out = (event: PointerEvent) => { if (!event.relatedTarget) { this.orbit.leave(); this.dragging = this.quiet = false } }
+    const blur = () => { this.orbit.leave(); this.dragging = this.quiet = false }
+    const clear = () => { this.orbit.clear(); this.running = false; this.dragging = this.quiet = false }
     const visibility = () => { this.running = false; this.orbit.reseed() }
     const down = (event: PointerEvent) => { move(event); this.dragging = true }
     const up = () => { this.dragging = false }
@@ -133,9 +138,11 @@ export class WorldsTubes {
   async prepare(gl: THREE.WebGLRenderer) {
     try {
       await gl.compileAsync(this.scene, this.camera)
+      if (this.disposed) return
       const context = gl.getContext()
       const program = gl.info.programs?.find(program => program.name === this.material.name)?.program
       if (!program || !context.getProgramParameter(program, context.LINK_STATUS)) throw new Error('Tube shader did not link')
+      await this.glow.prepare(gl, this.camera)
       if (!this.disposed) this.ready = true
     } catch (error) {
       console.warn('Optional Worlds tubes unavailable; smoke remains active.', error)
@@ -180,7 +187,6 @@ export class WorldsTubes {
     this.running = true
     this.accumulator += delta
     while (this.accumulator >= STEP) {
-      this.previous.set(this.points); this.oldHistory.set(this.history)
       this.time += STEP
       this.follow(target.x, target.y, pigment.rgb)
       this.accumulator -= STEP
@@ -194,44 +200,34 @@ export class WorldsTubes {
   }
 
   private seed(x: number, y: number, rgb: readonly number[]) {
-    for (let s = 0; s < STRANDS; s++) for (let i = 0; i < SAMPLES; i++) {
-      const p = (s * SAMPLES + i) * 3
-      this.points[p] = x - this.width / 2
-      this.points[p + 1] = this.height / 2 - y
-      this.points[p + 2] = 0
-      this.history.set(rgb, p)
+    for (let s = 0; s < STRANDS; s++) {
+      this.heads[s * 3] = x - this.width / 2
+      this.heads[s * 3 + 1] = this.height / 2 - y
+      this.heads[s * 3 + 2] = 0
     }
-    this.previous.set(this.points); this.oldHistory.set(this.history)
+    this.trail.seed(this.time, this.heads, rgb)
   }
 
   private follow(x: number, y: number, rgb: readonly number[]) {
     for (let s = 0; s < STRANDS; s++) {
-      const start = s * SAMPLES * 3
-      // Back-to-front stepping gives every link the previous simulation state.
-      const response = .36 + s * .045
-      for (let i = SAMPLES - 1; i > 0; i--) for (let axis = 0; axis < 3; axis++) {
-        const p = start + i * 3 + axis
-        this.points[p] += (this.points[p - 3] - this.points[p]) * response
-        this.history[p] += (this.history[p - 3] - this.history[p]) * response
-      }
-      const phase = s * 2.3999632297
-      // The reference's wandering stays subordinate to the requested compact
-      // idle circle; a moving-size offset here would knot up a 22px orbit.
-      const spread = (4 + s * 1.6) * (1 - .8 * this.orbit.mix)
-      this.points[start] = x - this.width / 2 + Math.cos(this.time * .83 + phase) * spread
-      this.points[start + 1] = this.height / 2 - y + Math.sin(this.time * 1.07 + phase) * spread
-      this.points[start + 2] = Math.sin(this.time * .65 + phase) * 12 * (1 - .5 * this.orbit.mix)
-      this.history.set(rgb, start)
+      const start = s * 3, phase = s * 2.3999632297
+      // Subordinate weave keeps the short idle arc dimensional, without
+      // creating independent targets or a second orbit animation owner.
+      const spread = (4 + s * 1.3) * (1 - .4 * this.orbit.mix)
+      this.heads[start] = x - this.width / 2 + Math.cos(this.time * .83 + phase) * spread
+      this.heads[start + 1] = this.height / 2 - y + Math.sin(this.time * 1.07 + phase) * spread
+      this.heads[start + 2] = Math.sin(this.time * .65 + phase) * 8
     }
+    this.trail.append(this.time, this.heads, rgb, .32 + .85 * this.orbit.mix)
   }
 
   private writeGeometry(mix: number) {
     for (let s = 0; s < STRANDS; s++) {
-      const start = s * SAMPLES * 3
-      for (let i = 0; i < SAMPLES * 3; i++) this.centers[i] = this.previous[start + i] + (this.points[start + i] - this.previous[start + i]) * mix
+      this.trail.sample(s, mix, Math.min(200, this.width * .45))
+      const centers = this.trail.centers
       for (let i = 0; i < SAMPLES; i++) {
         const p = i * 3, before = Math.max(0, i - 1) * 3, after = Math.min(SAMPLES - 1, i + 1) * 3
-        this.tangent.set(this.centers[after] - this.centers[before], this.centers[after + 1] - this.centers[before + 1], this.centers[after + 2] - this.centers[before + 2])
+        this.tangent.set(centers[after] - centers[before], centers[after + 1] - centers[before + 1], centers[after + 2] - centers[before + 2])
         if (this.tangent.lengthSq() < 1e-8) this.tangent.set(1, 0, 0)
         else this.tangent.normalize()
         // Parallel transport the previous section frame through reversals and
@@ -248,16 +244,15 @@ export class WorldsTubes {
           this.normal.normalize()
         }
         this.binormal.crossVectors(this.tangent, this.normal).normalize()
-        const radius = Math.sin(Math.PI * i / (SAMPLES - 1)) * (.9 + (s % 4) * .45)
+        const radius = Math.sin(Math.PI * i / (SAMPLES - 1)) * (.9 + (s % 4) * .45) * Math.min(1, this.trail.arcLengths[s] / 18)
         for (let j = 0; j < RING; j++) {
-          const angle = j / SIDES * Math.PI * 2, a = Math.cos(angle), b = Math.sin(angle)
+          const a = this.ringCos[j], b = this.ringSin[j]
           const v = ((s * SAMPLES + i) * RING + j) * 3
           for (let axis = 0; axis < 3; axis++) {
             const n = this.normal.getComponent(axis) * a + this.binormal.getComponent(axis) * b
             this.normals[v + axis] = n
-            this.positions[v + axis] = this.centers[p + axis] + n * radius
-            const c = start + p + axis
-            this.colors[v + axis] = this.oldHistory[c] + (this.history[c] - this.oldHistory[c]) * mix
+            this.positions[v + axis] = centers[p + axis] + n * radius
+            this.colors[v + axis] = this.trail.colors[p + axis]
           }
         }
       }
@@ -269,15 +264,22 @@ export class WorldsTubes {
 
   render(gl: THREE.WebGLRenderer) {
     const clear = gl.autoClear, target = gl.getRenderTarget(), test = gl.getScissorTest()
+    const face = gl.getActiveCubeFace(), mip = gl.getActiveMipmapLevel(), alpha = gl.getClearAlpha()
+    gl.getClearColor(this.clearColor)
     gl.getViewport(this.viewport); gl.getScissor(this.scissor)
     try {
       gl.autoClear = false
+      this.glow.renderEmission(gl, this.camera, this.width, this.height)
+      gl.setRenderTarget(target, face, mip); gl.setViewport(this.viewport); gl.setScissor(this.scissor)
+      gl.setScissorTest(test)
+      this.glow.renderComposite(gl, this.material.uniforms.uTubeLight.value, this.opacity, this.material.uniforms.uTubeBrightness.value)
       // The subsequent GlassLayer is a depth-independent screen pass. Clearing
       // depth here admits tubes over media/smoke while retaining self occlusion.
       gl.clearDepth()
       gl.render(this.scene, this.camera)
     } finally {
-      gl.setRenderTarget(target); gl.setViewport(this.viewport); gl.setScissor(this.scissor)
+      gl.setClearColor(this.clearColor, alpha)
+      gl.setRenderTarget(target, face, mip); gl.setViewport(this.viewport); gl.setScissor(this.scissor)
       gl.setScissorTest(test); gl.autoClear = clear
     }
   }
@@ -286,6 +288,7 @@ export class WorldsTubes {
     if (this.disposed) return
     this.disposed = true
     this.disconnect?.()
+    this.glow.dispose()
     this.geometry.dispose(); this.material.dispose()
     this.scene.clear()
   }
