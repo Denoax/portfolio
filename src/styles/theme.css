@@ -1,4 +1,21 @@
 /* v16 owned chrome; photos, videos and the protected world are never inverted. */
+/* The displayed theme mix also owns this temporary intro-only text contour. */
+[data-surface='intro'] {
+  --intro-theme-contour: min(1, calc(var(--theme-mix, 1) * 8), calc((1 - var(--theme-mix, 1)) * 4));
+}
+/* Static panel children set their own visibility; hide their whole paint layer. */
+[data-surface='intro'][data-reduced='true'] .selection-hub {
+  opacity: 0;
+}
+[data-surface='intro'] :is(.hub-brand-label, .gooey-label, .intro-hint span) {
+  -webkit-text-stroke: calc(.6px * var(--intro-theme-contour)) rgb(0 0 0 / var(--intro-theme-contour));
+  paint-order: stroke fill;
+  text-shadow:
+    -1px 0 rgb(255 255 255 / var(--intro-theme-contour)),
+    1px 0 rgb(255 255 255 / var(--intro-theme-contour)),
+    0 -1px rgb(255 255 255 / var(--intro-theme-contour)),
+    0 1px rgb(255 255 255 / var(--intro-theme-contour));
+}
 :root,
 :root[data-color-theme='dark'] {
   --site-base: #080808;

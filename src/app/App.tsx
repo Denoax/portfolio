@@ -386,7 +386,7 @@ function Home({ route }: { route: string }) {
       <a className="skip-link" href={pelagic.caseStudy}>
         Skip to Pelagic case study
       </a>
-      {!failed && !reduced && (
+      {!failed && (!reduced || hub.surface === 'intro') && (
         <ExperienceCanvas
           preferences={preferences}
           quality={quality}

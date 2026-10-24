@@ -44,6 +44,7 @@ export class Ringwriter {
       side: THREE.FrontSide, toneMapped: false,
       uniforms: {
         uInk: { value: new THREE.Color('#f4f4f2') }, uAtlas: { value: this.texture },
+        uTransitionContour: { value: 0 },
         uPressure: { value: 0 }, uPressureTime: { value: 0 }, uSnap: { value: 0 },
         uTime: { value: 0 }, uZoom: { value: 0 }, uPeriod: { value: this.layout.depthPeriod },
         uLower: { value: this.layout.lower }, uOuterSupportLog: { value: this.layout.outerSupportLog }, uScale: { value: 1 },
@@ -115,6 +116,7 @@ export class Ringwriter {
         gl_Position=projectionMatrix*modelViewMatrix*vec4((center+local)*uScale,0.,1.);
       }`,
       fragmentShader: `uniform vec3 uInk;uniform sampler2D uAtlas;uniform float uOpacity;
+      uniform float uTransitionContour,uRenderPixelRatio;
       uniform vec2 uAtlasGrid,uAtlasSize;uniform float uAtlasCell,uAtlasMaxLod;
       varying vec2 vUv;varying float vChar,vOpacity;
       void main(){
@@ -127,8 +129,29 @@ export class Ringwriter {
         float lod=.5*log2(max(max(dot(footprintX,footprintX),dot(footprintY,footprintY)),.000001));
         // Coarser whole-atlas levels lose cell isolation. Limit actual sampling
         // to the last level supported by measured transparent glyph padding.
-        float letter=texture2DLodEXT(uAtlas,atlas,clamp(lod,0.,uAtlasMaxLod)).a;
-        gl_FragColor=vec4(uInk,letter*vOpacity*uOpacity);
+        lod=clamp(lod,0.,uAtlasMaxLod);
+        float letter=texture2DLodEXT(uAtlas,atlas,lod).a;
+        vec3 ink=uInk;float coverage=letter;
+        if(uTransitionContour>.001){
+          // Opposite polarity inks necessarily cross during a continuous theme
+          // dissolve. A temporary two-tone edge preserves the glyph silhouette;
+          // both endpoint themes retain their exact original atlas treatment.
+          vec2 dx=dFdx(atlas)*uRenderPixelRatio,dy=dFdy(atlas)*uRenderPixelRatio;
+          vec2 origin=vec2(tile.x,uAtlasGrid.y-1.-tile.y)*uAtlasCell;
+          vec2 lower=(origin+.5)/uAtlasSize,upper=(origin+uAtlasCell-.5)/uAtlasSize;
+          float nearInk=letter,farInk=letter;
+          for(int side=0;side<4;side++){
+            vec2 offset=side==0?dx:side==1?-dx:side==2?dy:-dy;
+            nearInk=max(nearInk,texture2DLodEXT(uAtlas,clamp(atlas+offset,lower,upper),lod).a);
+            farInk=max(farInk,texture2DLodEXT(uAtlas,clamp(atlas+offset*2.,lower,upper),lod).a);
+          }
+          farInk=max(farInk,nearInk);
+          float edge=(farInk-letter)*uTransitionContour;
+          vec3 contour=vec3(1.-clamp((nearInk-letter)/max(farInk-letter,.00001),0.,1.));
+          coverage=letter+edge;
+          ink=(uInk*letter+contour*edge)/max(coverage,.00001);
+        }
+        gl_FragColor=vec4(ink,coverage*vOpacity*uOpacity);
         #include <colorspace_fragment>
       }`,
     })

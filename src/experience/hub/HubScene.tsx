@@ -10,6 +10,7 @@ import { panelTransform } from '../../core/projectedPanel'
 import { counterReelPose, pairedReelLayout } from '../../core/pairedReel'
 import { HoverPerimeter, perimeterGLSL } from './HoverPerimeter'
 import { Ringwriter } from './Ringwriter'
+import { IntroWaves } from './IntroWaves'
 import { displayedThemeMix } from '../../core/theme'
 import { CriticalDamper } from '../../core/criticalDamper'
 import { GlassField } from './GlassField'
@@ -189,6 +190,7 @@ export function HubScene({
     })
     overlay.add(new THREE.Mesh(plane, trailMaterial))
     const ringwriter = new Ringwriter()
+    const waves = new IntroWaves()
     const glass = new GlassField()
     return {
       geometry,
@@ -204,6 +206,7 @@ export function HubScene({
       plane,
       trailMaterial,
       ringwriter,
+      waves,
       glass,
     }
   }, [gl])
@@ -282,11 +285,15 @@ export function HubScene({
           resources.ringwriter.mesh.clone(),
           resources.glass.mesh.clone(),
         )
-        preparation = Promise.all([
+        const foreground = Promise.all([
           gl.compileAsync(compileScene, camera),
           resources.trail.prepare(),
         ])
-        await preparation
+        const backdrop = resources.waves.prepare(gl, camera).then(() => {
+          if (alive) needsRepaint.current = true
+        })
+        preparation = Promise.all([foreground, backdrop])
+        await foreground
         if (alive) {
           loaded.current = true
           clearTimeout(timeout)
@@ -309,6 +316,7 @@ export function HubScene({
         previewTexture.current?.texture.dispose()
         previewTexture.current = null
         resources.ringwriter.dispose()
+        resources.waves.dispose()
         resources.glass.dispose()
         resources.geometry.dispose()
         resources.materials.forEach((material) => material.dispose())
@@ -373,6 +381,15 @@ export function HubScene({
       Math.min(gl.getContext().drawingBufferWidth / size.width,
         gl.getContext().drawingBufferHeight / size.height),
     )
+    // Less motion keeps its existing accessible DOM rings over a still field.
+    resources.ringwriter.mesh.visible = menu.intro.active && !menu.reduced
+    if (menu.reduced) {
+      // This canvas supplies only the still intro backdrop. Projecting hidden
+      // panels here would leave inline visibility/poses on the DOM-only Worlds
+      // after entry unmounts the canvas.
+      for (const material of resources.materials) material.uniforms.uOpacity.value = 0
+      return
+    }
     const reveal = menu.intro.active ? menu.intro.exitProgress : 1
     const selected = Math.round(menu.rendered * (menuViews.length - 1))
     const video = previews.video
@@ -660,6 +677,11 @@ export function HubScene({
         style: menu.intro.active ? 'intro' : 'worlds', pigment, projectId: menuViews[selected].id,
         quiet: resources.perimeter.quiet },
     )
+    resources.waves.update(menu.intro, menu.clock, q,
+      context.drawingBufferWidth, context.drawingBufferHeight,
+      preferences.current.settings.displayBrightness)
+    resources.ringwriter.material.uniforms.uTransitionContour.value =
+      Math.min(1, q * 8, (1 - q) * 4)
     gl.render(scene, camera)
     if (loaded.current && !reported.current) {
       reported.current = true
@@ -687,6 +709,7 @@ export function HubScene({
   }, 1)
   return (
     <>
+      <primitive object={resources.waves.mesh} dispose={null} />
       <primitive object={resources.glass.mesh} dispose={null} />
       <primitive object={resources.ringwriter.mesh} dispose={null} />
       {menuViews.map((view, index) => (

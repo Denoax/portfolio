@@ -11,6 +11,13 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
+          Waves intro backdrop adapted from{' '}
+          <a href="https://codepen.io/TomHinton/pen/EajJrBd">
+            Tom Hinton — #WCCChallenge : Waves
+          </a>
+          . <a href="/licenses/Tom-Hinton-Waves-MIT.md">MIT license and source notice</a>.
+        </p>
+        <p>
           Flying pane tiles studied from{' '}
           <a href="https://www.inspora.design/posts/flying-dropdown-menu">
             George / @vanjek — Flying Dropdown Menu
