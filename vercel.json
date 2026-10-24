@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "testing/waves-intro-20261023-01a16be6": false,
-      "testing/worlds-tubes-20261023-01a16be6": false
+      "testing/worlds-tubes-20261023-01a16be6": false,
+      "testing/waves-refinement-v2-20261024-01a16be6": false
     }
   }
 }

@@ -687,7 +687,7 @@ export function HubScene({
     )
     resources.waves.update(menu.intro, menu.clock, q,
       context.drawingBufferWidth, context.drawingBufferHeight,
-      preferences.current.settings.displayBrightness)
+      preferences.current.settings.displayBrightness, size.height)
     const tubesActive = resources.tubes.update(smokeDelta, size.width, size.height,
       !menu.intro.active && !menu.paused && !menu.reduced && menu.decorativeRunning,
       q, pigment, resources.trail.displayedWorldsPigment,

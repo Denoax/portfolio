@@ -18,7 +18,7 @@ const geometry = waves.geometry, material = waves.material
 const hits = []
 waves.mesh.raycast(null, hits)
 assert.deepEqual(hits, [], 'Backdrop must not intercept input')
-waves.update(intro, 3, 1, 1440, 900, 100)
+waves.update(intro, 3, 1, 1440, 900, 100, 900)
 assert.equal(waves.mesh.visible, false, 'Foreground can render before optional compile completes')
 
 let finishCompile
@@ -32,28 +32,31 @@ const preparing = waves.prepare(renderer, {})
 assert.equal(waves.mesh.visible, false)
 finishCompile()
 await preparing
-waves.update(intro, 3, 1, 2880, 1800, 120)
+waves.update(intro, 3, 1, 2880, 1800, 120, 900)
 assert.equal(waves.mesh.visible, true)
 assert.deepEqual(material.uniforms.uWaveResolution.value.toArray(), [2880, 1800],
   'Actual buffer dimensions must not receive a second DPR multiplier')
 assert.equal(material.uniforms.uWaveTime.value, 3)
 assert.equal(material.uniforms.uWaveBrightness.value, 1.2)
+assert.equal(material.uniforms.uWaveCellFrequency.value, 900 / 48,
+  'DPR changes sampling resolution, not CSS cell spacing')
 
 for (const mix of [0, .2, .5, 1, .3, 0, 1]) {
-  waves.update(intro, 7, mix, 390, 844, 100)
+  waves.update(intro, 7, mix, 390, 844, 100, 844)
   assert.equal(material.uniforms.uWaveTime.value, 7, 'Theme/resize cannot restart phase')
   assert.equal(waves.geometry, geometry)
   assert.equal(waves.material, material)
 }
-waves.update({ active: true, exitProgress: .4 }, 9, 0, 390, 844, 100)
+assert.equal(material.uniforms.uWaveCellFrequency.value, 844 / 48)
+waves.update({ active: true, exitProgress: .4 }, 9, 0, 390, 844, 100, 844)
 assert.equal(material.uniforms.uWaveVisibility.value, .6)
-waves.update({ active: false, exitProgress: 0 }, 30, 0, 390, 844, 100)
+waves.update({ active: false, exitProgress: 0 }, 30, 0, 390, 844, 100, 844)
 assert.equal(waves.mesh.visible, false)
 assert.equal(material.uniforms.uWaveTime.value, 9, 'No wave uniform work in Worlds')
-waves.update(intro, 40 * Math.PI + .25, 1, 390, 844, 100)
+waves.update(intro, 40 * Math.PI + .25, 1, 390, 844, 100, 844)
 assert.equal(material.uniforms.uWaveTime.value, 40 * Math.PI + .25,
   'Source phase must continue through the mathematical period without a reset')
-waves.update({ active: true, exitProgress: 1 }, 30, 0, 390, 844, 100)
+waves.update({ active: true, exitProgress: 1 }, 30, 0, 390, 844, 100, 844)
 assert.equal(waves.mesh.visible, false)
 
 const warnings = [], originalWarn = console.warn
@@ -66,7 +69,7 @@ try {
       getContext: () => ({ LINK_STATUS: 1, getProgramParameter: () => false }),
       info: { programs: failure === 'missing' ? [] : [{ name: optional.material.name, program: {} }] },
     }, {})
-    optional.update(intro, 1, 1, 1440, 900, 100)
+    optional.update(intro, 1, 1, 1440, 900, 100, 900)
     assert.equal(optional.mesh.visible, false, `${failure}: plain intro remains available`)
     optional.dispose()
   }

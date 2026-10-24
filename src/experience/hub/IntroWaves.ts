@@ -10,18 +10,25 @@ void coswarp(inout vec3 trip, float scale, float time) {
   trip += scale * .05 * cos(11. * trip.yzx + time * .25);
   trip += scale * .025 * cos(17. * trip.yzx + time * .25);
 }
-float signedCubic(float edge0, float edge1, float x) {
-  // The original smoothstep can have reversed/equal edges (undefined GLSL).
-  // Preserve its signed cubic interpretation, including descending ramps.
-  float width = edge1 - edge0;
-  float safeWidth = (width < 0. ? -1. : 1.) * max(abs(width), .00001);
-  float a = clamp((x - edge0) / safeWidth, 0., 1.);
-  return a * a * (3. - 2. * a);
+float periodicCellRadius(vec2 p) {
+  // Squared sine is periodic in each axis, including matching boundary slopes.
+  // The small radial floor also keeps the derivative finite at cell corners.
+  vec2 s = sin(3.141592653589793 * p);
+  return sqrt(dot(s, s) + .0001);
+}
+float softOrientedRamp(float edge0, float edge1, float x) {
+  float delta = edge1 - edge0;
+  float midpoint = .5 * (edge0 + edge1);
+  float footprint = max(fwidth(x - midpoint), .0001);
+  float halfWidth = max(.5 * abs(delta), 1.25 * footprint);
+  float up = smoothstep(midpoint - halfWidth, midpoint + halfWidth, x);
+  // A signed near-zero ramp otherwise flips abruptly as its edges cross.
+  return mix(1. - up, up, smoothstep(-.035, .035, delta));
 }
 float tomHintonWaves(vec2 coord, vec2 resolution, float time) {
   vec2 uv = (coord - resolution * .5) / max(resolution.y, 1.) + .5;
-  float t = time * .2 + length(fract((uv - .5) * 10.));
-  float t2 = time * .1 + length(fract((uv - .5) * 20.));
+  float t = time * .2 + periodicCellRadius((uv - .5) * uWaveCellFrequency);
+  float t2 = time * .1 + periodicCellRadius((uv - .5) * uWaveCellFrequency * 2.);
   vec2 original = uv;
   vec3 warp = vec3(uv, 1.);
   coswarp(warp, 3., time);
@@ -30,14 +37,14 @@ float tomHintonWaves(vec2 coord, vec2 resolution, float time) {
   color.r = sin(time * .2) + sin(length(uv - .5) * 10.);
   color.g = sin(time * .3) + sin(length(uv - .5) * 20.);
   coswarp(color, 3., time);
-  return signedCubic(color.r, sin(t2), sin(t));
+  return softOrientedRamp(color.r, sin(t2), sin(t));
 }`
 
 export class IntroWaves {
-  private readonly darkBase = new THREE.Color('#080808')
-  private readonly darkCrest = new THREE.Color('#343941')
-  private readonly lightBase = new THREE.Color('#f3f5f7')
-  private readonly lightCrest = new THREE.Color('#c2c9d1')
+  private readonly darkBase = new THREE.Color('#050607')
+  private readonly darkCrest = new THREE.Color('#151920')
+  private readonly lightBase = new THREE.Color('#fafbfd')
+  private readonly lightCrest = new THREE.Color('#e4e9ef')
   private ready = false
   readonly geometry = new THREE.PlaneGeometry(2, 2)
   readonly material = new THREE.ShaderMaterial({
@@ -53,10 +60,11 @@ export class IntroWaves {
       uWaveBase: { value: new THREE.Color() },
       uWaveCrest: { value: new THREE.Color() },
       uWaveBrightness: { value: 1 },
+      uWaveCellFrequency: { value: 900 / 48 },
     },
     vertexShader: 'void main(){gl_Position=vec4(position.xy,0.,1.);}',
     fragmentShader: `
-      uniform float uWaveTime,uWaveVisibility,uWaveBrightness;
+      uniform float uWaveTime,uWaveVisibility,uWaveBrightness,uWaveCellFrequency;
       uniform vec2 uWaveResolution;
       uniform vec3 uWaveBase,uWaveCrest;
       ${waveField}
@@ -93,7 +101,7 @@ export class IntroWaves {
   }
 
   update(intro: MenuPresentation['intro'], clock: number, themeMix: number,
-    bufferWidth: number, bufferHeight: number, brightness: number) {
+    bufferWidth: number, bufferHeight: number, brightness: number, cssHeight: number) {
     this.mesh.visible = this.ready && intro.active && intro.exitProgress < 1
     if (!this.mesh.visible) return
     const uniforms = this.material.uniforms
@@ -102,6 +110,8 @@ export class IntroWaves {
     // narrow signed ramps can expose a few pixels at a mathematical-period wrap.
     uniforms.uWaveTime.value = clock
     uniforms.uWaveResolution.value.set(bufferWidth, bufferHeight)
+    // Composition uses CSS pixels; the real buffer remains the sampling owner.
+    uniforms.uWaveCellFrequency.value = cssHeight / 48
     uniforms.uWaveVisibility.value = 1 - intro.exitProgress
     uniforms.uWaveBase.value.copy(this.darkBase).lerp(this.lightBase, themeMix)
     uniforms.uWaveCrest.value.copy(this.darkCrest).lerp(this.lightCrest, themeMix)
