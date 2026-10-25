@@ -1,5 +1,5 @@
 import {boot} from './boot/runtime'
-import {TerminalIndex} from './boot/TerminalIndex'
+import {CompilationStream} from './boot/CompilationStream'
 
 const shell = document.getElementById('portfolio-boot')!
 const root = document.getElementById('root')!
@@ -7,7 +7,8 @@ const status = document.getElementById('portfolio-boot-status')!
 const retry = shell.querySelector<HTMLAnchorElement>('[data-boot-retry]')!
 retry.href = location.href
 window.dispatchEvent(new Event('portfolio:boot-connected'))
-const decoration = new TerminalIndex(shell)
+delete document.documentElement.dataset.bootHidden
+const decoration = new CompilationStream(shell)
 let raf = 0, last = 0, elapsed = 0, revealing = -1
 const deadline = setTimeout(() => boot.fail('Preparation took too long'), Math.max(0,12000-performance.now()))
 const reduced = () => matchMedia('(prefers-reduced-motion:reduce)').matches || (() => {
@@ -33,7 +34,8 @@ const frame = (now: number) => {
   if (document.hidden || state.phase !== 'REVEALING' || state.generation !== revealing) return
   elapsed += last ? Math.min(50,now-last) : 0; last=now
   const duration = reduced() ? 100 : document.documentElement.dataset.colorTheme === 'light' ? 650 : 420
-  const progress = Math.min(1,elapsed/duration)
+  const textFade = reduced() ? 0 : 110
+  const progress = Math.max(0,Math.min(1,(elapsed-textFade)/duration))
   // One cover dissolve. Release formation/transport only in the final third,
   // so loading never consumes the original opening's initial state.
   shell.style.opacity=String(1-progress)
@@ -55,7 +57,7 @@ const unsubscribe = boot.subscribe(() => {
     window.dispatchEvent(new Event('portfolio:boot-fallback'))
   }
   if(state.phase==='PRIMED') {
-    revealing=state.generation;elapsed=last=0;decoration.dispose()
+    revealing=state.generation;elapsed=last=0;decoration.retire()
     boot.reveal(revealing)
     raf=requestAnimationFrame(frame)
   }

@@ -56,37 +56,6 @@ export function InfoPanel({
             I’m a dual major in Mathematics and Computer Science, and a
             developer for the Government of Canada.
           </p>
-          <p className="info-source-credit">
-            Navigation: <a href="https://www.rareui.com/">Rare UI</a> · Swami
-            Malode, via Inspora.
-          </p>
-          <p className="info-source-credit">
-            Audio:{' '}
-            <a
-              href="https://obsydianx.itch.io/interface-sfx-pack-1"
-              target="_blank"
-              rel="noreferrer"
-            >
-              ObsydianX
-            </a>{' '}
-            and{' '}
-            <a
-              href="https://opengameart.org/users/isaiah658"
-              target="_blank"
-              rel="noreferrer"
-            >
-              isaiah658
-            </a>{' '}
-            · CC0. SVG gait study:{' '}
-            <a
-              href="https://www.inspora.design/posts/1-29"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Raul Dronca
-            </a>
-            .
-          </p>
           <p className="info-location">Lethbridge, Canada</p>
           <div className="info-links">
             <a href={`mailto:${contact.email}`}>Email ↗</a>

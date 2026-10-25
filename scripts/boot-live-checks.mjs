@@ -49,7 +49,9 @@ async function run(name,{fault='',path='',context:options={},delay=0}={},check=a
 }
 try {
  await run('delayed-import-input-fence',{delay:2800},async(page,item)=>{
-  await page.waitForSelector('#portfolio-boot');assert(await page.locator('#portfolio-boot .terminal-row').count()===22)
+  await page.waitForSelector('#portfolio-boot');assert.equal(await page.locator('#portfolio-boot pre.terminal-stream').count(),1)
+  assert.equal(await page.locator('#portfolio-boot .terminal-header,#portfolio-boot .terminal-row').count(),0)
+  assert((await page.locator('.terminal-stream').textContent()).split('\n').length===416)
   assert(await page.locator('#root').evaluate(n=>n.inert));await page.waitForFunction(()=>performance.getEntriesByName('first-contentful-paint').length>0);await page.screenshot({path:out+'/delayed-import-input-fence/shell.png'})
   await page.mouse.move(500,500);await page.mouse.wheel(0,900);await page.mouse.down();await page.keyboard.press('Enter');await page.waitForTimeout(400);await page.mouse.up()
   assert.equal(await page.locator('.identity-intro').count(),0,'Main is still delayed while real HTML shell is visible')
@@ -60,7 +62,8 @@ try {
   const m=await marks(page)
   item.paint=await page.evaluate(()=>performance.getEntriesByType('paint').map(x=>({name:x.name,at:x.startTime})))
   assert(item.paint.find(x=>x.name==='first-contentful-paint').at<=m.find(x=>x.name.endsWith('import-start')).at)
-  item.sameCanvas={createdWebGLContexts:await page.evaluate(()=>bootProbe.contexts),scope:'Includes the existing WebGL availability probe; frame trace proves no reveal-time context creation'}
+  item.sameCanvas={createdWebGLContexts:await page.evaluate(()=>bootProbe.contexts),scope:'One real WebGL renderer; no throwaway availability context and no reveal-time context creation'}
+  assert.equal(item.sameCanvas.createdWebGLContexts,1)
   const during=frames.filter(x=>x.phase==='REVEALING');assert(during.length>0);assert.equal(new Set(during.map(x=>x.contexts)).size,1)
   await page.waitForTimeout(700)
  })

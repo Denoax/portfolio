@@ -1,18 +1,17 @@
 import { useLayoutEffect, useState } from 'react'
+import { CriticalDamper } from './criticalDamper'
+import {linear,srgb,themeBase,toLinearThemeMix,fromLinearThemeMix,themeInkMix,themeContour} from './themeMotion'
+export {themeInkMix,themeContour} from './themeMotion'
 export type ThemePreference = 'system' | 'light' | 'dark'
 export type ResolvedTheme = 'light' | 'dark'
 // One displayed value serves DOM, the existing scene and its glass adapter.
 // q=0 is dark; q=1 is light. Preference remains the persisted target.
 let mix = Number(document.documentElement.dataset.colorTheme !== 'dark')
 let initialized = false
-let velocity = 0
+const motion = new CriticalDamper(fromLinearThemeMix(mix))
 export const displayedThemeMix = () => mix
-const linear = (v: number) =>
-  v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
-const srgb = (v: number) =>
-  v <= 0.0031308 ? v * 12.92 : 1.055 * v ** (1 / 2.4) - 0.055
 const palette = {
-  'site-base': ['080808', 'f3f5f7'],
+  'site-base': themeBase,
   'site-ink': ['f4f4f2', '161a20'],
   'site-muted': ['b1b7c0', '525d68'],
   'hover-ink': ['ffffff', '000000'],
@@ -22,10 +21,11 @@ const palette = {
   'nav-selected-ink': ['141414', 'f3f5f7'],
   'field-base': ['101318', 'eceff2'],
   'activity-zero': ['21272b', 'd7dce0'],
+  'settings-ink': ['f4f5f7', '161a20'],
+  'settings-muted': ['c2c7d0', '424b56'],
 } as const
 // Read-only palette access for transient paint; display remains the sole owner.
 export { palette as themePalette }
-export const themeInkMix = (q: number) => Math.min(1, Math.max(0, (q - 0.08) / 0.3))
 export function themeColor(dark: string, light: string, q: number) {
   const values = [0, 2, 4].map((i) =>
     Math.round(
@@ -42,9 +42,12 @@ function display(q: number) {
   mix = q
   const root = document.documentElement
   root.style.setProperty('--theme-mix', String(q))
+  // Retire the fixed inline first-paint background once the display owner
+  // starts; the root/scrollbar edge must follow the same live palette too.
+  root.style.backgroundColor = themeColor(...themeBase,q)
   root.dataset.themeMix = q.toFixed(5)
-  // Ink crosses sooner than the linear-light substrate. A bounded opposite
-  // contour keeps semantic text legible during the unavoidable polarity change.
+  // All native/GL ink uses the same smooth polarity crossover. A restrained
+  // continuous edge is present only where foreground and background converge.
   const inkMix = themeInkMix(q)
   for (const [name, [dark, light]] of Object.entries(palette))
     root.style.setProperty(
@@ -52,7 +55,7 @@ function display(q: number) {
       themeColor(
         dark,
         light,
-        name === 'site-ink' || name === 'nav-selected' ? inkMix : q,
+        name === 'site-ink' || name === 'nav-selected' || name === 'settings-ink' ? inkMix : q,
       ),
     )
   root.style.setProperty(
@@ -67,10 +70,13 @@ function display(q: number) {
     '--nav-hover-surface',
     `color-mix(in srgb, ${themeColor(...palette['hover-surface'], q)} ${q * 100}%, transparent)`,
   )
-  root.style.setProperty(
-    '--ink-contour',
-    `color-mix(in srgb, ${q < 0.23 ? '#080808' : '#f3f5f7'} ${Math.sin(Math.PI * q) * 75}%, transparent)`,
-  )
+  root.style.setProperty('--theme-contour',String(themeContour(q)))
+  root.style.setProperty('--theme-settings-film',
+    `color-mix(in srgb, ${themeColor('14171c','e9edf1',q)} ${78+8*q}%, transparent)`)
+  root.style.setProperty('--pane-hover-surface',themeColor('202020','e7ebef',q))
+  root.style.setProperty('--static-ring-edge',
+    `color-mix(in srgb, ${themeColor('ffffff','161a20',q)} 19%, transparent)`)
+  if (q===0 || q===1) root.style.colorScheme = q===1 ? 'light' : 'dark'
   root.style.setProperty('--buddy-body', themeColor('101010', 'e0e5e9', q))
   root.style.setProperty('--buddy-rim', themeColor('626262', 'ffffff', q))
   root.style.setProperty('--buddy-face', themeColor('ffffff', '171c22', q))
@@ -106,9 +112,9 @@ export function useSiteTheme(
     const root = document.documentElement,
       target = Number(theme === 'light')
     root.dataset.colorTheme = theme
-    root.style.colorScheme = theme
     if (!initialized) {
       initialized = true
+      motion.reset(fromLinearThemeMix(target))
       display(target)
       return
     }
@@ -117,22 +123,22 @@ export function useSiteTheme(
     root.dataset.themeTransitioning = 'true'
     let raf = 0,
       last = 0
-    const duration =
-      motionLess || shortDissolve || preference === 'system' ? 0.028 : 0.12
+    const response =
+      motionLess || shortDissolve || preference === 'system' ? 0.028 : 0.24
     // Exact critically damped integration is partition independent. Retargeting
     // starts at the displayed color; no overlay, duplicate renderer or queues.
     const tick = (now: number) => {
       const dt =
         last && !document.hidden ? Math.min(0.05, (now - last) / 1000) : 0
       last = now
-      const omega = 1 / duration,
-        offset = mix - target,
-        a = velocity + omega * offset,
-        e = Math.exp(-omega * dt)
-      const next = target + (offset + a * dt) * e
-      velocity = (velocity - omega * a * dt) * e
-      display(Math.max(0, Math.min(1, next)))
-      if (Math.abs(mix - target) < 0.0002 && Math.abs(velocity) < 0.003) {
+      // CriticalDamper's smoothTime uses omega=2/smoothTime. The 0.24s
+      // response is a time constant, not the complete transition duration.
+      const next = motion.step(target,response*2,dt)
+      motion.value = Math.max(0,Math.min(1,next))
+      if (motion.value!==next) motion.velocity=0
+      display(toLinearThemeMix(motion.value))
+      if (Math.abs(motion.value - target) < 0.0002 && Math.abs(motion.velocity) < 0.003) {
+        motion.reset(target)
         display(target)
         delete root.dataset.themeTransitioning
         return

@@ -1,7 +1,7 @@
 /* v16 owned chrome; photos, videos and the protected world are never inverted. */
 /* The displayed theme mix also owns this temporary intro-only text contour. */
 [data-surface='intro'] {
-  --intro-theme-contour: min(1, calc(var(--theme-mix, 1) * 8), calc((1 - var(--theme-mix, 1)) * 4));
+  --intro-theme-contour: var(--theme-contour,0);
 }
 /* Static panel children set their own visibility; hide their whole paint layer. */
 [data-surface='intro'][data-reduced='true'] .selection-hub {
@@ -77,7 +77,7 @@ html {
 .gooey-label:not([data-active='true']):is(:hover, :focus-visible) {
   background-color: var(--nav-hover-surface);
 }
-:root[data-color-theme='light'] .hub-brand:is(:hover, :focus-visible) {
+.hub-brand:is(:hover, :focus-visible) {
   background-color: var(--hover-surface);
 }
 .gooey-label:focus-visible {
@@ -211,33 +211,32 @@ html {
   border: 0;
   background: var(--button);
 }
-:root[data-color-theme='light'] .settings-panel option {
+.settings-panel option {
   background: #17212b;
   color: #f4f6f8;
 }
-:root[data-color-theme='light'] .intro-hint,
-:root[data-color-theme='light'] .intro-hint span {
+:root .intro-hint,
+:root .intro-hint span {
   color: var(--site-ink);
 }
-:root[data-color-theme='light'] .intro-static-rings span {
-  border-color: #161a2030;
+.intro-static-rings span {
+  border-color: var(--static-ring-edge);
   color: var(--site-ink);
 }
-:root[data-color-theme='light'] .menu-project,
-:root[data-color-theme='light'] .menu-description,
-:root[data-color-theme='light'] .menu-preview-control {
+.menu-project,
+.menu-description,
+.menu-preview-control {
   color: var(--site-ink);
 }
-:root[data-color-theme='light'] .selection-hub[data-static='true'] {
+.selection-hub[data-static='true'] {
   background: var(--site-base);
 }
-:root[data-color-theme='light'] .hub-name,
-:root[data-color-theme='light'] .case-study,
-:root[data-color-theme='light'] .credits {
+.hub-name,
+.case-study,
+.credits {
   color: var(--site-ink);
 }
-:root[data-color-theme='light']
-  :is(
+:is(
     .alignment-cover,
     .resource-transition,
     .alignment-status,
@@ -369,24 +368,24 @@ html {
   }
 }
 
-:root[data-color-theme='light'] .hub-brand,
-:root[data-color-theme='light'] .hub-brand span,
-:root[data-color-theme='light'] .hub-brand strong {
+.hub-brand,
+.hub-brand span,
+.hub-brand strong {
   color: var(--site-ink);
 }
-:root[data-color-theme='light'] .menu-actions > .ui-action,
-:root[data-color-theme='light'] .hub-header .utility-toggle {
+.menu-actions > .ui-action,
+.hub-header .utility-toggle {
   color: var(--site-ink);
   border-color: var(--line);
 }
-:root[data-color-theme='light'] .menu-actions > .ui-action:hover,
-:root[data-color-theme='light'] .hub-header .utility-toggle:hover {
+.menu-actions > .ui-action:hover,
+.hub-header .utility-toggle:hover {
   color: var(--hover-ink);
   background-color: var(--hover-surface);
 }
-:root[data-color-theme='light'] .hub-brand:hover,
-:root[data-color-theme='light'] .hub-brand:hover span,
-:root[data-color-theme='light'] .hub-brand:hover strong {
+.hub-brand:hover,
+.hub-brand:hover span,
+.hub-brand:hover strong {
   color: var(--hover-ink);
 }
 .simple-page {
@@ -396,15 +395,14 @@ html {
 .simple-page p {
   color: var(--site-muted);
 }
-:root[data-color-theme='light'] .case-site {
+.case-site {
   background: var(--site-base);
   color: var(--site-ink);
 }
-:root[data-color-theme='light'] .case-hero {
+.case-hero {
   color: #f4f4f2;
 }
-:root[data-color-theme='light']
-  .case-site
+.case-site
   :is(.case-copy, .case-details, .case-footer) {
   color: var(--site-ink);
 }

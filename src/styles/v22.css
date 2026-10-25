@@ -1,20 +1,13 @@
 /* Compact glass reuses the owned compositor. Only this pane's neutral film
    adapts to theme; project frames and protected world colors stay authored. */
 .glass-window.experience-settings {
-  --settings-film: rgba(20, 23, 28, 0.78);
-  --settings-ink: #f4f5f7;
-  --settings-muted: #c2c7d0;
+  --settings-film: var(--theme-settings-film);
   --pane-ink: var(--settings-ink);
   --pane-muted: var(--settings-muted);
   max-width: calc(100vw - 32px);
   max-height: calc(100svh - 32px);
   border-radius: 26px;
   color: var(--settings-ink);
-}
-:root[data-color-theme='light'] .experience-settings {
-  --settings-film: rgba(233, 237, 241, 0.86);
-  --settings-ink: #161a20;
-  --settings-muted: #424b56;
 }
 .experience-settings[data-glass-mode='gpu']::before {
   background: var(--settings-film);
@@ -180,11 +173,10 @@
 }
 /* Light chrome against the still-dark project/help substrate needs a pale
    neutral hover backing to make the requested black hover ink readable. */
-:root[data-color-theme='light']
-  .glass-window:not(.experience-settings)
+.glass-window:not(.experience-settings)
   :is(button, a):is(:hover, :focus-visible) {
-  color: #000;
-  background: #e7ebef;
+  color: var(--hover-ink);
+  background: var(--pane-hover-surface);
 }
 .hub-brand:is(:hover, :focus-visible) {
   background: transparent !important;

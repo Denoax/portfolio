@@ -11,10 +11,10 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
-          Terminal loading index studied from Jean Dawson / Pixel Bath, designed
-          by Mouthwash and developed by Guillaume Colombel. Original code using
-          this portfolio’s real catalogue.{' '}
-          <a href="/licenses/Terminal-Index-References.md">Reference and study credits</a>.
+          Compilation loading stream: original choreography for this portfolio,
+          informed by Ines Montani’s{' '}
+          <a href="https://github.com/ines/termynal">Termynal</a> output grammar.
+          {' '}<a href="/licenses/Compilation-Stream-References.md">Sources and notices</a>.
         </p>
         <p>
           Waves intro backdrop adapted from{' '}

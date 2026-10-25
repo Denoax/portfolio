@@ -12,7 +12,7 @@ import { counterReelPose, pairedReelLayout } from '../../core/pairedReel'
 import { HoverPerimeter, perimeterGLSL } from './HoverPerimeter'
 import { Ringwriter } from './Ringwriter'
 import { IntroWaves } from './IntroWaves'
-import { displayedThemeMix } from '../../core/theme'
+import { displayedThemeMix,themeInkMix,themeContour } from '../../core/theme'
 import { CriticalDamper } from '../../core/criticalDamper'
 import { GlassField } from './GlassField'
 import type { PreviewPlayback } from '../../core/previewPlayback'
@@ -290,6 +290,9 @@ export function HubScene({
       nativeFonts().then(() => boot.resource(bootToken,'native-fonts')),
     ])
       .then(async () => {
+        // Fonts/layout and uploads are independent preparation phases. Offer
+        // the browser a task boundary without adding a minimum display time.
+        await new Promise<void>(resolve => setTimeout(resolve,0))
         if (!alive) return
         gl.initTexture(resources.ringwriter.texture)
         boot.resource(bootToken,'ring-atlas')
@@ -313,7 +316,9 @@ export function HubScene({
             throw new Error('Foreground shader did not link')
           boot.resource(bootToken,'foreground')
         })
-        const backdrop = resources.waves.prepare(gl, camera).then(() => {
+        const backdrop = new Promise<void>(resolve => setTimeout(resolve,0)).then(() => {
+          if (alive) return resources.waves.prepare(gl,camera)
+        }).then(() => {
           if (alive) {
             needsRepaint.current = true
             boot.resource(bootToken,'waves',resources.waves.available ? 'ready' : 'fallback')
@@ -399,7 +404,7 @@ export function HubScene({
       .copy(darkInk)
       .lerp(
         lightInk,
-        Math.min(1, Math.max(0, (displayedThemeMix() - 0.08) / 0.3)),
+        themeInkMix(displayedThemeMix()),
       )
     resources.ringwriter.update(
       dt,
@@ -714,7 +719,7 @@ export function HubScene({
       context.drawingBufferWidth, context.drawingBufferHeight,
       preferences.current.settings.displayBrightness, size.height)
     resources.ringwriter.material.uniforms.uTransitionContour.value =
-      Math.min(1, q * 8, (1 - q) * 4)
+      themeContour(q)
     gl.render(scene, camera)
     if (active || perimeterActive) {
       const clear = gl.autoClear

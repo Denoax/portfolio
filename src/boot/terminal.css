@@ -1,39 +1,54 @@
-/* Measured Jean Dawson index study; the system mono stays fixed for this boot.
-   No application font/reset may swap or reflow this independent surface. */
-#portfolio-boot { --boot-gutter:20px; position:fixed; inset:0; z-index:10000; margin:0; background:#000; color:#929292; font:11px/13.5px ui-monospace,"Liberation Mono",monospace; font-synthesis:none; letter-spacing:0; text-align:left; color-scheme:dark; isolation:isolate; overflow:hidden; opacity:1; }
+/* Native mono, one finite prepainted stream. Only transforms move its rows. */
+/* The older page CSS reserves a bright gutter before the home DOM mounts. */
+:root:has(#portfolio-boot) { scrollbar-gutter:auto; }
+#portfolio-boot {
+  --boot-line:18px; position:fixed; inset:0; z-index:10000; margin:0;
+  background:#08090b; color:#c0c5cc; color-scheme:dark; isolation:isolate;
+  overflow:hidden; opacity:1; font:400 13px/var(--boot-line) ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  font-synthesis:none; letter-spacing:0; text-align:left;
+}
 #portfolio-boot *,#portfolio-boot *::before,#portfolio-boot *::after { box-sizing:border-box; font-family:inherit; letter-spacing:inherit; text-shadow:none; }
-#portfolio-boot .terminal-header { position:absolute; top:18px; left:var(--boot-gutter); right:var(--boot-gutter); display:flex; gap:14px; font-size:14px; line-height:16px; white-space:nowrap; }
-#portfolio-boot strong { color:#eee; font-weight:400; }
-#portfolio-boot .terminal-indicator { position:absolute; right:0; top:0; width:22px; height:14px; border:1px solid #999; background:linear-gradient(90deg,#454545 50%,#e9e9e9 50%); }
-#portfolio-boot h2 { margin:0 0 17.5px; font-size:11px; line-height:13.5px; font-weight:400; color:#818181; }
-#portfolio-boot .terminal-content { position:absolute; top:116px; bottom:88px; left:var(--boot-gutter); right:var(--boot-gutter); overflow:auto; overscroll-behavior:contain; scrollbar-width:none; }
-#portfolio-boot .terminal-content>section+section { margin-top:42px; }
-#portfolio-boot .terminal-row { position:relative; display:grid; height:13.5px; line-height:13.5px; white-space:nowrap; }
-#portfolio-boot .terminal-project { grid-template-columns:calc(24.8vw - var(--boot-gutter)) 32px calc(39.9vw - 32px) minmax(0,1fr) 70px; }
-#portfolio-boot .terminal-note { grid-template-columns:calc(24.8vw - var(--boot-gutter)) minmax(0,1fr) 70px; }
-#portfolio-boot .terminal-cell { min-width:0; overflow:hidden; }
-#portfolio-boot .terminal-source,#portfolio-boot .terminal-number,#portfolio-boot .terminal-end { color:#e5e5e5; }
-#portfolio-boot .terminal-end { text-align:right; }
-#portfolio-boot .terminal-value { position:relative; display:inline-block; max-width:100%; white-space:pre; overflow:hidden; vertical-align:top; }
-#portfolio-boot .terminal-inverse { position:absolute; inset:0; background:#e9e9e9; color:#000; clip-path:inset(0 calc(100% - var(--boot-band,0%)) 0 0); }
-#portfolio-boot .terminal-footer { position:absolute; bottom:18px; left:var(--boot-gutter); right:var(--boot-gutter); display:flex; justify-content:space-between; gap:24px; font-size:12px; line-height:18px; }
-#portfolio-boot p { margin:0; }
-#portfolio-boot #portfolio-boot-status { color:#d0d0d0; font-size:12px; }
-#portfolio-boot a { color:#bcbcbc; font-size:inherit; text-decoration:none; }
-#portfolio-boot a:hover,#portfolio-boot a:focus-visible { color:#000; background:#eee; outline:1px solid #eee; outline-offset:3px; }
-#portfolio-boot .terminal-footer nav { display:flex; gap:24px; align-self:flex-end; }
-#portfolio-boot .terminal-retry { display:none; }
-#portfolio-boot[data-phase="FALLBACK"] .terminal-retry { display:inline; }
+#portfolio-boot .terminal-stream-window { position:absolute; inset:22px 24px; overflow:hidden; transition:opacity 110ms linear; }
+#portfolio-boot .terminal-stream {
+  margin:0; width:max-content; font:inherit; white-space:pre;
+  animation:portfolio-compilation 4540ms infinite; will-change:transform;
+}
+@keyframes portfolio-compilation {
+  0% { transform:translate3d(0,0,0); animation-timing-function:steps(28,end); }
+  10% { transform:translate3d(0,calc(-28 * var(--boot-line)),0); animation-timing-function:linear; }
+  11.2% { transform:translate3d(0,calc(-28 * var(--boot-line)),0); animation-timing-function:steps(40,end); }
+  25% { transform:translate3d(0,calc(-68 * var(--boot-line)),0); animation-timing-function:linear; }
+  26.4% { transform:translate3d(0,calc(-68 * var(--boot-line)),0); animation-timing-function:steps(52,end); }
+  41% { transform:translate3d(0,calc(-120 * var(--boot-line)),0); animation-timing-function:linear; }
+  42.4% { transform:translate3d(0,calc(-120 * var(--boot-line)),0); animation-timing-function:steps(24,end); }
+  54% { transform:translate3d(0,calc(-144 * var(--boot-line)),0); animation-timing-function:linear; }
+  55.2% { transform:translate3d(0,calc(-144 * var(--boot-line)),0); animation-timing-function:steps(46,end); }
+  70% { transform:translate3d(0,calc(-190 * var(--boot-line)),0); animation-timing-function:linear; }
+  71.4% { transform:translate3d(0,calc(-190 * var(--boot-line)),0); animation-timing-function:steps(36,end); }
+  85% { transform:translate3d(0,calc(-226 * var(--boot-line)),0); animation-timing-function:linear; }
+  86.4% { transform:translate3d(0,calc(-226 * var(--boot-line)),0); animation-timing-function:steps(30,end); }
+  100% { transform:translate3d(0,calc(-256 * var(--boot-line)),0); }
+}
+#portfolio-boot .terminal-recovery { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+#portfolio-boot .terminal-recovery p { margin:0 0 18px; }
+#portfolio-boot .terminal-recovery nav { display:none; gap:24px; }
+#portfolio-boot a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
+#portfolio-boot a:focus-visible { outline:1px solid currentColor; outline-offset:4px; }
+#portfolio-boot .terminal-noscript { margin:24px; }
+:root[data-boot-hidden="true"] #portfolio-boot .terminal-stream,
+#portfolio-boot:is([data-phase="PRIMED"],[data-phase="REVEALING"],[data-phase="FALLBACK"]) .terminal-stream { animation-play-state:paused; }
 #portfolio-boot[data-phase="REVEALING"] { pointer-events:none; }
-#portfolio-boot[data-phase="COMPLETE"] { display:none; }
+#portfolio-boot[data-phase="REVEALING"] .terminal-stream-window { opacity:0; }
+#portfolio-boot[data-phase="FALLBACK"] .terminal-stream-window { display:none; }
+#portfolio-boot[data-phase="FALLBACK"] .terminal-recovery { inset:24px; width:auto; height:auto; clip-path:none; }
+#portfolio-boot[data-phase="FALLBACK"] .terminal-recovery nav { display:flex; }
+:root[data-boot-motion="less"] #portfolio-boot .terminal-stream { animation:none; will-change:auto; }
+:root[data-boot-motion="less"] #portfolio-boot .terminal-stream-window { max-height:calc(5 * var(--boot-line)); transition:none; }
 @media(max-width:600px) {
- #portfolio-boot { --boot-gutter:16px; }
- #portfolio-boot .terminal-header { gap:7px; font-size:11px; line-height:15px; }
- #portfolio-boot .terminal-header>span { display:none; }
- #portfolio-boot .terminal-content { top:104px; bottom:106px; }
- #portfolio-boot .terminal-project { grid-template-columns:0 26px minmax(0,1fr) 56px 40px; }
- #portfolio-boot .terminal-note { grid-template-columns:120px minmax(0,1fr) 0; }
- #portfolio-boot .terminal-note .terminal-end { display:none; }
- #portfolio-boot .terminal-footer { gap:12px; flex-direction:column; }
- #portfolio-boot .terminal-footer nav { align-self:flex-start; gap:24px; }
+  #portfolio-boot { --boot-line:16px; font-size:11px; }
+  #portfolio-boot .terminal-stream-window { inset:16px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #portfolio-boot .terminal-stream { animation:none; will-change:auto; }
+  #portfolio-boot .terminal-stream-window { max-height:calc(5 * var(--boot-line)); transition:none; }
 }

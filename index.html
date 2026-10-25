@@ -11,21 +11,29 @@
     <script>
       // First paint uses the same safe default and legacy migration as settings.
       let theme = 'light'
+      let bootMotion = 'system'
       try {
         const saved = JSON.parse(
           localStorage.getItem('portfolio:experience-settings:v1') || 'null',
         )
         if ((saved?.version === 1 || saved?.version === 2) && ['light', 'dark'].includes(saved.theme))
           theme = saved.theme
+        if ((saved?.version === 1 || saved?.version === 2) && saved.motion === 'less')
+          bootMotion = 'less'
       } catch {
         /* Storage is optional; the user's new default is light. */
       }
       document.documentElement.dataset.colorTheme = theme
+      document.documentElement.dataset.bootMotion = bootMotion
       document.documentElement.style.colorScheme = theme
       document.documentElement.style.backgroundColor =
         theme === 'light' ? '#f3f5f7' : '#080808'
       document.querySelector('meta[name="theme-color"]').content =
         theme === 'light' ? '#f3f5f7' : '#080808'
+      const bootVisibility = () => { document.documentElement.dataset.bootHidden = String(document.hidden) }
+      bootVisibility()
+      document.addEventListener('visibilitychange', bootVisibility)
+      window.addEventListener('portfolio:boot-connected', () => document.removeEventListener('visibilitychange', bootVisibility), { once:true })
     </script>
     <style>/* PORTFOLIO_BOOT_CSS */</style>
     <title>Mani Marami Milani — Computer Science Portfolio</title>

@@ -4,9 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   Component,
   useCallback,
-  useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
 } from 'react'
 import type { ReactNode, RefObject } from 'react'
@@ -112,18 +110,6 @@ export function ExperienceCanvas({
   const reportFailure = useCallback(() => {
     if (alive.current) onFailure()
   }, [onFailure])
-  const webglAvailable = useMemo(() => {
-    try {
-      return Boolean(document.createElement('canvas').getContext('webgl2'))
-    } catch {
-      return false
-    }
-  }, [])
-  useEffect(() => {
-    if (!webglAvailable) reportFailure()
-  }, [webglAvailable, reportFailure])
-  if (!webglAvailable) return null
-
   return (
     <div
       className={`experience-canvas ${visible ? 'experience-canvas--visible' : ''}`}
@@ -134,12 +120,23 @@ export function ExperienceCanvas({
           dpr={quality.dpr}
           frameloop="always"
           camera={{ position: [0.2, 4.2, 13.5], fov: 41, near: 0.1, far: 140 }}
-          gl={{
-            antialias: quality.tier !== 'low',
-            alpha: false,
-            powerPreference: 'high-performance',
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 0.9,
+          gl={(defaults) => {
+            // Probe the real renderer once. An unattached availability context
+            // duplicated synchronous driver initialization before this scene.
+            try {
+              const renderer = new THREE.WebGLRenderer({
+                ...defaults,
+                antialias: quality.tier !== 'low',
+                alpha: false,
+                powerPreference: 'high-performance',
+              })
+              renderer.toneMapping = THREE.ACESFilmicToneMapping
+              renderer.toneMappingExposure = 0.9
+              return renderer
+            } catch (error) {
+              reportFailure()
+              throw error
+            }
           }}
           onCreated={({ gl }) => {
             if (!alive.current) return
