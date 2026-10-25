@@ -1779,3 +1779,6 @@ html {
     font-size: 13px;
   }
 }
+
+/* Stable native typography if critical fonts failed or exceeded recovery. */
+#root[data-font-fallback="true"] *,#root [data-font-fallback="true"] * { font-family:ui-monospace,monospace !important; }

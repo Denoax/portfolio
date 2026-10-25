@@ -29,7 +29,7 @@ try {
   },theme)
   const page=await context.newPage()
   page.on('pageerror',e=>receipt.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')receipt.errors.push(m.text())})
-  await page.goto(base);await page.waitForFunction(()=>window.__portfolio?.introZoom.instances>0&&readGridWaves().draws>2)
+  await page.goto(base);await page.waitForFunction(()=>!document.querySelector('#portfolio-boot'));await page.waitForFunction(()=>window.__portfolio?.introZoom.instances>0&&readGridWaves().draws>2)
   const state=()=>page.evaluate(()=>structuredClone(__portfolio.introZoom))
   const initial=await state();assert.equal(initial.transport.state,'AUTO_OUT')
   assert(Math.abs((await page.evaluate(()=>readGridWaves())).uniforms.uWaveCellFrequency-900/40)<1e-6)

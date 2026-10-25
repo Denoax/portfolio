@@ -1,3 +1,5 @@
+import {boot,nativeTarget} from '../boot/runtime'
+import {useBoot} from '../boot/useBoot'
 import { clearIntroRipples } from '../core/introRipples'
 import { resetIntroTransport } from '../core/introMotion'
 import { GlobalProximityRail } from './GlobalProximityRail'
@@ -78,6 +80,7 @@ function initialState(route: string): HubState {
   }
 }
 function Home({ route }: { route: string }) {
+  const bootState = useBoot()
   const [introExiting, setIntroExiting] = useState(false)
   const [hub, dispatch] = useReducer(hubReducer, route, initialState)
   const hubRef = useRef(hub)
@@ -104,7 +107,15 @@ function Home({ route }: { route: string }) {
       settings.soundVolume / 100,
       settings.ambienceVolume / 100,
     )
-    engine.prepare()
+    let prepared = false
+    const prepareAudio = () => {
+      if (!prepared && ['REVEALING','COMPLETE'].includes(boot.getSnapshot().phase)) {
+        prepared = true
+        engine.prepare()
+      }
+    }
+    const stopBootAudio = boot.subscribe(prepareAudio)
+    prepareAudio()
     const retire = () => engine.retireAll()
     const hidden = () => {
       engine.visibility()
@@ -112,6 +123,7 @@ function Home({ route }: { route: string }) {
     window.addEventListener('pagehide', retire)
     document.addEventListener('visibilitychange', hidden)
     return () => {
+      stopBootAudio()
       engine.dispose()
       audio.current = null
       window.removeEventListener('pagehide', retire)
@@ -163,7 +175,7 @@ function Home({ route }: { route: string }) {
   useEffect(() => {
     setStorageUnavailable(!saveSettings(settings))
   }, [])
-  const [failed, setFailed] = useState(false),
+  const [failed, setFailed] = useState(() => boot.getSnapshot().phase === 'FALLBACK'),
     [hubReady, setHubReady] = useState(false)
   const closeOrdinaryPanes = (dismissIndex = true) => {
     setInfoOpen(false)
@@ -173,13 +185,13 @@ function Home({ route }: { route: string }) {
     if (dismissIndex) setDismissIndexRequest((value) => value + 1)
   }
   const panelOpen = settingsOpen || infoOpen || projectsOpen || Boolean(help)
-  presentation.current.paused = hub.surface !== 'hub' || Boolean(resource)
+  presentation.current.paused = hub.surface !== 'hub' || Boolean(resource) || !bootState.motionAllowed
   presentation.current.reduced = reduced
   presentation.current.intro.active = hub.surface === 'intro'
   presentation.current.decorativeRunning =
-    ['intro', 'hub'].includes(hub.surface) && !reduced
-  presentation.current.intro.paused = reduced
-  presentation.current.intro.inputBlocked = Boolean(resource)
+    ['intro', 'hub'].includes(hub.surface) && !reduced && bootState.motionAllowed
+  presentation.current.intro.paused = reduced || !bootState.motionAllowed
+  presentation.current.intro.inputBlocked = Boolean(resource) || bootState.phase !== 'COMPLETE'
   const preferences = useRef({ settings, panelOpen, theme })
   preferences.current = {
     settings,
@@ -189,10 +201,26 @@ function Home({ route }: { route: string }) {
   const routeRef = useRef(route),
     previousSurface = useRef(hub.surface)
   const onHubReady = useCallback(() => setHubReady(true), [])
-  const onFailure = useCallback(() => setFailed(true), [])
+  const onFailure = useCallback(() => { boot.fail('Graphics preparation unavailable');setFailed(true) }, [])
   const onOverload = useCallback(() => {
     setQuality(lowerQuality)
   }, [])
+  useEffect(() => {
+    const fallback = () => setFailed(true)
+    window.addEventListener('portfolio:boot-fallback', fallback)
+    if (boot.getSnapshot().phase === 'FALLBACK') fallback()
+    return () => window.removeEventListener('portfolio:boot-fallback', fallback)
+  }, [])
+  useEffect(() => {
+    if (!failed && !(reduced && hub.surface !== 'intro')) return
+    const element = routeSurface.current
+    if (element) void nativeTarget(element, hub.surface + '-static')
+  }, [failed, reduced, hub.surface])
+  useEffect(() => {
+    if (!hubReady) return
+    const token = boot.getSnapshot().generation
+    if (routeSurface.current?.getClientRects().length) boot.resource(token, 'native-layout')
+  }, [hubReady, bootState.generation])
   const updateSettings = (value: Settings) => {
     const next = validateSettings(value)
     if (next.graphics !== settings.graphics) {
@@ -502,7 +530,7 @@ function Home({ route }: { route: string }) {
         </div>
       </header>
       <SelectionHub
-        staticView={failed || reduced || !hubReady}
+        staticView={failed || reduced}
         notice={hub.notice}
         aligning={false}
         active={hub.surface === 'hub'}
@@ -547,7 +575,6 @@ function Home({ route }: { route: string }) {
           <ThemeToggle
             theme={theme}
             reduced={reduced}
-            onReact={() => cue('buddy')}
             onToggle={() =>
               updateSettings({
                 ...settings,
@@ -561,7 +588,7 @@ function Home({ route }: { route: string }) {
         <IdentityIntro
           presentation={presentation}
           staticView={failed || reduced}
-          paused={Boolean(resource)}
+          paused={Boolean(resource) || bootState.phase !== 'COMPLETE'}
           entryRequest={introEntryRequest}
           onDone={skipIntro}
           exiting={introExiting}
@@ -660,6 +687,7 @@ function Home({ route }: { route: string }) {
 }
 
 function ThemedDocument({ children }: { children: ReactNode }) {
+  useEffect(() => { const root=document.getElementById('root');if(root) void nativeTarget(root,'document') }, [])
   useSiteTheme(loadSettings().theme)
   return children
 }

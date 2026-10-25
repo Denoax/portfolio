@@ -154,13 +154,13 @@ export class CursorTrail {
     })
     this.scene.add(new THREE.Mesh(this.geometry, this.material))
   }
-  connect() {
+  connect(enabled: () => boolean = () => true) {
     window.__cursorTrail = this.evidence
     const diagnostic = window as unknown as { __worldsTrail?: unknown }
     const worldDiagnostic = this.worlds ? { field: this.worlds.evidence, path: this.worlds.path.evidence } : null
     if (worldDiagnostic) diagnostic.__worldsTrail = worldDiagnostic
     const move = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse' || !this.fine.matches) return
+      if (!enabled() || e.pointerType !== 'mouse' || !this.fine.matches) return
       if (this.worlds) this.worldsPointer.set(e.clientX, e.clientY)
       if (this.worldsActive) this.worlds?.admit(e)
       const x = e.clientX / innerWidth,

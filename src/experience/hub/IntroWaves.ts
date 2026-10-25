@@ -45,10 +45,11 @@ float tomHintonWaves(vec2 coord, vec2 resolution, float time) {
 
 export class IntroWaves {
   private readonly darkBase = new THREE.Color('#050607')
-  private readonly darkCrest = new THREE.Color('#1c222c')
-  private readonly lightBase = new THREE.Color('#fafbfd')
-  private readonly lightCrest = new THREE.Color('#e4e9ef')
+  private readonly darkCrest = new THREE.Color('#151a22')
+  private readonly lightBase = new THREE.Color('#e7e9ed')
+  private readonly lightCrest = new THREE.Color('#d8dde5')
   private ready = false
+  get available() { return this.ready }
   readonly geometry = new THREE.PlaneGeometry(2, 2)
   readonly material = new THREE.ShaderMaterial({
     name: 'IntroWaves-TomHinton',

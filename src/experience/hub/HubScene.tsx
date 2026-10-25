@@ -1,3 +1,4 @@
+import {boot,nativeFonts} from '../../boot/runtime'
 import { useEffect, useMemo, useRef } from 'react'
 import type { RefObject } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
@@ -30,6 +31,7 @@ function mediaGeometry() {
   return geometry
 }
 export function HubScene({
+  rendererActive,
   baseFrame,
   quality,
   preferences,
@@ -38,6 +40,7 @@ export function HubScene({
   onFailure,
   previews,
 }: {
+  rendererActive: RefObject<boolean>
   baseFrame: RefObject<number>
   quality: QualityProfile
   preferences: RefObject<ExperiencePreferences>
@@ -213,11 +216,12 @@ export function HubScene({
   useEffect(() => {
     let alive = true
     loaded.current = false
+    const bootToken = boot.begin(presentation.current.intro.active ? 'intro' : 'worlds', gl)
     reported.current = false
     const textures = new Map<string, THREE.Texture>()
     media.current = textures
     let preparation: Promise<unknown> | null = null
-    const disconnect = resources.trail.connect()
+    const disconnect = resources.trail.connect(() => boot.getSnapshot().phase === 'COMPLETE')
     const disconnectPerimeter = resources.perimeter.connect()
     const diagnostics = window as unknown as {
       __hoverSmoke?: typeof resources.perimeter.evidence
@@ -236,7 +240,17 @@ export function HubScene({
       if (existing) return existing
       const request = loader
         .loadAsync(path)
-        .then((texture) => {
+        .then(async (texture) => {
+          if (!alive) {
+            texture.dispose()
+            return
+          }
+          try {
+            if (texture.image instanceof HTMLImageElement) await texture.image.decode()
+          } catch (error) {
+            texture.dispose()
+            throw error
+          }
           if (!alive) {
             texture.dispose()
             return
@@ -248,11 +262,13 @@ export function HubScene({
           needsRepaint.current = true
         })
         .catch((error: unknown) => {
-          failedPosters.current.add(path)
+          if (alive) failedPosters.current.add(path)
           console.warn(`Project poster unavailable: ${path}`, error)
           throw error
         })
-        .finally(() => requests.current.delete(path))
+        .finally(() => {
+          if (requests.current.get(path) === request) requests.current.delete(path)
+        })
       requests.current.set(path, request)
       return request
     }
@@ -271,10 +287,13 @@ export function HubScene({
         loadPoster.current(view.portrait),
       ]),
       resources.ringwriter.prepare(),
+      nativeFonts().then(() => boot.resource(bootToken,'native-fonts')),
     ])
       .then(async () => {
         if (!alive) return
         gl.initTexture(resources.ringwriter.texture)
+        boot.resource(bootToken,'ring-atlas')
+        boot.resource(bootToken,'posters')
         // Compile only resources owned by this menu. Shared scene traversal
         // can capture retiring world materials in Three's asynchronous poll.
         const compileScene = new THREE.Scene()
@@ -288,12 +307,20 @@ export function HubScene({
         const foreground = Promise.all([
           gl.compileAsync(compileScene, camera),
           resources.trail.prepare(),
-        ])
+        ]).then(() => {
+          const context = gl.getContext()
+          if (gl.info.programs?.some(program => program.name !== 'IntroWaves-TomHinton' && !context.getProgramParameter(program.program, context.LINK_STATUS)))
+            throw new Error('Foreground shader did not link')
+          boot.resource(bootToken,'foreground')
+        })
         const backdrop = resources.waves.prepare(gl, camera).then(() => {
-          if (alive) needsRepaint.current = true
+          if (alive) {
+            needsRepaint.current = true
+            boot.resource(bootToken,'waves',resources.waves.available ? 'ready' : 'fallback')
+          }
         })
         preparation = Promise.all([foreground, backdrop])
-        await foreground
+        await preparation
         if (alive) {
           loaded.current = true
           clearTimeout(timeout)
@@ -304,6 +331,7 @@ export function HubScene({
       })
     return () => {
       alive = false
+      boot.retire(bootToken)
       clearTimeout(timeout)
       disconnect()
       disconnectPerimeter()
@@ -333,6 +361,9 @@ export function HubScene({
     // replacing resources, restarting readiness or resetting native progress.
   }, [resources, gl, scene, camera, onReady, onFailure])
   useFrame((state, dt) => {
+    // Canvas retires its R3F tree asynchronously. Stop projection writes before
+    // native fallback layout effects take ownership of these same DOM targets.
+    if (!rendererActive.current) return
     const menu = presentation.current
     const clockRunning = !document.hidden && menu.decorativeRunning
     const delta = activeClock.current && clockRunning ? Math.min(dt, 0.05) : 0
@@ -595,6 +626,7 @@ export function HubScene({
     }
   }, -1)
   useFrame((_, dt) => {
+    if (!rendererActive.current) return
     const q = displayedThemeMix()
     if (lastThemeMix.current !== q) {
       lastThemeMix.current = q
@@ -607,6 +639,7 @@ export function HubScene({
     if (
       (!presentation.current.decorativeRunning || document.hidden) &&
       reported.current &&
+      ['REVEALING','COMPLETE'].includes(boot.getSnapshot().phase) &&
       paintedSize.current === bufferSize &&
       !needsRepaint.current
     )
@@ -683,10 +716,6 @@ export function HubScene({
     resources.ringwriter.material.uniforms.uTransitionContour.value =
       Math.min(1, q * 8, (1 - q) * 4)
     gl.render(scene, camera)
-    if (loaded.current && !reported.current) {
-      reported.current = true
-      onReady()
-    }
     if (active || perimeterActive) {
       const clear = gl.autoClear
       try {
@@ -702,6 +731,10 @@ export function HubScene({
       } finally {
         gl.autoClear = clear
       }
+    }
+    if (loaded.current && !reported.current) {
+      reported.current = true
+      onReady()
     }
     paintedSize.current = bufferSize
     needsRepaint.current = false

@@ -15,7 +15,7 @@
         const saved = JSON.parse(
           localStorage.getItem('portfolio:experience-settings:v1') || 'null',
         )
-        if (saved?.version === 1 && ['light', 'dark'].includes(saved.theme))
+        if ((saved?.version === 1 || saved?.version === 2) && ['light', 'dark'].includes(saved.theme))
           theme = saved.theme
       } catch {
         /* Storage is optional; the user's new default is light. */
@@ -27,6 +27,7 @@
       document.querySelector('meta[name="theme-color"]').content =
         theme === 'light' ? '#f3f5f7' : '#080808'
     </script>
+    <style>/* PORTFOLIO_BOOT_CSS */</style>
     <title>Mani Marami Milani — Computer Science Portfolio</title>
     <link
       rel="icon"
@@ -36,7 +37,33 @@
     <link rel="apple-touch-icon" href="/assets/profile/profile-v12-192.png" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- PORTFOLIO_BOOT_SHELL -->
+    <div id="root" inert aria-busy="true"></div>
+    <script>
+      // A pre-module recovery boundary; ownership transfers once bootstrap runs.
+      (() => {
+        let connected = false
+        const recover = () => {
+          if (connected) return
+          const shell = document.getElementById('portfolio-boot')
+          if (!shell) return
+          shell.dataset.phase = 'FALLBACK'
+          document.getElementById('portfolio-boot-status').textContent =
+            'The interactive view could not start. Reload the page or explore the projects on GitHub.'
+          document.querySelector('[data-boot-retry]').href = location.href
+        }
+        const deadline = setTimeout(recover, 12000)
+        const failed = event => {
+          if (event.target?.id === 'portfolio-bootstrap') recover()
+        }
+        window.addEventListener('error', failed, true)
+        window.addEventListener('portfolio:boot-connected', () => {
+          connected = true
+          clearTimeout(deadline)
+          window.removeEventListener('error', failed, true)
+        }, { once: true })
+      })()
+    </script>
+    <script id="portfolio-bootstrap" type="module" src="/src/bootstrap.ts"></script>
   </body>
 </html>

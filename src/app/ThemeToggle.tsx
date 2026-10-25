@@ -5,12 +5,10 @@ import type { ResolvedTheme } from '../core/theme'
 export function ThemeToggle({
   theme,
   onToggle,
-  onReact,
   reduced = false,
 }: {
   theme: ResolvedTheme
   onToggle: () => void
-  onReact: () => void
   reduced?: boolean
 }) {
   const button = useRef<HTMLButtonElement>(null),
@@ -114,6 +112,7 @@ export function ThemeToggle({
     <button
       ref={button}
       className="theme-toggle"
+      data-audio-silent
       type="button"
       aria-label={label}
       title={label}
@@ -152,7 +151,6 @@ export function ThemeToggle({
         if (e.detail && state.current.cancelled) return
         state.current.reaction = performance.now()
         wakeAnimation.current()
-        onReact()
         onToggle()
       }}
     >

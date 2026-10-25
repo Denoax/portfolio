@@ -163,7 +163,9 @@ export class Ringwriter {
   }
 
   async prepare() {
-    await document.fonts.load(`${fontPx}px "IBM Plex Mono"`)
+    const faces = await document.fonts.load(`${fontPx}px "IBM Plex Mono"`)
+    if (!faces.length || !document.fonts.check(`${fontPx}px "IBM Plex Mono"`))
+      throw new Error('Ringwriter font unavailable')
     const context = this.canvas.getContext('2d')!
     context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     context.font = `${fontPx}px "IBM Plex Mono"`
@@ -208,7 +210,7 @@ export class Ringwriter {
 
   connect(state: () => MenuPresentation['intro']) {
     const move = (event: PointerEvent) => {
-      if (!state().active || state().paused) return
+      if (!state().active || state().paused || state().inputBlocked) return
       const minimum = Math.min(innerWidth, innerHeight)
       this.pointer.set((event.clientX - innerWidth * 0.5) / minimum,
         (innerHeight * 0.5 - event.clientY) / minimum)

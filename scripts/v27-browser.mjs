@@ -2,7 +2,8 @@ import { chromium } from 'playwright'
 // Keep explicit software rendering for reproducing the original v27 captures.
 // Opt into native GL with V27_NATIVE_GL=1 and record the actual renderer identity;
 // browser rendering evidence does not establish physical-display approval.
-export const launchCaptureBrowser = () => chromium.launch({
+export const launchCaptureBrowser = (options = {}) => chromium.launch({
+  ...options,
   headless: true,
   args: process.env.V27_NATIVE_GL === '1'
     ? ['--use-angle=gl', '--enable-gpu']

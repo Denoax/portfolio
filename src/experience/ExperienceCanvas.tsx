@@ -1,9 +1,11 @@
+import {boot} from '../boot/runtime'
 import { GlassLayer } from './glass/GlassLayer'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   Component,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
 } from 'react'
@@ -74,6 +76,17 @@ function DefaultFramebuffer() {
   return null
 }
 
+function BootFrame({baseFrame}: {baseFrame: RefObject<number>}) {
+  const {gl} = useThree()
+  const seen = useRef(0)
+  useFrame(() => {
+    if (baseFrame.current === seen.current) return
+    seen.current = baseFrame.current
+    boot.targetDraw(gl)
+  }, 3)
+  return null
+}
+
 export function ExperienceCanvas({
   quality,
   presentation,
@@ -89,7 +102,7 @@ export function ExperienceCanvas({
   // must not mark a replacement canvas ready or failed after a preference change.
   const alive = useRef(true)
   const detachContextListener = useRef<(() => void) | null>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     alive.current = true
     return () => {
       alive.current = false
@@ -147,6 +160,7 @@ export function ExperienceCanvas({
           <AmbientClock />
           <QualityController quality={quality} onOverload={onOverload} />
           <HubScene
+            rendererActive={alive}
             baseFrame={baseFrame}
             quality={quality}
             preferences={preferences}
@@ -157,6 +171,7 @@ export function ExperienceCanvas({
           />
           <GlassLayer world={false} baseFrame={baseFrame} />
           <RuntimeDiagnostics quality={quality} presentation={presentation} />
+          <BootFrame baseFrame={baseFrame} />
         </Canvas>
       </GraphicsBoundary>
     </div>

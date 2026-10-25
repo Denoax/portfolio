@@ -11,6 +11,12 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
+          Terminal loading index studied from Jean Dawson / Pixel Bath, designed
+          by Mouthwash and developed by Guillaume Colombel. Original code using
+          this portfolio’s real catalogue.{' '}
+          <a href="/licenses/Terminal-Index-References.md">Reference and study credits</a>.
+        </p>
+        <p>
           Waves intro backdrop adapted from{' '}
           <a href="https://codepen.io/TomHinton/pen/EajJrBd">
             Tom Hinton — #WCCChallenge : Waves

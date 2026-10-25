@@ -34,6 +34,7 @@ try {
     const page = await context.newPage(), errors = []
     page.on('pageerror', error => errors.push(error.message))
     await page.goto(base)
+    await page.waitForFunction(()=>!document.querySelector('#portfolio-boot'))
     await page.waitForFunction(() => readIntroWaves().uWaveVisibility === 1)
     const before = await page.evaluate(() => readIntroWaves())
     await page.waitForTimeout(500)

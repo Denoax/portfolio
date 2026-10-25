@@ -1,3 +1,4 @@
+import {boot} from '../../boot/runtime'
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { RefObject } from 'react'
@@ -320,7 +321,8 @@ export function GlassLayer({
       if (
         !element.isConnected ||
         !element.getClientRects().length ||
-        element.closest('[hidden],[inert]') ||
+        element.closest('[hidden]') ||
+        (element.closest('[inert]') && !(element.closest('[inert]')?.id === 'root' && boot.getSnapshot().phase !== 'COMPLETE')) ||
         (modal && !modal.contains(element))
       )
         continue

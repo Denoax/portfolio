@@ -15,7 +15,7 @@ export function useIntentAudio(cue: () => void, onPress: () => void) {
       y = NaN,
       keyboard = false
     const semantic = (e: EventTarget | null) =>
-      e instanceof Element
+      e instanceof Element && !e.closest('[data-audio-silent]')
         ? e.closest('button,a[href],input[type="range"],[role="tab"]')
         : null
     const clear = () => {
