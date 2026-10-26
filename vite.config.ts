@@ -1,15 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import {readFileSync,readdirSync} from 'node:fs'
-import {terminalMarkup} from './src/boot/terminalMarkup'
+import {readFileSync} from 'node:fs'
+import {loadingMarkup} from './src/boot/loadingMarkup'
 import {contact} from './src/content/portfolio'
 
 export default defineConfig({
   plugins: [react(), {name:'portfolio-boot-shell',transformIndexHtml:{order:'pre',handler(html) {
-    return html.replace('/* PORTFOLIO_BOOT_CSS */',readFileSync(new URL('./src/boot/terminal.css',import.meta.url),'utf8'))
-      .replace('<!-- PORTFOLIO_BOOT_SHELL -->',terminalMarkup(
-        readdirSync(new URL('./src',import.meta.url),{recursive:true})
-          .filter(path=>/\.(tsx?|css|json)$/.test(path)).map(path=>'src/'+path.replaceAll('\\','/')).sort(),contact))
+    return html.replace('/* PORTFOLIO_BOOT_CSS */',readFileSync(new URL('./src/boot/loading.css',import.meta.url),'utf8'))
+      .replace('<!-- PORTFOLIO_BOOT_SHELL -->',loadingMarkup(contact))
   }}}],
   optimizeDeps: {
     entries: ['index.html'],

@@ -21,6 +21,10 @@ export class BootSession {
   private readonly listeners = new Set<() => void>()
   constructor(private readonly record: (name: string, snapshot: BootSnapshot) => void = () => {}) {}
   getSnapshot = () => this.snapshot
+  // Completed preparation steps, not download bytes or elapsed time.
+  // The final step is the existing verified target draw.
+  getProgress = () => ['PRIMED','REVEALING','COMPLETE'].includes(this.snapshot.phase) ? 100 :
+    Math.floor(100 * this.required.filter(name => this.snapshot.resources[name]).length / (this.required.length + 1))
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   private update(change: Partial<BootSnapshot>, event: string) {
     this.snapshot = {...this.snapshot, ...change}

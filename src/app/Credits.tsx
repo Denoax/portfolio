@@ -11,10 +11,9 @@ export function Credits() {
         </p>
         <h2>Interaction audio and motion</h2>
         <p>
-          Compilation loading stream: original choreography for this portfolio,
-          informed by Ines Montani’s{' '}
-          <a href="https://github.com/ines/termynal">Termynal</a> output grammar.
-          {' '}<a href="/licenses/Compilation-Stream-References.md">Sources and notices</a>.
+          Loading screen: original implementation inspired by{' '}
+          <a href="https://lusion.co/">Lusion</a>.
+          {' '}<a href="/licenses/Minimal-Loading-Reference.md">Reference details</a>.
         </p>
         <p>
           Waves intro backdrop adapted from{' '}

@@ -1,5 +1,5 @@
 import {boot} from './boot/runtime'
-import {CompilationStream} from './boot/CompilationStream'
+import {ProgressLoader} from './boot/ProgressLoader'
 
 const shell = document.getElementById('portfolio-boot')!
 const root = document.getElementById('root')!
@@ -8,7 +8,7 @@ const retry = shell.querySelector<HTMLAnchorElement>('[data-boot-retry]')!
 retry.href = location.href
 window.dispatchEvent(new Event('portfolio:boot-connected'))
 delete document.documentElement.dataset.bootHidden
-const decoration = new CompilationStream(shell)
+const progress = new ProgressLoader(shell)
 let raf = 0, last = 0, elapsed = 0, revealing = -1
 const deadline = setTimeout(() => boot.fail('Preparation took too long'), Math.max(0,12000-performance.now()))
 const reduced = () => matchMedia('(prefers-reduced-motion:reduce)').matches || (() => {
@@ -22,7 +22,7 @@ const focusContent = () => {
 const finish = (token: number) => {
   if (!boot.current(token)) return
   root.inert = false; root.removeAttribute('aria-busy')
-  decoration.dispose(); shell.remove()
+  progress.dispose(); shell.remove()
   clearTimeout(deadline); document.removeEventListener('visibilitychange', visibility)
   unsubscribe(); boot.complete(token)
   // The React surface also owns an input fence. Focus after its COMPLETE
@@ -34,8 +34,7 @@ const frame = (now: number) => {
   if (document.hidden || state.phase !== 'REVEALING' || state.generation !== revealing) return
   elapsed += last ? Math.min(50,now-last) : 0; last=now
   const duration = reduced() ? 100 : document.documentElement.dataset.colorTheme === 'light' ? 650 : 420
-  const textFade = reduced() ? 0 : 110
-  const progress = Math.max(0,Math.min(1,(elapsed-textFade)/duration))
+  const progress = Math.max(0,Math.min(1,elapsed/duration))
   // One cover dissolve. Release formation/transport only in the final third,
   // so loading never consumes the original opening's initial state.
   shell.style.opacity=String(1-progress)
@@ -50,14 +49,15 @@ const visibility = () => {
 document.addEventListener('visibilitychange',visibility)
 const unsubscribe = boot.subscribe(() => {
   const state=boot.getSnapshot();shell.dataset.phase=state.phase
+  progress.update(boot.getProgress())
   if(state.phase==='PREPARING') status.textContent=state.target.startsWith('intro')?'Preparing the opening':'Preparing the portfolio'
   if(state.phase==='FALLBACK') {
-    cancelAnimationFrame(raf);shell.style.opacity='1';decoration.dispose()
+    cancelAnimationFrame(raf);shell.style.opacity='1';progress.dispose()
     status.textContent='The interactive view is unavailable. Preparing a simpler view, or use the links below.'
     window.dispatchEvent(new Event('portfolio:boot-fallback'))
   }
   if(state.phase==='PRIMED') {
-    revealing=state.generation;elapsed=last=0;decoration.retire()
+    revealing=state.generation;elapsed=last=0;progress.complete()
     boot.reveal(revealing)
     raf=requestAnimationFrame(frame)
   }

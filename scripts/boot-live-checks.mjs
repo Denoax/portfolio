@@ -49,9 +49,9 @@ async function run(name,{fault='',path='',context:options={},delay=0}={},check=a
 }
 try {
  await run('delayed-import-input-fence',{delay:2800},async(page,item)=>{
-  await page.waitForSelector('#portfolio-boot');assert.equal(await page.locator('#portfolio-boot pre.terminal-stream').count(),1)
-  assert.equal(await page.locator('#portfolio-boot .terminal-header,#portfolio-boot .terminal-row').count(),0)
-  assert((await page.locator('.terminal-stream').textContent()).split('\n').length===416)
+  await page.waitForSelector('#portfolio-boot');assert.equal(await page.locator('#portfolio-boot [data-boot-number]').textContent(),'000')
+  assert.equal(await page.locator('#portfolio-boot pre,#portfolio-boot canvas,#portfolio-boot header').count(),0)
+  assert.equal(await page.locator('#portfolio-boot [data-boot-fill]').count(),1)
   assert(await page.locator('#root').evaluate(n=>n.inert));await page.waitForFunction(()=>performance.getEntriesByName('first-contentful-paint').length>0);await page.screenshot({path:out+'/delayed-import-input-fence/shell.png'})
   await page.mouse.move(500,500);await page.mouse.wheel(0,900);await page.mouse.down();await page.keyboard.press('Enter');await page.waitForTimeout(400);await page.mouse.up()
   assert.equal(await page.locator('.identity-intro').count(),0,'Main is still delayed while real HTML shell is visible')

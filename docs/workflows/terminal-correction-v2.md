@@ -1,5 +1,7 @@
 # Terminal correction v2
 
+Superseded: Mani rejected the compilation loader. See [minimal-loader-v3.md](minimal-loader-v3.md); retain this document as implementation history.
+
 The v1 static archive loader was rejected. Its masthead, project table, notes,
 hover bands and normal footer links are replaced by one native monochrome
 compilation strip. The authored verbs and real source paths are decorative
